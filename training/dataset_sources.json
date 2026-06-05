@@ -1,0 +1,35 @@
+{
+  "sources": [
+    {
+      "id": "archit11/worldbuilding",
+      "role": "seed_worldbuilding",
+      "why": "Good source of institutions, social structure, laws, and civilization logic.",
+      "use": "Extract or rewrite into short impossible-world concepts before museum conversion."
+    },
+    {
+      "id": "euclaise/writingprompts",
+      "role": "seed_prompts",
+      "why": "Good source of imaginative premises and unusual situations.",
+      "use": "Convert strong premises into concise world concepts."
+    },
+    {
+      "id": "Dxniz/Novelist-CoT",
+      "role": "style_reference",
+      "why": "Useful for richer narrative texture and emotional polish.",
+      "use": "Do not train directly on the raw rows for this task; use it to guide synthetic conversions."
+    },
+    {
+      "id": "HeAAAAA/story_generation_sft",
+      "role": "structure_reference",
+      "why": "Helpful for story flow and structured creative generation.",
+      "use": "Mine examples of crisp, specific world details rather than broad plot summaries."
+    }
+  ],
+  "recommended_mix": {
+    "world_bible": 0.4,
+    "artifacts": 0.2,
+    "timeline": 0.15,
+    "newspaper": 0.15,
+    "visitor_book": 0.1
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "museum_name": "Museum of Somnia",
+  "tagline": "Where sleep is ledger and prophecy is taxed.",
+  "core_premise": "Dreams are currency.",
+  "government": "The Nocturnal Treasury",
+  "founded": "Year 0 of the Velvet Ledger",
+  "population": "18 million",
+  "currency": "Distilled dreams sealed in blue glass",
+  "language": "Somnari",
+  "capital": "Velis",
+  "summary": "A concise 2-3 sentence overview of the civilization.",
+  "tone_words": [
+    "melancholic",
+    "ritualized",
+    "ornate"
+  ],
+  "laws_of_reality": [
+    "Dreams can be harvested and traded.",
+    "Nightmares are considered contaminated wealth.",
+    "Sleep debt has legal and economic consequences."
+  ],
+  "taboo": "Selling the final dream of the dead.",
+  "historical_anchors": [
+    "Founding of the First Sleep Ledger",
+    "The Hollow Night market collapse",
+    "The Reform of Public Dreamhouses"
+  ],
+  "visual_motifs": [
+    "blue glass",
+    "wax seals",
+    "velvet dusk"
+  ],
+  "social_contradictions": [
+    "The poor sleep longer but own less.",
+    "The wealthy can purchase peace but rarely rest."
+  ],
+  "daily_life": "2-3 sentences about how ordinary people live within this impossible system."
+}

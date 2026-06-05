@@ -1,0 +1,10 @@
+{
+  "events": [
+    {
+      "year": "year or era",
+      "title": "event name",
+      "description": "1-2 sentences of museum prose",
+      "type": "one of: founding, conflict, discovery, collapse, golden_age, reform"
+    }
+  ]
+}

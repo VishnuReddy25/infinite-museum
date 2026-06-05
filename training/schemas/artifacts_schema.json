@@ -1,0 +1,11 @@
+{
+  "artifacts": [
+    {
+      "name": "artifact name",
+      "era": "historical period",
+      "material": "what it is made from",
+      "description": "2-3 sentences in exhibit-card prose",
+      "significance": "one sentence on cultural importance"
+    }
+  ]
+}

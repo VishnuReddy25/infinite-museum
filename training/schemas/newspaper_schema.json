@@ -1,0 +1,10 @@
+{
+  "newspaper_name": "publication name",
+  "date": "date in their own calendar",
+  "headline": "major headline",
+  "headline_body": "3-4 sentences for the lead story",
+  "secondary_headline": "secondary story headline",
+  "secondary_body": "2 sentences",
+  "advertisement": "1-2 line period-appropriate advertisement or classified",
+  "weather": "weather report using this world's own terms"
+}
