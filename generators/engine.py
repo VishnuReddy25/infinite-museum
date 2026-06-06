@@ -5,6 +5,12 @@ from functools import lru_cache
 
 from dotenv import load_dotenv
 
+try:
+    import spaces
+    HAS_SPACES = True
+except ImportError:
+    HAS_SPACES = False
+
 from generators.prompts import (
     ARTIFACTS_PROMPT,
     HALL_RULES,
@@ -17,6 +23,10 @@ from generators.prompts import (
 )
 
 load_dotenv()
+
+# Enable fast multi-threaded downloads on HuggingFace Spaces
+os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+os.environ.setdefault("HF_HUB_CACHE", "/data/huggingface")
 
 MODEL_ID = os.environ.get("MUSEUM_MODEL_ID", "Qwen/Qwen2.5-7B-Instruct")
 RUNTIME = os.environ.get("MUSEUM_RUNTIME", "local").lower()
@@ -72,18 +82,43 @@ def _load_hf_client():
 
 
 def _generate_with_local(messages: list[dict], max_new_tokens: int) -> str:
+    if HAS_SPACES:
+        return _generate_with_local_gpu(messages, max_new_tokens)
+    return _generate_with_local_cpu(messages, max_new_tokens)
+
+
+def _generate_with_local_cpu(messages: list[dict], max_new_tokens: int) -> str:
     pipe = _load_local_pipeline()
     output = pipe(
         messages,
         max_new_tokens=max_new_tokens,
+        max_length=None,
         temperature=0.8,
         do_sample=True,
         return_full_text=False,
     )
-
     if not output:
         return ""
+    first = output[0]
+    generated = first.get("generated_text", "")
+    if isinstance(generated, list):
+        return generated[-1].get("content", "").strip()
+    return str(generated).strip()
 
+
+@spaces.GPU
+def _generate_with_local_gpu(messages: list[dict], max_new_tokens: int) -> str:
+    pipe = _load_local_pipeline()
+    output = pipe(
+        messages,
+        max_new_tokens=max_new_tokens,
+        max_length=None,
+        temperature=0.8,
+        do_sample=True,
+        return_full_text=False,
+    )
+    if not output:
+        return ""
     first = output[0]
     generated = first.get("generated_text", "")
     if isinstance(generated, list):
