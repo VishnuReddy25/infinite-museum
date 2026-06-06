@@ -3,8 +3,14 @@ import os
 import re
 from functools import lru_cache
 
-import spaces
 from dotenv import load_dotenv
+
+try:
+    import spaces
+    GPU = spaces.GPU
+except Exception:
+    def GPU(fn):
+        return fn
 
 from generators.prompts import (
     ARTIFACTS_PROMPT,
@@ -75,7 +81,7 @@ def _load_hf_client():
     return InferenceClient(api_key=HF_TOKEN)
 
 
-@spaces.GPU
+@GPU
 def _generate_with_local(messages: list[dict], max_new_tokens: int) -> str:
     pipe = _load_local_pipeline()
     output = pipe(
