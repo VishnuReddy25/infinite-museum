@@ -3,13 +3,8 @@ import os
 import re
 from functools import lru_cache
 
+import spaces
 from dotenv import load_dotenv
-
-try:
-    import spaces
-    HAS_SPACES = True
-except ImportError:
-    HAS_SPACES = False
 
 from generators.prompts import (
     ARTIFACTS_PROMPT,
@@ -35,7 +30,6 @@ HF_TOKEN = os.environ.get("HF_TOKEN")
 
 def extract_json(text: str) -> dict:
     """Extract a JSON object from a model response."""
-
     text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
 
     try:
@@ -81,33 +75,8 @@ def _load_hf_client():
     return InferenceClient(api_key=HF_TOKEN)
 
 
-def _generate_with_local(messages: list[dict], max_new_tokens: int) -> str:
-    if HAS_SPACES:
-        return _generate_with_local_gpu(messages, max_new_tokens)
-    return _generate_with_local_cpu(messages, max_new_tokens)
-
-
-def _generate_with_local_cpu(messages: list[dict], max_new_tokens: int) -> str:
-    pipe = _load_local_pipeline()
-    output = pipe(
-        messages,
-        max_new_tokens=max_new_tokens,
-        max_length=None,
-        temperature=0.8,
-        do_sample=True,
-        return_full_text=False,
-    )
-    if not output:
-        return ""
-    first = output[0]
-    generated = first.get("generated_text", "")
-    if isinstance(generated, list):
-        return generated[-1].get("content", "").strip()
-    return str(generated).strip()
-
-
 @spaces.GPU
-def _generate_with_local_gpu(messages: list[dict], max_new_tokens: int) -> str:
+def _generate_with_local(messages: list[dict], max_new_tokens: int) -> str:
     pipe = _load_local_pipeline()
     output = pipe(
         messages,
