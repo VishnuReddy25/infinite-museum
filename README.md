@@ -1,6 +1,6 @@
 ---
 title: Infinite Museum of Impossible Worlds
-emoji: "🏛"
+emoji: "🏛️"
 colorFrom: gray
 colorTo: yellow
 sdk: gradio
@@ -8,7 +8,7 @@ sdk_version: 4.44.0
 app_file: app.py
 pinned: true
 license: mit
-short_description: Explore a museum dedicated to civilizations from impossible worlds.
+short_description: AI museum of impossible worlds
 ---
 
 # Infinite Museum of Impossible Worlds
