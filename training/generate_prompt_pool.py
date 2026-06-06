@@ -83,20 +83,47 @@ def write_jsonl(rows: list[dict], output_path: Path) -> None:
             handle.write(json.dumps(row, ensure_ascii=True) + "\n")
 
 
+def read_jsonl(path: Path) -> list[dict]:
+    rows = []
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+    return rows
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate a prompt pool for museum fine-tuning.")
     parser.add_argument("--output", required=True, help="Path to the output JSONL file.")
     parser.add_argument("--count", type=int, default=200, help="Number of prompts to create.")
+    parser.add_argument("--public-input", help="Optional JSONL file of public prompt seeds with a concept field.")
     parser.add_argument("--seed", type=int, default=42, help="Random seed.")
     args = parser.parse_args()
 
     rng = random.Random(args.seed)
     concepts = list(SEED_CONCEPTS)
+    if args.public_input:
+        public_rows = read_jsonl(Path(args.public_input))
+        concepts.extend(
+            row["concept"].strip()
+            for row in public_rows
+            if isinstance(row.get("concept"), str) and row["concept"].strip()
+        )
     while len(concepts) < args.count:
         concepts.append(synthesize_concept(rng))
 
     rng.shuffle(concepts)
-    rows = [{"concept": concept.strip()} for concept in concepts[: args.count]]
+    deduped = []
+    seen = set()
+    for concept in concepts:
+        normalized = concept.strip()
+        key = normalized.lower()
+        if normalized and key not in seen:
+            seen.add(key)
+            deduped.append(normalized)
+
+    rows = [{"concept": concept} for concept in deduped[: args.count]]
     write_jsonl(rows, Path(args.output))
     print(f"Wrote {len(rows)} prompts to {args.output}")
 

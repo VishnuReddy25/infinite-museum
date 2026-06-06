@@ -16,6 +16,7 @@ Fine-tune a small model so it becomes better at:
 - `schemas/`: exact JSON targets for each task
 - `dataset_sources.json`: public source ideas and how to use them
 - `generate_prompt_pool.py`: builds a pool of impossible-world concepts
+- `fetch_public_prompt_sources.py`: pulls and normalizes seed concepts from public Hugging Face datasets
 - `build_museum_examples.py`: converts concepts into museum-format JSONL
 - `train_lora_modal.py`: Modal LoRA starter
 - `requirements-train.txt`: training and data prep dependencies
@@ -38,13 +39,24 @@ Fine-tune a small model so it becomes better at:
 pip install -r training/requirements-train.txt
 ```
 
-### 2. Build a prompt pool
+### 2. Pull public seed concepts
+
+This step downloads premise-like rows from public Hugging Face datasets and rewrites them into concise concept candidates.
+
+```bash
+python training/fetch_public_prompt_sources.py \
+  --output data/raw_prompts/public_world_concepts.jsonl \
+  --per-source 120
+```
+
+### 3. Build a prompt pool
 
 Prepare a CSV with at least one `concept` column, or use the built-in seed list.
 
 ```bash
 python training/generate_prompt_pool.py \
   --output data/raw_prompts/world_concepts.jsonl \
+  --public-input data/raw_prompts/public_world_concepts.jsonl \
   --count 200
 ```
 
@@ -54,7 +66,7 @@ Optional:
 - merge prompts from your team
 - remove joke prompts that have no worldbuilding depth
 
-### 3. Generate synthetic museum examples
+### 4. Generate synthetic museum examples
 
 This step converts each concept into one or more task examples:
 
@@ -75,7 +87,7 @@ python training/build_museum_examples.py \
 
 The script writes JSONL stubs if no teacher outputs are provided yet, so you can still inspect the exact training shape.
 
-### 4. Curate a gold dataset
+### 5. Curate a gold dataset
 
 Create these files by keeping only high-quality rows:
 
@@ -92,7 +104,7 @@ Target sizes:
 
 If time is tight, fine-tune only `world_bible_train.jsonl`.
 
-### 5. Fine-tune with Modal
+### 6. Fine-tune with Modal
 
 Set env vars:
 
@@ -113,7 +125,7 @@ set OUTPUT_REPO=yourname/infinite-museum-worldbible-lora
 modal run training/train_lora_modal.py
 ```
 
-### 6. Evaluate
+### 7. Evaluate
 
 Hold out at least 20 prompts the model never saw in training.
 
@@ -125,7 +137,7 @@ Score both base and tuned model on:
 - tone
 - reuse of canon
 
-### 7. Publish and integrate
+### 8. Publish and integrate
 
 - push the adapter or merged model to Hugging Face
 - update the app runtime to use the tuned checkpoint

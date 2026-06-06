@@ -7,3 +7,4 @@ pyarrow>=17.0.0
 transformers>=4.51.0
 trl>=0.9.6
 unsloth>=2024.8
+jsonlines>=4.0.0
