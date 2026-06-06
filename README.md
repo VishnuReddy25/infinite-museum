@@ -9,6 +9,8 @@ sdk_version: 4.44.0
 app_file: app.py
 pinned: true
 license: mit
+gradio>=5.0.0
+huggingface_hub==0.25.2
 short_description: AI museum of impossible worlds
 ---
 
