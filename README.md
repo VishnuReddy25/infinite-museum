@@ -5,10 +5,12 @@ colorFrom: gray
 colorTo: yellow
 sdk: gradio
 python_version: 3.11
-sdk_version: 4.44.0
+
 app_file: app.py
 pinned: true
 license: mit
+sdk: gradio
+sdk_version: 5.0.0
 
 short_description: AI museum of impossible worlds
 ---
