@@ -924,13 +924,16 @@ def build_artifacts_html(data: dict) -> str:
     cards = []
     featured = data.get("featured_image") if isinstance(data, dict) else None
     featured_html = ""
-    if data.get("artifacts"):
-        lead = data["artifacts"][0]
+    if featured:
+        lead = featured.get("artifact", {})
         prompt_text = featured.get("prompt", "") if isinstance(featured, dict) else ""
-        if isinstance(featured, dict) and featured.get("image_url"):
-            media = f"<img class='featured-image' src='{esc(featured.get('image_url', ''))}' alt='{esc(lead.get('name', 'Featured artifact'))}'>"
+        image_src = ""
+        if isinstance(featured, dict):
+            image_src = featured.get("image_url") or featured.get("image_path") or ""
+        if image_src:
+            media = f"<img class='featured-image' src='{esc(image_src)}' alt='{esc(lead.get('name', 'Featured artifact'))}'>"
         else:
-            media = "<div class='featured-placeholder'>Featured artifact image slot. Connect a local FLUX runner to generate this object automatically.</div>"
+            media = "<div class='featured-placeholder'>No artifact image generated yet. Use one of the image buttons below to render an object on demand.</div>"
 
         featured_html = f"""
 <div class="featured-artifact">
@@ -944,6 +947,24 @@ def build_artifacts_html(data: dict) -> str:
                 <div class="featured-text"><strong>Material:</strong> {esc(lead.get('material', ''))} | <strong>Era:</strong> {esc(lead.get('era', ''))}</div>
             </div>
             <div class="featured-prompt">Image prompt: {esc(prompt_text or 'This prompt will appear here once the backend hook is active.')}</div>
+        </div>
+    </div>
+</div>
+"""
+    else:
+        featured_html = """
+<div class="featured-artifact">
+    <div class="featured-grid">
+        <div class="featured-image-shell">
+            <div class="featured-placeholder">No artifact image generated yet. Pick an artifact below and render it only when you want it.</div>
+        </div>
+        <div class="featured-copy">
+            <div>
+                <div class="featured-label">Artifact image</div>
+                <div class="featured-title">On-demand generation</div>
+                <div class="featured-text">The museum no longer slows down by generating images automatically. Click an artifact image button when you want to render one object.</div>
+            </div>
+            <div class="featured-prompt">The chosen artifact prompt will appear here after generation.</div>
         </div>
     </div>
 </div>
@@ -1106,7 +1127,7 @@ def build_museum_state(concept: str, curator_mode: str, world_bible: dict, artif
         "guided_concept": format_concept(concept, curator_mode),
         "world_bible": world_bible or {},
         "artifacts": artifacts or {},
-        "featured_image": {},
+        "featured_image": None,
         "timeline": timeline or {},
         "newspaper": newspaper or {},
         "visitor_book": visitor_book or {},
@@ -1115,6 +1136,32 @@ def build_museum_state(concept: str, curator_mode: str, world_bible: dict, artif
 
 def default_state() -> dict:
     return build_museum_state("", "Anthropology", {})
+
+
+def generate_artifact_image_action(state: dict, artifact_index: int):
+    state = state or default_state()
+    artifacts_payload = state.get("artifacts") or {}
+    artifacts = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
+    curator_mode = state.get("curator_mode") or "Anthropology"
+    world_bible = state.get("world_bible") or {}
+
+    if not artifacts or artifact_index >= len(artifacts):
+        return (
+            build_status_panel("Generate a museum first", "There is no artifact here yet to render.", curator_mode),
+            gr.update(value=build_artifacts_html({**artifacts_payload, "featured_image": state.get("featured_image")})),
+            state,
+        )
+
+    artifact = artifacts[artifact_index]
+    image_result = generate_featured_artifact_image(world_bible, {"artifacts": [artifact]})
+    image_result["artifact"] = artifact
+    state["featured_image"] = image_result
+
+    return (
+        build_status_panel("Artifact image generated", f"Rendered an image for {artifact.get('name', 'the selected artifact')}.", curator_mode),
+        gr.update(value=build_artifacts_html({**artifacts_payload, "featured_image": image_result})),
+        state,
+    )
 
 
 def regenerate_hall(state: dict, hall: str):
@@ -1128,7 +1175,7 @@ def regenerate_hall(state: dict, hall: str):
             build_status_panel("Open a museum first", "Generate a civilization before rerolling an individual hall.", curator_mode),
             gr.update(value=build_map_html("lobby", [])),
             gr.update(value=build_lobby_html(world_bible)),
-            gr.update(value=build_artifacts_html(state.get("artifacts") or {})),
+            gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
             gr.update(value=build_timeline_html(state.get("timeline") or {})),
             gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
             gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
@@ -1140,8 +1187,7 @@ def regenerate_hall(state: dict, hall: str):
     if hall == "artifacts":
         artifacts = generate_artifacts(guided_concept, world_bible)
         state["artifacts"] = artifacts
-        state["featured_image"] = generate_featured_artifact_image(world_bible, artifacts)
-        state["artifacts"]["featured_image"] = state["featured_image"]
+        state["featured_image"] = None
         title = "Artifacts rerolled"
         subtitle = "The object gallery has been refreshed without changing the rest of the museum."
     elif hall == "timeline":
@@ -1167,7 +1213,7 @@ def regenerate_hall(state: dict, hall: str):
         build_status_panel(title, subtitle, curator_mode),
         gr.update(value=build_map_html(hall if hall in {"artifacts", "timeline", "newspaper", "visitor"} else "lobby", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
             gr.update(value=build_lobby_html(world_bible)),
-            gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image") or {}})),
+            gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
             gr.update(value=build_timeline_html(state.get("timeline") or {})),
             gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
             gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
@@ -1227,15 +1273,14 @@ def generate_museum(concept: str, curator_mode: str):
 
     artifacts = generate_artifacts(guided_concept, world_bible)
     state["artifacts"] = artifacts
-    state["featured_image"] = generate_featured_artifact_image(world_bible, artifacts)
-    state["artifacts"]["featured_image"] = state["featured_image"]
+    state["featured_image"] = None
     yield (
         build_status_panel("Artifacts catalogued", "The collection vault has opened. The chronology is being assembled.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("timeline", ["lobby", "artifacts"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(state["artifacts"])),
+        gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": None})),
         empty_gallery("Assembling the official historical record."),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
@@ -1250,7 +1295,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_map_html("newspaper", ["lobby", "artifacts", "timeline"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(state["artifacts"])),
+        gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
@@ -1265,7 +1310,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(state["artifacts"])),
+        gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         empty_gallery("Opening the final testimony cabinet."),
@@ -1280,7 +1325,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(state["artifacts"])),
+        gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_visitor_book_html(visitor_book)),
@@ -1338,6 +1383,10 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
                 elem_classes=["hall-content"],
             )
         with gr.Tab("Artifacts"):
+            with gr.Row():
+                artifact_image_btn_1 = gr.Button("Generate Image for Artifact 1", size="sm")
+                artifact_image_btn_2 = gr.Button("Generate Image for Artifact 2", size="sm")
+                artifact_image_btn_3 = gr.Button("Generate Image for Artifact 3", size="sm")
             regen_artifacts_btn = gr.Button("Regenerate Artifacts", size="sm")
             artifacts_html = gr.HTML(
                 value="<div class='empty-state'>The artifact hall is sealed.</div>",
@@ -1407,6 +1456,11 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
     regen_timeline_btn.click(lambda state: regenerate_hall(state, "timeline"), inputs=[museum_state], outputs=hall_outputs)
     regen_newspaper_btn.click(lambda state: regenerate_hall(state, "newspaper"), inputs=[museum_state], outputs=hall_outputs)
     regen_visitor_btn.click(lambda state: regenerate_hall(state, "visitor"), inputs=[museum_state], outputs=hall_outputs)
+
+    artifact_image_outputs = [status_html, artifacts_html, museum_state]
+    artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs)
+    artifact_image_btn_2.click(lambda state: generate_artifact_image_action(state, 1), inputs=[museum_state], outputs=artifact_image_outputs)
+    artifact_image_btn_3.click(lambda state: generate_artifact_image_action(state, 2), inputs=[museum_state], outputs=artifact_image_outputs)
 
 
 if __name__ == "__main__":

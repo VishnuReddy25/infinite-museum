@@ -51,10 +51,11 @@ Planned hackathon targets:
 - `LLAMACPP_BASE_URL=http://127.0.0.1:8080`
 - `LLAMACPP_MODEL=museum-gguf`
 - `LLAMACPP_API_KEY=` optional unless your local server expects one
-- `MUSEUM_IMAGE_RUNTIME=disabled` or `backend`
-- `MUSEUM_IMAGE_BASE_URL=http://127.0.0.1:7861`
+- `MUSEUM_IMAGE_RUNTIME=disabled`, `local`, or `backend`
+- `MUSEUM_IMAGE_BASE_URL=http://127.0.0.1:7861` only for `backend`
 - `MUSEUM_IMAGE_MODEL=black-forest-labs/FLUX.2-klein-4B`
 - `MUSEUM_IMAGE_API_KEY=` optional unless your image backend expects one
+- `MUSEUM_IMAGE_OUTPUT_DIR=generated_images`
 
 ## Local run
 
@@ -80,9 +81,22 @@ set LLAMACPP_MODEL=museum-gguf
 python app.py
 ```
 
-## Featured artifact image backend
+## Featured artifact images
 
 The artifact hall now has a featured image slot. By default it shows the generated image prompt and a placeholder panel.
+
+For the simplest Space-style setup, let the app generate images directly from `app.py`:
+
+```bash
+pip install -r requirements-image.txt
+set MUSEUM_IMAGE_RUNTIME=local
+set MUSEUM_IMAGE_MODEL=black-forest-labs/FLUX.2-klein-4B
+python app.py
+```
+
+This uses the local helper in [generators/image_engine.py](/C:/Users/vishn/OneDrive/Desktop/infinite-museum/generators/image_engine.py) and saves images into `generated_images/`.
+
+If you still want an external image service later, you can keep using the optional backend mode below.
 
 To connect a local image backend later, expose a simple HTTP endpoint:
 
@@ -115,4 +129,42 @@ set MUSEUM_IMAGE_RUNTIME=backend
 set MUSEUM_IMAGE_BASE_URL=http://127.0.0.1:7861
 set MUSEUM_IMAGE_MODEL=black-forest-labs/FLUX.2-klein-4B
 python app.py
+```
+
+## Local FLUX image server
+
+This repo now includes a tiny local image server in [image_backend.py](/C:/Users/vishn/OneDrive/Desktop/infinite-museum/image_backend.py) that matches the museum app's `/generate` contract.
+
+Install the image dependencies:
+
+```bash
+pip install -r requirements-image.txt
+```
+
+Run the server:
+
+```bash
+set MUSEUM_IMAGE_MODEL=black-forest-labs/FLUX.2-klein-4B
+python image_backend.py
+```
+
+Optional environment variables:
+
+- `MUSEUM_IMAGE_HOST=127.0.0.1`
+- `MUSEUM_IMAGE_PORT=7861`
+- `MUSEUM_IMAGE_OUTPUT_DIR=generated_images`
+
+Then start the museum app with:
+
+```bash
+set MUSEUM_IMAGE_RUNTIME=backend
+set MUSEUM_IMAGE_BASE_URL=http://127.0.0.1:7861
+set MUSEUM_IMAGE_MODEL=black-forest-labs/FLUX.2-klein-4B
+python app.py
+```
+
+Quick backend check:
+
+```bash
+curl http://127.0.0.1:7861/health
 ```

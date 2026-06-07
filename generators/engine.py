@@ -5,6 +5,7 @@ from functools import lru_cache
 from urllib import error, request
 
 from dotenv import load_dotenv
+from generators.image_engine import generate_image
 
 try:
     import spaces
@@ -38,7 +39,6 @@ LLAMACPP_BASE_URL = os.environ.get("LLAMACPP_BASE_URL", "http://127.0.0.1:8080")
 LLAMACPP_MODEL = os.environ.get("LLAMACPP_MODEL", "museum-gguf")
 LLAMACPP_API_KEY = os.environ.get("LLAMACPP_API_KEY", "")
 IMAGE_RUNTIME = os.environ.get("MUSEUM_IMAGE_RUNTIME", "disabled").lower()
-IMAGE_BASE_URL = os.environ.get("MUSEUM_IMAGE_BASE_URL", "http://127.0.0.1:7861")
 IMAGE_MODEL = os.environ.get("MUSEUM_IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
 IMAGE_API_KEY = os.environ.get("MUSEUM_IMAGE_API_KEY", "")
 
@@ -281,6 +281,7 @@ def build_featured_artifact_prompt(world_bible: dict, artifact: dict) -> str:
 
 
 def _generate_image_via_backend(prompt: str) -> dict:
+    IMAGE_BASE_URL = os.environ.get("MUSEUM_IMAGE_BASE_URL", "http://127.0.0.1:7861")
     payload = json.dumps(
         {
             "model": IMAGE_MODEL,
@@ -324,6 +325,11 @@ def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict)
 
     if IMAGE_RUNTIME == "disabled":
         return {"prompt": prompt, "artifact_name": artifact.get("name", ""), "status": "disabled"}
+    if IMAGE_RUNTIME == "local":
+        result = generate_image(prompt)
+        result["prompt"] = prompt
+        result["artifact_name"] = artifact.get("name", "")
+        return result
     if IMAGE_RUNTIME == "backend":
         result = _generate_image_via_backend(prompt)
         result["artifact_name"] = artifact.get("name", "")
