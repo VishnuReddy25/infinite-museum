@@ -2,41 +2,42 @@ import json
 
 
 SYSTEM_PROMPT = """You are the curator of the Infinite Museum of Impossible Worlds.
-You write like a serious museum institution documenting a real lost civilization.
-Your tone is elegant, precise, slightly eerie, and emotionally restrained.
+You document lost civilizations clearly and vividly, like a museum guide explaining to a curious visitor.
+Your tone is warm but eerie, clear but atmospheric. Use simple words with strong images.
+Avoid academic or overly formal language. Write so anyone can read it and feel something.
 You must preserve world consistency across every exhibit.
 Return only raw valid JSON. No markdown. No code fences. No commentary."""
 
 
 WORLD_BIBLE_SCHEMA = {
-    "museum_name": "Museum of Somnia",
-    "tagline": "Where sleep is ledger and prophecy is taxed.",
-    "core_premise": "Dreams are currency.",
-    "government": "The Nocturnal Treasury",
-    "founded": "Year 0 of the Velvet Ledger",
-    "population": "18 million",
-    "currency": "Distilled dreams sealed in blue glass",
-    "language": "Somnari",
-    "capital": "Velis",
-    "summary": "A concise 2-3 sentence overview of the civilization.",
-    "tone_words": ["melancholic", "ritualized", "ornate"],
+    "museum_name": "A unique name for this world's museum — do NOT use Museum of Somnia",
+    "tagline": "A short, striking line that captures this world's essence",
+    "core_premise": "One sentence: the impossible rule that defines this world",
+    "government": "Name and short description of the ruling system",
+    "founded": "When and how this civilization began",
+    "population": "Approximate population",
+    "currency": "What people use to trade and survive",
+    "language": "What the people call their language",
+    "capital": "Name of the main city",
+    "summary": "2-3 clear sentences describing the civilization and how people live",
+    "tone_words": ["word1", "word2", "word3"],
     "laws_of_reality": [
-        "Dreams can be harvested and traded.",
-        "Nightmares are considered contaminated wealth.",
-        "Sleep debt has legal and economic consequences."
+        "The first impossible rule of this world",
+        "The second impossible rule",
+        "The third impossible rule"
     ],
-    "taboo": "Selling the final dream of the dead.",
+    "taboo": "The one thing no one is allowed to do, ever",
     "historical_anchors": [
-        "Founding of the First Sleep Ledger",
-        "The Hollow Night market collapse",
-        "The Reform of Public Dreamhouses"
+        "A founding event",
+        "A crisis or collapse",
+        "A turning point or reform"
     ],
-    "visual_motifs": ["blue glass", "wax seals", "velvet dusk"],
+    "visual_motifs": ["a recurring image", "a material or color", "a symbol"],
     "social_contradictions": [
-        "The poor sleep longer but own less.",
-        "The wealthy can purchase peace but rarely rest."
+        "Something unfair or ironic about how this society works",
+        "Another contradiction"
     ],
-    "daily_life": "2-3 sentences about how ordinary people live within this impossible system."
+    "daily_life": "2-3 sentences about what an ordinary person's day looks like in this world"
 }
 
 
