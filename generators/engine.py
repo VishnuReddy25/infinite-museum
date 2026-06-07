@@ -30,6 +30,7 @@ os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
 os.environ.setdefault("HF_HUB_CACHE", "/data/huggingface")
 
 MODEL_ID = os.environ.get("MUSEUM_MODEL_ID", "Qwen/Qwen2.5-7B-Instruct")
+ADAPTER_ID = os.environ.get("MUSEUM_ADAPTER_ID", "VishnuReddy25/infinite-museum-lora")
 RUNTIME = os.environ.get("MUSEUM_RUNTIME", "local").lower()
 HF_TOKEN = os.environ.get("HF_TOKEN")
 
@@ -63,13 +64,30 @@ def extract_json(text: str) -> dict:
 @lru_cache(maxsize=1)
 def _load_local_pipeline():
     from transformers import pipeline
+    from peft import PeftModel, PeftConfig
+    import torch
 
-    return pipeline(
+    print(f"Loading base model: {MODEL_ID}")
+    print(f"Loading adapter: {ADAPTER_ID}")
+
+    # Load base model via pipeline first
+    pipe = pipeline(
         "text-generation",
         model=MODEL_ID,
         device_map="auto",
         torch_dtype="auto",
+        token=HF_TOKEN,
     )
+
+    # Attach LoRA adapter
+    pipe.model = PeftModel.from_pretrained(
+        pipe.model,
+        ADAPTER_ID,
+        token=HF_TOKEN,
+    )
+    pipe.model = pipe.model.merge_and_unload()
+    print("Adapter merged successfully.")
+    return pipe
 
 
 @lru_cache(maxsize=1)
