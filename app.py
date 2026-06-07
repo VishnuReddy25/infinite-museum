@@ -989,6 +989,79 @@ def format_concept(concept: str, curator_mode: str) -> str:
     )
 
 
+def build_museum_state(concept: str, curator_mode: str, world_bible: dict, artifacts=None, timeline=None, newspaper=None, visitor_book=None) -> dict:
+    return {
+        "concept": concept,
+        "curator_mode": curator_mode,
+        "guided_concept": format_concept(concept, curator_mode),
+        "world_bible": world_bible or {},
+        "artifacts": artifacts or {},
+        "timeline": timeline or {},
+        "newspaper": newspaper or {},
+        "visitor_book": visitor_book or {},
+    }
+
+
+def default_state() -> dict:
+    return build_museum_state("", "Anthropology", {})
+
+
+def regenerate_hall(state: dict, hall: str):
+    state = state or default_state()
+    concept = (state.get("concept") or "").strip()
+    curator_mode = state.get("curator_mode") or "Anthropology"
+    world_bible = state.get("world_bible") or {}
+
+    if not concept or not world_bible:
+        return (
+            build_status_panel("Open a museum first", "Generate a civilization before rerolling an individual hall.", curator_mode),
+            gr.update(value=build_map_html("lobby", [])),
+            gr.update(value=build_lobby_html(world_bible)),
+            gr.update(value=build_artifacts_html(state.get("artifacts") or {})),
+            gr.update(value=build_timeline_html(state.get("timeline") or {})),
+            gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
+            gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+            state,
+        )
+
+    guided_concept = state.get("guided_concept") or format_concept(concept, curator_mode)
+
+    if hall == "artifacts":
+        artifacts = generate_artifacts(guided_concept, world_bible)
+        state["artifacts"] = artifacts
+        title = "Artifacts rerolled"
+        subtitle = "The object gallery has been refreshed without changing the rest of the museum."
+    elif hall == "timeline":
+        timeline = generate_timeline(guided_concept, world_bible)
+        state["timeline"] = timeline
+        title = "Timeline rerolled"
+        subtitle = "The history wall has been rebuilt while the civilization stays intact."
+    elif hall == "newspaper":
+        newspaper = generate_newspaper(guided_concept, world_bible)
+        state["newspaper"] = newspaper
+        title = "Newspaper rerolled"
+        subtitle = "A new front page has been printed for the same civilization."
+    elif hall == "visitor":
+        visitor_book = generate_visitor_book(guided_concept, world_bible)
+        state["visitor_book"] = visitor_book
+        title = "Visitor's Book rerolled"
+        subtitle = "A different personal voice has been added to the same world."
+    else:
+        title = "Unknown hall"
+        subtitle = "No changes were made."
+
+    return (
+        build_status_panel(title, subtitle, curator_mode),
+        gr.update(value=build_map_html(hall if hall in {"artifacts", "timeline", "newspaper", "visitor"} else "lobby", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
+        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_artifacts_html(state.get("artifacts") or {})),
+        gr.update(value=build_timeline_html(state.get("timeline") or {})),
+        gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
+        gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+        state,
+    )
+
+
 def generate_museum(concept: str, curator_mode: str):
     concept = (concept or "").strip()
     curator_mode = curator_mode or "Anthropology"
@@ -1003,6 +1076,7 @@ def generate_museum(concept: str, curator_mode: str):
             empty_gallery("History has not yet been arranged."),
             empty_gallery("No front page has gone to print."),
             empty_gallery("No one has yet signed the visitor's book."),
+            default_state(),
         )
         return
 
@@ -1018,10 +1092,12 @@ def generate_museum(concept: str, curator_mode: str):
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
+        default_state(),
     )
 
     world_bible = generate_world_bible(guided_concept)
     header = museum_heading(world_bible)
+    state = build_museum_state(concept, curator_mode, world_bible)
 
     yield (
         build_status_panel("Lobby opened", "The civilization has taken shape. The first records are now on display.", curator_mode),
@@ -1033,9 +1109,11 @@ def generate_museum(concept: str, curator_mode: str):
         empty_gallery("Assembling the official historical record."),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
+        state,
     )
 
     artifacts = generate_artifacts(guided_concept, world_bible)
+    state["artifacts"] = artifacts
     yield (
         build_status_panel("Artifacts catalogued", "The collection vault has opened. The chronology is being assembled.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
@@ -1046,9 +1124,11 @@ def generate_museum(concept: str, curator_mode: str):
         empty_gallery("Assembling the official historical record."),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
+        state,
     )
 
     timeline = generate_timeline(guided_concept, world_bible)
+    state["timeline"] = timeline
     yield (
         build_status_panel("Timeline restored", "The museum now knows how this world rose, changed, and endured.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
@@ -1059,9 +1139,11 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_timeline_html(timeline)),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
+        state,
     )
 
     newspaper = generate_newspaper(guided_concept, world_bible)
+    state["newspaper"] = newspaper
     yield (
         build_status_panel("Presses running", "A surviving newspaper is now on display beside the official archive.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
@@ -1072,9 +1154,11 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         empty_gallery("Opening the final testimony cabinet."),
+        state,
     )
 
     visitor_book = generate_visitor_book(guided_concept, world_bible)
+    state["visitor_book"] = visitor_book
     yield (
         build_status_panel("Museum complete", "All five halls are open. The world is ready to be explored.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
@@ -1085,10 +1169,12 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_visitor_book_html(visitor_book)),
+        state,
     )
 
 
 with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
+    museum_state = gr.State(default_state())
     hero_html = gr.HTML(build_hero_html("Anthropology"))
 
     with gr.Row(elem_classes=["input-zone"]):
@@ -1137,21 +1223,25 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
                 elem_classes=["hall-content"],
             )
         with gr.Tab("Artifacts"):
+            regen_artifacts_btn = gr.Button("Regenerate Artifacts", size="sm")
             artifacts_html = gr.HTML(
                 value="<div class='empty-state'>The artifact hall is sealed.</div>",
                 elem_classes=["hall-content"],
             )
         with gr.Tab("Timeline"):
+            regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm")
             timeline_html = gr.HTML(
                 value="<div class='empty-state'>History has not yet been arranged.</div>",
                 elem_classes=["hall-content"],
             )
         with gr.Tab("Newspaper"):
+            regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm")
             newspaper_html = gr.HTML(
                 value="<div class='empty-state'>No front page has gone to print.</div>",
                 elem_classes=["hall-content"],
             )
         with gr.Tab("Visitor's Book"):
+            regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm")
             visitor_html = gr.HTML(
                 value="<div class='empty-state'>No one has yet signed the visitor's book.</div>",
                 elem_classes=["hall-content"],
@@ -1175,6 +1265,7 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
         timeline_html,
         newspaper_html,
         visitor_html,
+        museum_state,
     ]
 
     curator_mode.change(
@@ -1185,6 +1276,22 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
 
     generate_btn.click(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
     concept_input.submit(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
+
+    hall_outputs = [
+        status_html,
+        map_html,
+        lobby_html,
+        artifacts_html,
+        timeline_html,
+        newspaper_html,
+        visitor_html,
+        museum_state,
+    ]
+
+    regen_artifacts_btn.click(lambda state: regenerate_hall(state, "artifacts"), inputs=[museum_state], outputs=hall_outputs)
+    regen_timeline_btn.click(lambda state: regenerate_hall(state, "timeline"), inputs=[museum_state], outputs=hall_outputs)
+    regen_newspaper_btn.click(lambda state: regenerate_hall(state, "newspaper"), inputs=[museum_state], outputs=hall_outputs)
+    regen_visitor_btn.click(lambda state: regenerate_hall(state, "visitor"), inputs=[museum_state], outputs=hall_outputs)
 
 
 if __name__ == "__main__":
