@@ -37,6 +37,10 @@ HF_TOKEN = os.environ.get("HF_TOKEN")
 LLAMACPP_BASE_URL = os.environ.get("LLAMACPP_BASE_URL", "http://127.0.0.1:8080")
 LLAMACPP_MODEL = os.environ.get("LLAMACPP_MODEL", "museum-gguf")
 LLAMACPP_API_KEY = os.environ.get("LLAMACPP_API_KEY", "")
+IMAGE_RUNTIME = os.environ.get("MUSEUM_IMAGE_RUNTIME", "disabled").lower()
+IMAGE_BASE_URL = os.environ.get("MUSEUM_IMAGE_BASE_URL", "http://127.0.0.1:7861")
+IMAGE_MODEL = os.environ.get("MUSEUM_IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
+IMAGE_API_KEY = os.environ.get("MUSEUM_IMAGE_API_KEY", "")
 
 
 def extract_json(text: str) -> dict:
@@ -259,3 +263,70 @@ def generate_visitor_book(concept: str, world_bible: dict) -> dict:
         ),
         max_new_tokens=500,
     )
+
+
+def build_featured_artifact_prompt(world_bible: dict, artifact: dict) -> str:
+    motifs = ", ".join(world_bible.get("visual_motifs", [])[:3])
+    laws = ", ".join(world_bible.get("laws_of_reality", [])[:2])
+    return (
+        f"Museum artifact photograph, centered display object, dramatic exhibit lighting. "
+        f"Show {artifact.get('name', 'an impossible artifact')} from the civilization of {world_bible.get('capital', 'an unknown capital')}. "
+        f"Material: {artifact.get('material', 'unknown material')}. "
+        f"Era: {artifact.get('era', 'unknown era')}. "
+        f"Use details from this description: {artifact.get('description', '')} "
+        f"Visual motifs: {motifs}. "
+        f"World rules: {laws}. "
+        f"Dark museum background, realistic texture, no text, no people, one hero object."
+    ).strip()
+
+
+def _generate_image_via_backend(prompt: str) -> dict:
+    payload = json.dumps(
+        {
+            "model": IMAGE_MODEL,
+            "prompt": prompt,
+            "width": 1024,
+            "height": 1024,
+            "num_inference_steps": 4,
+            "guidance_scale": 3.5,
+        }
+    ).encode("utf-8")
+
+    headers = {"Content-Type": "application/json"}
+    if IMAGE_API_KEY:
+        headers["Authorization"] = f"Bearer {IMAGE_API_KEY}"
+
+    endpoint = f"{IMAGE_BASE_URL.rstrip('/')}/generate"
+    req = request.Request(endpoint, data=payload, headers=headers, method="POST")
+
+    try:
+        with request.urlopen(req, timeout=240) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+    except error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        return {"error": f"image backend HTTP {exc.code}: {detail[:300]}"}
+    except error.URLError as exc:
+        return {"error": f"Could not reach image backend at {endpoint}: {exc}"}
+
+    image_url = body.get("image_url") or body.get("url") or body.get("image")
+    if not image_url:
+        return {"error": f"Unexpected image backend response: {body}"}
+    return {"image_url": image_url, "prompt": prompt}
+
+
+def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict) -> dict:
+    artifacts = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
+    if not artifacts:
+        return {}
+
+    artifact = artifacts[0]
+    prompt = build_featured_artifact_prompt(world_bible, artifact)
+
+    if IMAGE_RUNTIME == "disabled":
+        return {"prompt": prompt, "artifact_name": artifact.get("name", ""), "status": "disabled"}
+    if IMAGE_RUNTIME == "backend":
+        result = _generate_image_via_backend(prompt)
+        result["artifact_name"] = artifact.get("name", "")
+        return result
+
+    return {"prompt": prompt, "artifact_name": artifact.get("name", ""), "status": "unknown_runtime"}

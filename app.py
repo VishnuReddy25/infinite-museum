@@ -4,6 +4,7 @@ import gradio as gr
 
 from generators.engine import (
     generate_artifacts,
+    generate_featured_artifact_image,
     generate_newspaper,
     generate_timeline,
     generate_visitor_book,
@@ -522,6 +523,87 @@ body, .gradio-container {
     margin-bottom: 14px;
 }
 
+.featured-artifact {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 28%),
+        rgba(15, 11, 9, 0.88);
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 18px;
+    align-items: stretch;
+}
+
+.featured-image-shell {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(200, 169, 110, 0.15);
+    background: rgba(10, 8, 7, 0.5);
+    min-height: 320px;
+}
+
+.featured-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.featured-placeholder {
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.7;
+    padding: 18px;
+}
+
+.featured-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.featured-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.featured-title {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.featured-text {
+    color: var(--paper);
+    font-size: 17px;
+    line-height: 1.75;
+    margin-bottom: 12px;
+}
+
+.featured-prompt {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.65;
+    border-top: 1px solid rgba(200, 169, 110, 0.14);
+    padding-top: 12px;
+}
+
 .artifact-kicker {
     color: var(--gold-soft);
     font-size: 9px;
@@ -707,7 +789,8 @@ body, .gradio-container {
     .timeline-card,
     .hero-grid,
     .museum-map,
-    .status-panel {
+    .status-panel,
+    .featured-grid {
         grid-template-columns: 1fr;
     }
 
@@ -839,6 +922,33 @@ def build_artifacts_html(data: dict) -> str:
         return "<div class='empty-state'>The artifact hall is still being catalogued.</div>"
 
     cards = []
+    featured = data.get("featured_image") if isinstance(data, dict) else None
+    featured_html = ""
+    if data.get("artifacts"):
+        lead = data["artifacts"][0]
+        prompt_text = featured.get("prompt", "") if isinstance(featured, dict) else ""
+        if isinstance(featured, dict) and featured.get("image_url"):
+            media = f"<img class='featured-image' src='{esc(featured.get('image_url', ''))}' alt='{esc(lead.get('name', 'Featured artifact'))}'>"
+        else:
+            media = "<div class='featured-placeholder'>Featured artifact image slot. Connect a local FLUX runner to generate this object automatically.</div>"
+
+        featured_html = f"""
+<div class="featured-artifact">
+    <div class="featured-grid">
+        <div class="featured-image-shell">{media}</div>
+        <div class="featured-copy">
+            <div>
+                <div class="featured-label">Featured artifact</div>
+                <div class="featured-title">{esc(lead.get('name', 'Featured artifact'))}</div>
+                <div class="featured-text">{esc(lead.get('description', ''))}</div>
+                <div class="featured-text"><strong>Material:</strong> {esc(lead.get('material', ''))} | <strong>Era:</strong> {esc(lead.get('era', ''))}</div>
+            </div>
+            <div class="featured-prompt">Image prompt: {esc(prompt_text or 'This prompt will appear here once the backend hook is active.')}</div>
+        </div>
+    </div>
+</div>
+"""
+
     for artifact in data.get("artifacts", []):
         cards.append(
             f"""
@@ -851,7 +961,7 @@ def build_artifacts_html(data: dict) -> str:
 </div>
 """
         )
-    return "<div class='section-heading'>Artifacts hall</div>" + "".join(cards)
+    return "<div class='section-heading'>Artifacts hall</div>" + featured_html + "".join(cards)
 
 
 def build_timeline_html(data: dict) -> str:
@@ -996,6 +1106,7 @@ def build_museum_state(concept: str, curator_mode: str, world_bible: dict, artif
         "guided_concept": format_concept(concept, curator_mode),
         "world_bible": world_bible or {},
         "artifacts": artifacts or {},
+        "featured_image": {},
         "timeline": timeline or {},
         "newspaper": newspaper or {},
         "visitor_book": visitor_book or {},
@@ -1029,6 +1140,8 @@ def regenerate_hall(state: dict, hall: str):
     if hall == "artifacts":
         artifacts = generate_artifacts(guided_concept, world_bible)
         state["artifacts"] = artifacts
+        state["featured_image"] = generate_featured_artifact_image(world_bible, artifacts)
+        state["artifacts"]["featured_image"] = state["featured_image"]
         title = "Artifacts rerolled"
         subtitle = "The object gallery has been refreshed without changing the rest of the museum."
     elif hall == "timeline":
@@ -1053,11 +1166,11 @@ def regenerate_hall(state: dict, hall: str):
     return (
         build_status_panel(title, subtitle, curator_mode),
         gr.update(value=build_map_html(hall if hall in {"artifacts", "timeline", "newspaper", "visitor"} else "lobby", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
-        gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(state.get("artifacts") or {})),
-        gr.update(value=build_timeline_html(state.get("timeline") or {})),
-        gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
-        gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+            gr.update(value=build_lobby_html(world_bible)),
+            gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image") or {}})),
+            gr.update(value=build_timeline_html(state.get("timeline") or {})),
+            gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
+            gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
         state,
     )
 
@@ -1114,13 +1227,15 @@ def generate_museum(concept: str, curator_mode: str):
 
     artifacts = generate_artifacts(guided_concept, world_bible)
     state["artifacts"] = artifacts
+    state["featured_image"] = generate_featured_artifact_image(world_bible, artifacts)
+    state["artifacts"]["featured_image"] = state["featured_image"]
     yield (
         build_status_panel("Artifacts catalogued", "The collection vault has opened. The chronology is being assembled.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("timeline", ["lobby", "artifacts"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(artifacts)),
+        gr.update(value=build_artifacts_html(state["artifacts"])),
         empty_gallery("Assembling the official historical record."),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
@@ -1135,7 +1250,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_map_html("newspaper", ["lobby", "artifacts", "timeline"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(artifacts)),
+        gr.update(value=build_artifacts_html(state["artifacts"])),
         gr.update(value=build_timeline_html(timeline)),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
@@ -1150,7 +1265,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(artifacts)),
+        gr.update(value=build_artifacts_html(state["artifacts"])),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         empty_gallery("Opening the final testimony cabinet."),
@@ -1165,7 +1280,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        gr.update(value=build_artifacts_html(artifacts)),
+        gr.update(value=build_artifacts_html(state["artifacts"])),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_visitor_book_html(visitor_book)),

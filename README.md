@@ -51,6 +51,10 @@ Planned hackathon targets:
 - `LLAMACPP_BASE_URL=http://127.0.0.1:8080`
 - `LLAMACPP_MODEL=museum-gguf`
 - `LLAMACPP_API_KEY=` optional unless your local server expects one
+- `MUSEUM_IMAGE_RUNTIME=disabled` or `backend`
+- `MUSEUM_IMAGE_BASE_URL=http://127.0.0.1:7861`
+- `MUSEUM_IMAGE_MODEL=black-forest-labs/FLUX.2-klein-4B`
+- `MUSEUM_IMAGE_API_KEY=` optional unless your image backend expects one
 
 ## Local run
 
@@ -73,5 +77,42 @@ Then set:
 set MUSEUM_RUNTIME=llamacpp
 set LLAMACPP_BASE_URL=http://127.0.0.1:8080
 set LLAMACPP_MODEL=museum-gguf
+python app.py
+```
+
+## Featured artifact image backend
+
+The artifact hall now has a featured image slot. By default it shows the generated image prompt and a placeholder panel.
+
+To connect a local image backend later, expose a simple HTTP endpoint:
+
+- `POST /generate`
+- request body:
+
+```json
+{
+  "model": "black-forest-labs/FLUX.2-klein-4B",
+  "prompt": "museum artifact photograph ...",
+  "width": 1024,
+  "height": 1024,
+  "num_inference_steps": 4,
+  "guidance_scale": 3.5
+}
+```
+
+- response body:
+
+```json
+{
+  "image_url": "http://127.0.0.1:7861/generated/example.png"
+}
+```
+
+Then set:
+
+```bash
+set MUSEUM_IMAGE_RUNTIME=backend
+set MUSEUM_IMAGE_BASE_URL=http://127.0.0.1:7861
+set MUSEUM_IMAGE_MODEL=black-forest-labs/FLUX.2-klein-4B
 python app.py
 ```
