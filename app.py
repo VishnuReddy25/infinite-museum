@@ -339,10 +339,14 @@ body, .gradio-container {
         linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 25%),
         var(--panel-light);
     border-radius: 12px;
-    color: var(--ink);
+    color: var(--ink) !important;
     padding: 24px;
     border: 1px solid rgba(58, 42, 24, 0.18);
     box-shadow: inset 0 0 60px rgba(85, 58, 24, 0.08);
+}
+
+.newspaper-shell * {
+    color: var(--ink) !important;
 }
 
 .paper-kicker {
