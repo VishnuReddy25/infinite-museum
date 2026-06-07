@@ -2,6 +2,7 @@ import json
 import os
 import re
 from functools import lru_cache
+from urllib import error, request
 
 from dotenv import load_dotenv
 
@@ -33,6 +34,9 @@ MODEL_ID = os.environ.get("MUSEUM_MODEL_ID", "Qwen/Qwen2.5-7B-Instruct")
 ADAPTER_ID = os.environ.get("MUSEUM_ADAPTER_ID", "VishnuReddy25/infinite-museum-lora")
 RUNTIME = os.environ.get("MUSEUM_RUNTIME", "local").lower()
 HF_TOKEN = os.environ.get("HF_TOKEN")
+LLAMACPP_BASE_URL = os.environ.get("LLAMACPP_BASE_URL", "http://127.0.0.1:8080")
+LLAMACPP_MODEL = os.environ.get("LLAMACPP_MODEL", "museum-gguf")
+LLAMACPP_API_KEY = os.environ.get("LLAMACPP_API_KEY", "")
 
 
 def extract_json(text: str) -> dict:
@@ -130,6 +134,41 @@ def _generate_with_hub(messages: list[dict], max_new_tokens: int) -> str:
     return completion.choices[0].message.content.strip()
 
 
+def _generate_with_llamacpp(messages: list[dict], max_new_tokens: int) -> str:
+    payload = json.dumps(
+        {
+            "model": LLAMACPP_MODEL,
+            "messages": messages,
+            "max_tokens": max_new_tokens,
+            "temperature": 0.8,
+        }
+    ).encode("utf-8")
+
+    headers = {"Content-Type": "application/json"}
+    if LLAMACPP_API_KEY:
+        headers["Authorization"] = f"Bearer {LLAMACPP_API_KEY}"
+
+    endpoint = f"{LLAMACPP_BASE_URL.rstrip('/')}/v1/chat/completions"
+    req = request.Request(endpoint, data=payload, headers=headers, method="POST")
+
+    try:
+        with request.urlopen(req, timeout=180) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+    except error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        raise RuntimeError(f"llama.cpp HTTP {exc.code}: {detail[:300]}") from exc
+    except error.URLError as exc:
+        raise RuntimeError(
+            f"Could not reach llama.cpp server at {endpoint}. "
+            "Make sure your local server is running."
+        ) from exc
+
+    try:
+        return body["choices"][0]["message"]["content"].strip()
+    except Exception as exc:
+        raise RuntimeError(f"Unexpected llama.cpp response: {body}") from exc
+
+
 def call_llm(prompt: str, max_new_tokens: int = 900) -> dict:
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -140,6 +179,8 @@ def call_llm(prompt: str, max_new_tokens: int = 900) -> dict:
     try:
         if RUNTIME == "hub":
             text = _generate_with_hub(messages, max_new_tokens)
+        elif RUNTIME == "llamacpp":
+            text = _generate_with_llamacpp(messages, max_new_tokens)
         else:
             text = _generate_with_local(messages, max_new_tokens)
 

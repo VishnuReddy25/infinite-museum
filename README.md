@@ -30,6 +30,7 @@ Runtime modes:
 
 - `MUSEUM_RUNTIME=local` loads the model directly inside the Space or local environment.
 - `MUSEUM_RUNTIME=hub` uses hosted inference as a fallback during development.
+- `MUSEUM_RUNTIME=llamacpp` connects the app to a local `llama.cpp` OpenAI-compatible server.
 
 ## Recommended model
 
@@ -47,10 +48,30 @@ Planned hackathon targets:
 - `MUSEUM_RUNTIME=local`
 - `MUSEUM_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
 - `HF_TOKEN=...` only required when `MUSEUM_RUNTIME=hub`
+- `LLAMACPP_BASE_URL=http://127.0.0.1:8080`
+- `LLAMACPP_MODEL=museum-gguf`
+- `LLAMACPP_API_KEY=` optional unless your local server expects one
 
 ## Local run
 
 ```bash
 pip install -r requirements.txt
+python app.py
+```
+
+## llama.cpp run
+
+If you have already converted your tuned model to GGUF, start a local OpenAI-compatible server first:
+
+```bash
+llama-server -m /path/to/your-model.gguf --ctx-size 8192 --port 8080
+```
+
+Then set:
+
+```bash
+set MUSEUM_RUNTIME=llamacpp
+set LLAMACPP_BASE_URL=http://127.0.0.1:8080
+set LLAMACPP_MODEL=museum-gguf
 python app.py
 ```

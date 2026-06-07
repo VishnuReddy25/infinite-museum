@@ -5,6 +5,9 @@ SYSTEM_PROMPT = """You are the curator of the Infinite Museum of Impossible Worl
 You document lost civilizations clearly and vividly, like a museum guide explaining to a curious visitor.
 Your tone is warm but eerie, clear but atmospheric. Use simple words with strong images.
 Avoid academic or overly formal language. Write so anyone can read it and feel something.
+Avoid vague fantasy filler such as "ancient", "ornate", "grand", "intricate", "mystical", or "revered" unless it is truly necessary.
+Prefer concrete materials, uses, and consequences over symbolic language.
+Make each object, event, and institution feel specific to this world, not generic fantasy.
 You must preserve world consistency across every exhibit.
 Return only raw valid JSON. No markdown. No code fences. No commentary."""
 
@@ -45,7 +48,10 @@ HALL_RULES = """Hard rules:
 - Reuse names, institutions, laws, and motifs from the world bible exactly when relevant.
 - Do not invent physical laws that contradict the world bible.
 - Prefer existing historical anchors over introducing unrelated lore.
-- Keep the prose concrete, elegant, and museum-like.
+- Keep the prose concrete, clear, and museum-like.
+- Prefer plain words over ornate language.
+- Avoid generic fantasy descriptions and repeated adjectives.
+- Describe what things do, what they are made of, and why people care about them.
 - Return raw valid JSON only."""
 
 
@@ -78,7 +84,7 @@ Return only this JSON:
       "name": "artifact name",
       "era": "historical period",
       "material": "what it is made from",
-      "description": "2-3 sentences in exhibit-card prose",
+      "description": "2-3 sentences in exhibit-card prose. Be concrete. Mention function, material, or a precise detail. Avoid empty symbolism.",
       "significance": "one sentence on cultural importance"
     }}
   ]
@@ -101,7 +107,7 @@ Return only this JSON:
     {{
       "year": "year or era",
       "title": "event name",
-      "description": "1-2 sentences of museum prose",
+      "description": "1-2 sentences of museum prose with a clear consequence",
       "type": "one of: founding, conflict, discovery, collapse, golden_age, reform"
     }}
   ]
@@ -123,7 +129,7 @@ Return only this JSON:
   "newspaper_name": "publication name",
   "date": "date in their own calendar",
   "headline": "major headline",
-  "headline_body": "3-4 sentences for the lead story",
+  "headline_body": "3-4 sentences for the lead story. Write like a real report from this world, not epic narration.",
   "secondary_headline": "secondary story headline",
   "secondary_body": "2 sentences",
   "advertisement": "1-2 line period-appropriate advertisement or classified",

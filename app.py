@@ -17,6 +17,7 @@ CSS = """
 :root {
     --bg: #16110f;
     --bg-deep: #0d0a08;
+    --bg-wash: #241912;
     --panel: rgba(16, 12, 10, 0.92);
     --panel-light: rgba(240, 232, 212, 0.96);
     --line: rgba(200, 169, 110, 0.22);
@@ -29,6 +30,8 @@ CSS = """
 
 body, .gradio-container {
     background:
+        radial-gradient(circle at 12% 18%, rgba(200, 169, 110, 0.11), transparent 22%),
+        radial-gradient(circle at 80% 6%, rgba(107, 63, 31, 0.2), transparent 18%),
         radial-gradient(circle at top, rgba(80, 57, 27, 0.18), transparent 34%),
         linear-gradient(180deg, #090706 0%, var(--bg) 30%, #120d0a 100%) !important;
     color: var(--paper) !important;
@@ -44,15 +47,51 @@ body, .gradio-container {
     margin: 20px;
     background: rgba(10, 8, 7, 0.72);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
 }
 
 .museum-header {
-    padding: 44px 28px 34px;
-    text-align: center;
+    padding: 18px 22px 0;
     border-bottom: 1px solid var(--line);
     background:
+        radial-gradient(circle at 50% -20%, rgba(200, 169, 110, 0.24), transparent 35%),
         linear-gradient(180deg, rgba(200, 169, 110, 0.08), transparent 40%),
         linear-gradient(180deg, rgba(12, 9, 7, 0.98), rgba(19, 14, 11, 0.92));
+}
+
+.museum-marquee {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.14);
+    padding: 0 0 12px;
+    margin-bottom: 28px;
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 22px;
+    align-items: stretch;
+    padding-bottom: 26px;
+}
+
+.hero-main {
+    padding: 22px 10px 16px 8px;
+}
+
+.hero-side {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background:
+        linear-gradient(180deg, rgba(200, 169, 110, 0.08), transparent 18%),
+        rgba(17, 12, 10, 0.8);
+    padding: 18px 18px 16px;
 }
 
 .museum-kicker,
@@ -61,7 +100,8 @@ body, .gradio-container {
 .lobby-label,
 .artifact-kicker,
 .paper-kicker,
-.visitor-kicker {
+.visitor-kicker,
+.mode-chip {
     font-family: 'Cinzel', serif;
     letter-spacing: 0.36em;
     text-transform: uppercase;
@@ -75,7 +115,7 @@ body, .gradio-container {
 
 .museum-title {
     font-family: 'Cinzel', serif;
-    font-size: 34px;
+    font-size: 42px;
     line-height: 1.2;
     color: var(--gold);
     margin-bottom: 10px;
@@ -90,8 +130,67 @@ body, .gradio-container {
     margin: 0 auto;
 }
 
+.museum-lead {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.8;
+    max-width: 680px;
+}
+
+.hero-plaques {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.hero-plaque {
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(10, 8, 7, 0.55);
+}
+
+.hero-plaque-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.hero-plaque-value {
+    color: var(--paper);
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.hero-side-heading {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.hero-side-copy {
+    color: var(--paper);
+    line-height: 1.75;
+    font-size: 17px;
+}
+
+.hero-side-note {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.65;
+}
+
 .input-zone {
-    padding: 24px 24px 8px;
+    padding: 24px 24px 2px;
 }
 
 .input-zone textarea,
@@ -109,6 +208,65 @@ body, .gradio-container {
     font-family: 'Cinzel', serif !important;
     font-size: 11px !important;
     letter-spacing: 0.2em !important;
+}
+
+.control-shell {
+    padding: 0 24px 10px;
+}
+
+.control-card {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 24%),
+        rgba(12, 9, 7, 0.78);
+}
+
+.control-panel-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.control-panel-copy {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.65;
+    margin-bottom: 18px;
+}
+
+.mode-radio {
+    gap: 10px;
+}
+
+.mode-radio label {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+}
+
+.mode-radio label span {
+    width: 100%;
+    display: block;
+    padding: 12px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.2);
+    background: rgba(18, 13, 11, 0.72);
+    color: var(--paper) !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 11px !important;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.mode-radio input:checked + span {
+    background: linear-gradient(180deg, rgba(200, 169, 110, 0.18), rgba(38, 27, 18, 0.86));
+    border-color: rgba(200, 169, 110, 0.5);
+    color: var(--gold) !important;
 }
 
 .enter-btn {
@@ -130,14 +288,19 @@ body, .gradio-container {
 }
 
 .status-wrap {
-    padding: 6px 24px 18px;
+    padding: 2px 24px 18px;
 }
 
 .status-panel {
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 14px;
     padding: 18px 20px;
-    background: rgba(13, 10, 8, 0.72);
+    background:
+        linear-gradient(90deg, rgba(200, 169, 110, 0.06), transparent 22%),
+        rgba(13, 10, 8, 0.72);
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 18px;
 }
 
 .status-line {
@@ -151,6 +314,98 @@ body, .gradio-container {
     margin-top: 8px;
     color: var(--muted);
     font-size: 16px;
+}
+
+.status-side {
+    border-left: 1px solid rgba(200, 169, 110, 0.12);
+    padding-left: 18px;
+}
+
+.mode-chip {
+    font-size: 9px;
+    color: var(--gold-soft);
+    margin-bottom: 10px;
+}
+
+.mode-name {
+    color: var(--paper);
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.mode-desc {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.map-wrap {
+    padding: 0 24px 14px;
+}
+
+.museum-map {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.museum-room {
+    min-height: 124px;
+    border-radius: 14px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.06), transparent 45%),
+        rgba(13, 10, 8, 0.74);
+    padding: 14px 14px 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.museum-room::after {
+    content: "";
+    position: absolute;
+    inset: auto -30% -55% auto;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(200, 169, 110, 0.05);
+}
+
+.museum-room.state-active {
+    border-color: rgba(200, 169, 110, 0.6);
+    box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.08), inset 0 0 0 1px rgba(200, 169, 110, 0.08);
+}
+
+.museum-room.state-complete {
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.12), transparent 45%),
+        rgba(18, 14, 11, 0.82);
+}
+
+.museum-room.state-idle {
+    opacity: 0.8;
+}
+
+.museum-room-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.museum-room-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.museum-room-copy {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.55;
 }
 
 .hall-tabs .tab-nav {
@@ -449,8 +704,22 @@ body, .gradio-container {
 @media (max-width: 900px) {
     .lobby-grid,
     .world-details,
-    .timeline-card {
+    .timeline-card,
+    .hero-grid,
+    .museum-map,
+    .status-panel {
         grid-template-columns: 1fr;
+    }
+
+    .hero-plaques {
+        grid-template-columns: 1fr;
+    }
+
+    .status-side {
+        border-left: none;
+        border-top: 1px solid rgba(200, 169, 110, 0.12);
+        padding-left: 0;
+        padding-top: 14px;
     }
 
     .museum-title {
@@ -458,6 +727,37 @@ body, .gradio-container {
     }
 }
 """
+
+CURATOR_MODES = {
+    "Anthropology": {
+        "tagline": "Everyday life, social rules, and how people actually live.",
+        "lead": "This mode focuses on work, ritual, family life, and the small systems that make an impossible world feel ordinary to the people inside it.",
+        "plaque": "Daily life and social rules",
+    },
+    "Mythic": {
+        "tagline": "Omens, sacred stories, and meaning shaped by belief.",
+        "lead": "This mode leans toward prophecy, symbols, and ritual meaning, while still grounding the world in real social life.",
+        "plaque": "Belief and ritual",
+    },
+    "Imperial Archive": {
+        "tagline": "Official records, institutions, and the language of the state.",
+        "lead": "This mode emphasizes chronicles, law, bureaucracy, and how powerful institutions describe the world in their own terms.",
+        "plaque": "State records",
+    },
+    "Melancholy": {
+        "tagline": "Loss, memory, and the human cost inside history.",
+        "lead": "This mode softens the museum into something more intimate, with fading customs, private grief, and the emotional residue of public events.",
+        "plaque": "Memory and loss",
+    },
+}
+
+ROOMS = [
+    ("lobby", "Lobby", "World overview", "The main rule, social structure, and tension at the center of the world."),
+    ("artifacts", "Artifacts", "Object gallery", "Tools, relics, and impossible objects from everyday and public life."),
+    ("timeline", "Timeline", "History wall", "The events that shaped the civilization over time."),
+    ("newspaper", "Newspaper", "Press room", "A surviving front page from how this world saw itself."),
+    ("visitor", "Visitor's Book", "Personal voice", "A single human voice to close the museum at ground level."),
+]
 
 
 def esc(value: str) -> str:
@@ -472,10 +772,22 @@ def format_list(items) -> str:
 
 
 def build_status_html(title: str, subtitle: str) -> str:
+    return build_status_panel(title, subtitle, "Anthropology")
+
+
+def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
+    mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
     return f"""
 <div class="status-panel">
-    <div class="status-line">{esc(title)}</div>
-    <div class="status-subline">{esc(subtitle)}</div>
+    <div>
+        <div class="status-line">{esc(title)}</div>
+        <div class="status-subline">{esc(subtitle)}</div>
+    </div>
+    <div class="status-side">
+        <div class="mode-chip">Active curatorial lens</div>
+        <div class="mode-name">{esc(curator_mode)}</div>
+        <div class="mode-desc">{esc(mode["tagline"])}</div>
+    </div>
 </div>
 """
 
@@ -605,11 +917,86 @@ def museum_heading(world_bible: dict) -> str:
 """
 
 
-def generate_museum(concept: str):
+def build_hero_html(curator_mode: str) -> str:
+    mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
+    return f"""
+<div class="museum-shell">
+    <div class="museum-header">
+        <div class="museum-marquee">
+            <span>Impossible Civilizations Archive</span>
+            <span>Museum open</span>
+            <span>Mode: {esc(curator_mode)}</span>
+        </div>
+        <div class="hero-grid">
+            <div class="hero-main">
+                <div class="museum-kicker">Infinite Museum of Impossible Worlds</div>
+                <div class="museum-title">Step Into A Civilization That Should Not Exist</div>
+                <div class="museum-tagline">Every idea creates a civilization. Every civilization leaves artifacts.</div>
+                <div class="museum-lead">{esc(mode["lead"])}</div>
+                <div class="hero-plaques">
+                    <div class="hero-plaque">
+                        <div class="hero-plaque-label">Current mode</div>
+                        <div class="hero-plaque-value">{esc(curator_mode)}</div>
+                    </div>
+                    <div class="hero-plaque">
+                        <div class="hero-plaque-label">What this does</div>
+                        <div class="hero-plaque-value">One idea becomes a full civilization.</div>
+                    </div>
+                    <div class="hero-plaque">
+                        <div class="hero-plaque-label">Focus</div>
+                        <div class="hero-plaque-value">{esc(mode["plaque"])}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-side">
+                <div class="hero-side-heading">Curator note</div>
+                <div class="hero-side-copy">{esc(mode["tagline"])}</div>
+                <div class="hero-side-note">Describe one impossible condition. The museum will turn it into government, objects, history, news, and personal memory.</div>
+            </div>
+        </div>
+    </div>
+</div>
+"""
+
+
+def build_map_html(active_room: str, completed_rooms: list[str]) -> str:
+    cards = []
+    completed = set(completed_rooms)
+    for room_id, title, kicker, copy in ROOMS:
+        state = "state-idle"
+        if room_id in completed:
+            state = "state-complete"
+        if room_id == active_room:
+            state = "state-active"
+        cards.append(
+            f"""
+<div class="museum-room {state}">
+    <div class="museum-room-kicker">{esc(kicker)}</div>
+    <div class="museum-room-title">{esc(title)}</div>
+    <div class="museum-room-copy">{esc(copy)}</div>
+</div>
+"""
+        )
+    return "<div class='museum-map'>" + "".join(cards) + "</div>"
+
+
+def format_concept(concept: str, curator_mode: str) -> str:
+    mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
+    return (
+        f"{concept}\n\n"
+        f"Curatorial lens: {curator_mode}. "
+        f"Prioritize this sensibility: {mode['tagline']}"
+    )
+
+
+def generate_museum(concept: str, curator_mode: str):
     concept = (concept or "").strip()
+    curator_mode = curator_mode or "Anthropology"
     if not concept:
         yield (
-            build_status_html("Awaiting a world concept", "Describe an impossible civilization to open the museum."),
+            build_status_panel("Awaiting a world concept", "Describe an impossible civilization to open the museum.", curator_mode),
+            gr.update(value=build_hero_html(curator_mode)),
+            gr.update(value=build_map_html("lobby", [])),
             gr.update(value="<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"),
             empty_gallery("The museum awaits its first impossible world."),
             empty_gallery("The artifact hall is sealed."),
@@ -620,8 +1007,11 @@ def generate_museum(concept: str):
         return
 
     waiting = "The curatorial staff is preparing this hall."
+    guided_concept = format_concept(concept, curator_mode)
     yield (
-        build_status_html("Opening the museum", "We are drafting the world bible and preparing the first gallery."),
+        build_status_panel("Opening the museum", "We are drafting the world bible and preparing the first gallery.", curator_mode),
+        gr.update(value=build_hero_html(curator_mode)),
+        gr.update(value=build_map_html("lobby", [])),
         gr.update(value="<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Preparing a new impossible civilization.</div>"),
         empty_gallery("Drafting the foundational world bible."),
         empty_gallery(waiting),
@@ -630,11 +1020,13 @@ def generate_museum(concept: str):
         empty_gallery(waiting),
     )
 
-    world_bible = generate_world_bible(concept)
+    world_bible = generate_world_bible(guided_concept)
     header = museum_heading(world_bible)
 
     yield (
-        build_status_html("Lobby opened", "The civilization has taken shape. The first records are now on display."),
+        build_status_panel("Lobby opened", "The civilization has taken shape. The first records are now on display.", curator_mode),
+        gr.update(value=build_hero_html(curator_mode)),
+        gr.update(value=build_map_html("artifacts", ["lobby"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
         empty_gallery("Excavating artifacts from the collection vault."),
@@ -643,9 +1035,11 @@ def generate_museum(concept: str):
         empty_gallery("Opening the final testimony cabinet."),
     )
 
-    artifacts = generate_artifacts(concept, world_bible)
+    artifacts = generate_artifacts(guided_concept, world_bible)
     yield (
-        build_status_html("Artifacts catalogued", "The collection vault has opened. The chronology is being assembled."),
+        build_status_panel("Artifacts catalogued", "The collection vault has opened. The chronology is being assembled.", curator_mode),
+        gr.update(value=build_hero_html(curator_mode)),
+        gr.update(value=build_map_html("timeline", ["lobby", "artifacts"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html(artifacts)),
@@ -654,9 +1048,11 @@ def generate_museum(concept: str):
         empty_gallery("Opening the final testimony cabinet."),
     )
 
-    timeline = generate_timeline(concept, world_bible)
+    timeline = generate_timeline(guided_concept, world_bible)
     yield (
-        build_status_html("Timeline restored", "The museum now knows how this world rose, changed, and endured."),
+        build_status_panel("Timeline restored", "The museum now knows how this world rose, changed, and endured.", curator_mode),
+        gr.update(value=build_hero_html(curator_mode)),
+        gr.update(value=build_map_html("newspaper", ["lobby", "artifacts", "timeline"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html(artifacts)),
@@ -665,9 +1061,11 @@ def generate_museum(concept: str):
         empty_gallery("Opening the final testimony cabinet."),
     )
 
-    newspaper = generate_newspaper(concept, world_bible)
+    newspaper = generate_newspaper(guided_concept, world_bible)
     yield (
-        build_status_html("Presses running", "A surviving newspaper is now on display beside the official archive."),
+        build_status_panel("Presses running", "A surviving newspaper is now on display beside the official archive.", curator_mode),
+        gr.update(value=build_hero_html(curator_mode)),
+        gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html(artifacts)),
@@ -676,9 +1074,11 @@ def generate_museum(concept: str):
         empty_gallery("Opening the final testimony cabinet."),
     )
 
-    visitor_book = generate_visitor_book(concept, world_bible)
+    visitor_book = generate_visitor_book(guided_concept, world_bible)
     yield (
-        build_status_html("Museum complete", "All five halls are open. The world is ready to be explored."),
+        build_status_panel("Museum complete", "All five halls are open. The world is ready to be explored.", curator_mode),
+        gr.update(value=build_hero_html(curator_mode)),
+        gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html(artifacts)),
@@ -689,17 +1089,7 @@ def generate_museum(concept: str):
 
 
 with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
-    gr.HTML(
-        """
-<div class="museum-shell">
-    <div class="museum-header">
-        <div class="museum-kicker">Department of impossible civilizations</div>
-        <div class="museum-title">Infinite Museum of Impossible Worlds</div>
-        <div class="museum-tagline">Every idea creates a civilization. Every civilization leaves artifacts.</div>
-    </div>
-</div>
-"""
-    )
+    hero_html = gr.HTML(build_hero_html("Anthropology"))
 
     with gr.Row(elem_classes=["input-zone"]):
         with gr.Column(scale=5):
@@ -711,17 +1101,34 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
         with gr.Column(scale=1, min_width=190):
             generate_btn = gr.Button("Open Museum", elem_classes=["enter-btn"])
 
+    with gr.Row(elem_classes=["control-shell"]):
+        with gr.Column(elem_classes=["control-card"]):
+            gr.HTML(
+                """
+<div class="control-panel-label">Curator modes</div>
+<div class="control-panel-copy">Choose how the museum should frame the next world. The same premise can feel social, mythic, official, or intimate depending on the mode.</div>
+"""
+            )
+            curator_mode = gr.Radio(
+                choices=list(CURATOR_MODES.keys()),
+                value="Anthropology",
+                show_label=False,
+                elem_classes=["mode-radio"],
+            )
+
     with gr.Row(elem_classes=["status-wrap"]):
         status_html = gr.HTML(
-            build_status_html(
+            build_status_panel(
                 "Awaiting a world concept",
                 "Describe an impossible civilization to open the museum.",
+                "Anthropology",
             )
         )
 
     museum_header = gr.HTML(
         "<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"
     )
+    map_html = gr.HTML(build_map_html("lobby", []), elem_classes=["map-wrap"])
 
     with gr.Tabs(elem_classes=["hall-tabs"]):
         with gr.Tab("Lobby"):
@@ -760,6 +1167,8 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
 
     outputs = [
         status_html,
+        hero_html,
+        map_html,
         museum_header,
         lobby_html,
         artifacts_html,
@@ -768,8 +1177,14 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
         visitor_html,
     ]
 
-    generate_btn.click(generate_museum, inputs=[concept_input], outputs=outputs)
-    concept_input.submit(generate_museum, inputs=[concept_input], outputs=outputs)
+    curator_mode.change(
+        fn=lambda mode: build_hero_html(mode),
+        inputs=[curator_mode],
+        outputs=[hero_html],
+    )
+
+    generate_btn.click(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
+    concept_input.submit(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
 
 
 if __name__ == "__main__":
