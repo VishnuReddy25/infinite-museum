@@ -4,7 +4,6 @@ import gradio as gr
 
 from generators.engine import (
     generate_artifacts,
-    generate_featured_artifact_image,
     generate_newspaper,
     generate_timeline,
     generate_visitor_book,
@@ -2026,27 +2025,10 @@ def default_state() -> dict:
 
 
 def generate_artifact_image_action(state: dict, artifact_index: int):
-    state = state or default_state()
-    artifacts_payload = state.get("artifacts") or {}
-    artifacts = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
-    curator_mode = state.get("curator_mode") or "Anthropology"
-    world_bible = state.get("world_bible") or {}
-
-    if not artifacts or artifact_index >= len(artifacts):
-        return (
-            build_status_panel("Generate a museum first", "There is no artifact here yet to render.", curator_mode),
-            gr.update(value=build_artifacts_html({**artifacts_payload, "featured_image": state.get("featured_image")})),
-            state,
-        )
-
-    artifact = artifacts[artifact_index]
-    image_result = generate_featured_artifact_image(world_bible, {"artifacts": [artifact]})
-    image_result["artifact"] = artifact
-    state["featured_image"] = image_result
-
+    curator_mode = (state or {}).get("curator_mode") or "Anthropology"
     return (
-        build_status_panel("Artifact image generated", f"Rendered an image for {artifact.get('name', 'the selected artifact')}.", curator_mode),
-        gr.update(value=build_artifacts_html({**artifacts_payload, "featured_image": image_result})),
+        build_status_panel("Image generation coming soon", "Artifact image generation is not enabled yet.", curator_mode),
+        gr.update(value=build_artifacts_html({**((state or {}).get("artifacts") or {}), "featured_image": None})),
         state,
     )
 
