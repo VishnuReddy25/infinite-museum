@@ -229,12 +229,14 @@ CSS = """
     --bg-wash: #241912;
     --panel: rgba(16, 12, 10, 0.92);
     --panel-light: rgba(240, 232, 212, 0.96);
+    --panel-strong: rgba(12, 9, 7, 0.86);
     --line: rgba(200, 169, 110, 0.22);
     --gold: #c8a96e;
     --gold-soft: #8a7248;
     --paper: #eadfc9;
     --muted: #94846b;
     --ink: #241a12;
+    --shadow: rgba(0, 0, 0, 0.35);
 }
 
 body, .gradio-container {
@@ -251,6 +253,28 @@ body, .gradio-container {
     max-width: none !important;
     width: 100% !important;
     padding: 0 20px 36px !important;
+}
+
+body[data-museum-theme="retro"], body[data-museum-theme="retro"] .gradio-container {
+    background:
+        radial-gradient(circle at 12% 18%, rgba(200, 169, 110, 0.11), transparent 22%),
+        radial-gradient(circle at 80% 6%, rgba(107, 63, 31, 0.2), transparent 18%),
+        radial-gradient(circle at top, rgba(80, 57, 27, 0.18), transparent 34%),
+        linear-gradient(180deg, #090706 0%, var(--bg) 30%, #120d0a 100%) !important;
+}
+
+body[data-museum-theme="dark"], body[data-museum-theme="dark"] .gradio-container {
+    background:
+        radial-gradient(circle at 14% 12%, rgba(79, 183, 187, 0.16), transparent 20%),
+        radial-gradient(circle at 84% 10%, rgba(14, 92, 116, 0.22), transparent 18%),
+        linear-gradient(180deg, #03070c 0%, var(--bg) 42%, #08131a 100%) !important;
+}
+
+body[data-museum-theme="light"], body[data-museum-theme="light"] .gradio-container {
+    background:
+        radial-gradient(circle at 12% 10%, rgba(95, 141, 156, 0.11), transparent 18%),
+        radial-gradient(circle at 88% 8%, rgba(190, 165, 132, 0.14), transparent 16%),
+        linear-gradient(180deg, #fcfbf8 0%, var(--bg) 44%, #eef3f3 100%) !important;
 }
 
 .input-zone,
@@ -272,47 +296,53 @@ body[data-museum-theme="retro"] {
     --bg-wash: #241912;
     --panel: rgba(16, 12, 10, 0.92);
     --panel-light: rgba(240, 232, 212, 0.96);
+    --panel-strong: rgba(12, 9, 7, 0.86);
     --line: rgba(200, 169, 110, 0.22);
     --gold: #c8a96e;
     --gold-soft: #8a7248;
     --paper: #eadfc9;
     --muted: #94846b;
     --ink: #241a12;
+    --shadow: rgba(0, 0, 0, 0.35);
 }
 
 body[data-museum-theme="dark"] {
-    --bg: #0b1018;
-    --bg-deep: #06080c;
-    --bg-wash: #132238;
-    --panel: rgba(11, 16, 24, 0.94);
-    --panel-light: rgba(220, 233, 252, 0.96);
-    --line: rgba(101, 163, 255, 0.22);
-    --gold: #8fb6ff;
-    --gold-soft: #5f7fad;
-    --paper: #e8f0ff;
-    --muted: #98a8c7;
-    --ink: #0d1522;
+    --bg: #071119;
+    --bg-deep: #03070c;
+    --bg-wash: #103246;
+    --panel: rgba(7, 18, 28, 0.94);
+    --panel-light: rgba(227, 244, 248, 0.97);
+    --panel-strong: rgba(8, 16, 24, 0.9);
+    --line: rgba(77, 196, 185, 0.24);
+    --gold: #8be6d8;
+    --gold-soft: #4fb7bb;
+    --paper: #ebfbff;
+    --muted: #92b7c4;
+    --ink: #102028;
+    --shadow: rgba(0, 8, 14, 0.42);
 }
 
 body[data-museum-theme="light"] {
-    --bg: #f4efe5;
-    --bg-deep: #ece4d6;
-    --bg-wash: #d5c4a7;
-    --panel: rgba(251, 248, 241, 0.94);
-    --panel-light: rgba(255, 252, 246, 0.98);
-    --line: rgba(126, 92, 43, 0.22);
-    --gold: #7f5b2b;
-    --gold-soft: #9e7a46;
-    --paper: #2b2013;
-    --muted: #6a5843;
-    --ink: #241a12;
+    --bg: #f7f4ee;
+    --bg-deep: #efe9de;
+    --bg-wash: #d9e3e6;
+    --panel: rgba(255, 252, 247, 0.97);
+    --panel-light: rgba(255, 255, 252, 0.99);
+    --panel-strong: rgba(250, 245, 237, 0.98);
+    --line: rgba(88, 111, 122, 0.22);
+    --gold: #365c6b;
+    --gold-soft: #6a4f39;
+    --paper: #18242b;
+    --muted: #51646d;
+    --ink: #18242b;
+    --shadow: rgba(65, 82, 90, 0.12);
 }
 
 .museum-shell {
     border: 1px solid var(--line);
     margin: 20px auto;
-    background: rgba(10, 8, 7, 0.72);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    background: var(--panel-strong);
+    box-shadow: 0 10px 40px var(--shadow);
     overflow: hidden;
     width: min(100%, 1540px);
 }
@@ -357,7 +387,7 @@ body[data-museum-theme="light"] {
     border-radius: 16px;
     background:
         linear-gradient(180deg, rgba(200, 169, 110, 0.08), transparent 18%),
-        rgba(17, 12, 10, 0.8);
+        var(--panel);
     padding: 18px 18px 16px;
 }
 
@@ -502,7 +532,7 @@ body[data-museum-theme="light"] {
     padding: 14px 18px;
     background:
         linear-gradient(180deg, rgba(200, 169, 110, 0.08), transparent 18%),
-        rgba(17, 12, 10, 0.7);
+        var(--panel);
 }
 
 .theme-bar-copy {
@@ -545,7 +575,7 @@ body[data-museum-theme="light"] {
     padding: 18px;
     background:
         radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 24%),
-        rgba(12, 9, 7, 0.78);
+        var(--panel);
 }
 
 .control-panel-label {
@@ -597,7 +627,7 @@ body[data-museum-theme="light"] {
 .enter-btn {
     height: 100% !important;
     min-height: 96px;
-    background: linear-gradient(180deg, #2c2117, #17100c) !important;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 28%, var(--panel-strong)), var(--panel-strong)) !important;
     color: var(--gold) !important;
     border: 1px solid rgba(200, 169, 110, 0.45) !important;
     border-radius: 16px !important;
@@ -613,7 +643,7 @@ body[data-museum-theme="light"] {
 
 .enter-btn:hover {
     border-color: rgba(200, 169, 110, 0.8) !important;
-    background: linear-gradient(180deg, #35281a, #19120d) !important;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 38%, var(--panel-strong)), var(--panel-strong)) !important;
     transform: translateY(-1px);
     box-shadow:
         inset 0 1px 0 rgba(200, 169, 110, 0.12),
@@ -622,7 +652,7 @@ body[data-museum-theme="light"] {
 
 .museum-action-btn,
 .museum-secondary-btn {
-    background: linear-gradient(180deg, rgba(44, 33, 23, 0.96), rgba(23, 16, 12, 0.96)) !important;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 16%, var(--panel-strong)), color-mix(in srgb, var(--panel-strong) 88%, black)) !important;
     color: var(--gold) !important;
     border: 1px solid rgba(200, 169, 110, 0.4) !important;
     border-radius: 999px !important;
@@ -649,7 +679,7 @@ body[data-museum-theme="light"] {
 .museum-action-btn:hover,
 .museum-secondary-btn:hover {
     border-color: rgba(200, 169, 110, 0.78) !important;
-    background: linear-gradient(180deg, rgba(53, 40, 26, 0.98), rgba(25, 18, 13, 0.98)) !important;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 24%, var(--panel-strong)), color-mix(in srgb, var(--panel-strong) 84%, black)) !important;
     transform: translateY(-1px);
 }
 
@@ -663,7 +693,7 @@ body[data-museum-theme="light"] {
     padding: 18px 20px;
     background:
         linear-gradient(90deg, rgba(200, 169, 110, 0.06), transparent 22%),
-        rgba(13, 10, 8, 0.72);
+        var(--panel);
     display: grid;
     grid-template-columns: 1.15fr 1fr;
     gap: 18px;
@@ -716,7 +746,7 @@ body[data-museum-theme="light"] {
     border-radius: 24px;
     background:
         radial-gradient(circle at top left, rgba(200, 169, 110, 0.08), transparent 20%),
-        linear-gradient(180deg, rgba(18, 13, 11, 0.92), rgba(11, 8, 7, 0.96));
+        linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, transparent), color-mix(in srgb, var(--panel-strong) 96%, black));
     overflow: hidden;
     box-shadow:
         inset 0 1px 0 rgba(200, 169, 110, 0.04),
@@ -753,7 +783,7 @@ body[data-museum-theme="light"] {
     border: 1.5px solid rgba(200, 169, 110, 0.26);
     background:
         linear-gradient(180deg, rgba(200, 169, 110, 0.06), rgba(200, 169, 110, 0.02)),
-        rgba(15, 11, 9, 0.58);
+        color-mix(in srgb, var(--panel-strong) 76%, transparent);
     padding: 18px 18px 14px;
     cursor: pointer;
     transition: transform 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
@@ -1055,7 +1085,7 @@ body[data-museum-theme="light"] .museum-room {
 body[data-museum-theme="light"] .input-zone textarea,
 body[data-museum-theme="light"] .input-zone input,
 body[data-museum-theme="light"] .theme-chip {
-    background: rgba(255, 251, 244, 0.92) !important;
+    background: rgba(255, 255, 253, 0.96) !important;
     color: var(--paper) !important;
 }
 
@@ -1064,7 +1094,7 @@ body[data-museum-theme="light"] .hero-side-note,
 body[data-museum-theme="light"] .control-panel-copy,
 body[data-museum-theme="light"] .museum-map-help,
 body[data-museum-theme="light"] .museum-legend-copy {
-    color: #6e604d !important;
+    color: #556971 !important;
 }
 
 body[data-museum-theme="dark"] .museum-map,
@@ -1074,6 +1104,72 @@ body[data-museum-theme="dark"] .museum-shell,
 body[data-museum-theme="dark"] .museum-room,
 body[data-museum-theme="dark"] .hall-tabs .tab-nav {
     background-color: rgba(10, 14, 22, 0.88) !important;
+}
+
+body[data-museum-theme="light"] .museum-header {
+    background:
+        radial-gradient(circle at 50% -20%, rgba(95, 141, 156, 0.18), transparent 35%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 240, 233, 0.96)) !important;
+}
+
+body[data-museum-theme="light"] .museum-marquee,
+body[data-museum-theme="light"] .museum-tagline,
+body[data-museum-theme="light"] .hero-side-copy,
+body[data-museum-theme="light"] .featured-text,
+body[data-museum-theme="light"] .lobby-summary,
+body[data-museum-theme="light"] .timeline-desc,
+body[data-museum-theme="light"] .visitor-entry,
+body[data-museum-theme="light"] .hall-panel-copy,
+body[data-museum-theme="light"] .status-subline {
+    color: #24333b !important;
+}
+
+body[data-museum-theme="light"] .museum-hall-nav-copy,
+body[data-museum-theme="light"] .mode-desc,
+body[data-museum-theme="light"] .artifact-meta,
+body[data-museum-theme="light"] .featured-prompt {
+    color: #556971 !important;
+}
+
+body[data-museum-theme="light"] .museum-room {
+    background:
+        linear-gradient(180deg, rgba(95, 141, 156, 0.12), rgba(95, 141, 156, 0.04)),
+        rgba(255, 252, 247, 0.95) !important;
+    border-color: rgba(88, 111, 122, 0.3) !important;
+}
+
+body[data-museum-theme="light"] .museum-room-title,
+body[data-museum-theme="light"] .museum-legend-title,
+body[data-museum-theme="light"] .museum-hall-nav-title,
+body[data-museum-theme="light"] .timeline-title,
+body[data-museum-theme="light"] .artifact-name {
+    color: #1f3138 !important;
+}
+
+body[data-museum-theme="light"] .museum-foyer-label,
+body[data-museum-theme="light"] .museum-visitor-label {
+    color: #4e6570 !important;
+}
+
+body[data-museum-theme="light"] .museum-visitor-caption {
+    color: #f8fcfd !important;
+    background: rgba(38, 57, 66, 0.92) !important;
+    border-color: rgba(88, 111, 122, 0.36) !important;
+}
+
+body[data-museum-theme="light"] .theme-chip:hover,
+body[data-museum-theme="light"] .theme-chip.is-active,
+body[data-museum-theme="light"] .museum-hall-nav-btn:hover,
+body[data-museum-theme="light"] .museum-hall-nav-btn.is-active,
+body[data-museum-theme="light"] .mode-radio input:checked + span {
+    background: rgba(213, 229, 235, 0.86) !important;
+    color: #18323b !important;
+}
+
+body[data-museum-theme="dark"] .museum-header {
+    background:
+        radial-gradient(circle at 50% -20%, rgba(79, 183, 187, 0.22), transparent 35%),
+        linear-gradient(180deg, rgba(12, 24, 31, 0.96), rgba(7, 18, 28, 0.92)) !important;
 }
 
 .museum-hall-stack {
