@@ -345,46 +345,120 @@ body, .gradio-container {
 }
 
 .museum-map {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    position: relative;
+    min-height: 420px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at top left, rgba(200, 169, 110, 0.08), transparent 20%),
+        linear-gradient(180deg, rgba(18, 13, 11, 0.92), rgba(11, 8, 7, 0.96));
+    overflow: hidden;
+}
+
+.museum-map::before {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border: 1px dashed rgba(200, 169, 110, 0.08);
+    border-radius: 14px;
+    pointer-events: none;
+}
+
+.museum-blueprint-line {
+    position: relative;
+    background: rgba(200, 169, 110, 0.16);
+    border-radius: 999px;
+}
+
+.museum-blueprint-line.h {
+    height: 2px;
+}
+
+.museum-blueprint-line.v {
+    width: 2px;
 }
 
 .museum-room {
-    min-height: 124px;
-    border-radius: 14px;
-    border: 1px solid rgba(200, 169, 110, 0.14);
+    position: absolute;
+    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.18);
     background:
-        radial-gradient(circle at top, rgba(200, 169, 110, 0.06), transparent 45%),
-        rgba(13, 10, 8, 0.74);
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.06), transparent 42%),
+        rgba(15, 11, 9, 0.84);
     padding: 14px 14px 12px;
-    position: relative;
-    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
 }
 
 .museum-room::after {
     content: "";
     position: absolute;
-    inset: auto -30% -55% auto;
-    width: 110px;
-    height: 110px;
+    inset: auto -18% -42% auto;
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
     background: rgba(200, 169, 110, 0.05);
+}
+
+.museum-room:hover {
+    transform: translateY(-2px);
+    border-color: rgba(200, 169, 110, 0.35);
 }
 
 .museum-room.state-active {
     border-color: rgba(200, 169, 110, 0.6);
     box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.08), inset 0 0 0 1px rgba(200, 169, 110, 0.08);
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.16), transparent 42%),
+        rgba(20, 15, 11, 0.92);
 }
 
 .museum-room.state-complete {
     background:
         radial-gradient(circle at top, rgba(200, 169, 110, 0.12), transparent 45%),
         rgba(18, 14, 11, 0.82);
+    border-color: rgba(200, 169, 110, 0.28);
 }
 
 .museum-room.state-idle {
     opacity: 0.8;
+}
+
+.museum-room.state-active .museum-room-title {
+    color: #f4dfb0;
+}
+
+.museum-room.state-complete .museum-room-kicker {
+    color: #b8965f;
+}
+
+.museum-door {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    background: rgba(200, 169, 110, 0.08);
+    box-shadow: 0 0 0 rgba(200, 169, 110, 0);
+    transition: background 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.museum-door.is-target {
+    background: rgba(200, 169, 110, 0.26);
+    border-color: rgba(200, 169, 110, 0.55);
+    box-shadow: 0 0 18px rgba(200, 169, 110, 0.38);
+    animation: museumDoorPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes museumDoorPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.85;
+    }
+    50% {
+        transform: scale(1.18);
+        opacity: 1;
+    }
 }
 
 .museum-room-kicker {
@@ -399,14 +473,113 @@ body, .gradio-container {
 .museum-room-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: 16px;
+    font-size: 15px;
     margin-bottom: 8px;
 }
 
 .museum-room-copy {
     color: var(--muted);
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.museum-foyer {
+    position: absolute;
+    left: 45%;
+    top: 41%;
+    width: 10%;
+    height: 18%;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 16px;
+    background: rgba(20, 15, 12, 0.42);
+}
+
+.museum-foyer-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(232, 223, 200, 0.52);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.museum-visitor {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #f7dfaa, var(--gold));
+    box-shadow: 0 0 18px rgba(200, 169, 110, 0.4);
+    border: 2px solid rgba(18, 12, 9, 0.72);
+    transition: transform 0.18s ease;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.museum-visitor::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(38, 25, 12, 0.72);
+}
+
+.museum-visitor.walking {
+    animation: museumWalker 0.6s infinite ease-in-out;
+}
+
+@keyframes museumWalker {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+    }
+    50% {
+        transform: scale(1.04) translateY(-2px);
+    }
+}
+
+.museum-visitor-label {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 8px);
+    transform: translateX(-50%);
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.museum-visitor-caption {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%);
+    color: var(--paper);
+    background: rgba(12, 9, 7, 0.88);
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.museum-map-help {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
 }
 
 .hall-tabs .tab-nav {
@@ -450,6 +623,100 @@ body, .gradio-container {
     border-radius: 12px;
     background: rgba(12, 9, 7, 0.45);
     padding: 24px;
+}
+
+.loading-card {
+    min-height: 280px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 28%),
+        rgba(12, 9, 7, 0.72);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.loading-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.loading-title {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    line-height: 1.35;
+    margin: 6px 0 10px;
+}
+
+.loading-copy {
+    color: var(--paper);
+    font-size: 17px;
+    line-height: 1.75;
+    max-width: 720px;
+}
+
+.loading-track {
+    width: 100%;
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(200, 169, 110, 0.12);
+    overflow: hidden;
+}
+
+.loading-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(200, 169, 110, 0.3), rgba(200, 169, 110, 0.9));
+    box-shadow: 0 0 18px rgba(200, 169, 110, 0.22);
+}
+
+.loading-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: center;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.loading-dots {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.loading-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(200, 169, 110, 0.25);
+    animation: museumPulse 1.2s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.loading-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes museumPulse {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.4;
+    }
+    40% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
 }
 
 .section-heading {
@@ -788,10 +1055,13 @@ body, .gradio-container {
     .world-details,
     .timeline-card,
     .hero-grid,
-    .museum-map,
     .status-panel,
     .featured-grid {
         grid-template-columns: 1fr;
+    }
+
+    .museum-map {
+        min-height: 520px;
     }
 
     .hero-plaques {
@@ -841,6 +1111,14 @@ ROOMS = [
     ("newspaper", "Newspaper", "Press room", "A surviving front page from how this world saw itself."),
     ("visitor", "Visitor's Book", "Personal voice", "A single human voice to close the museum at ground level."),
 ]
+
+ROOM_LAYOUT = {
+    "lobby": {"left": "9%", "top": "14%", "width": "24%", "height": "26%", "visitor_left": "21%", "visitor_top": "24%"},
+    "artifacts": {"left": "67%", "top": "14%", "width": "24%", "height": "26%", "visitor_left": "79%", "visitor_top": "24%"},
+    "timeline": {"left": "9%", "top": "60%", "width": "24%", "height": "24%", "visitor_left": "21%", "visitor_top": "70%"},
+    "newspaper": {"left": "67%", "top": "60%", "width": "24%", "height": "24%", "visitor_left": "79%", "visitor_top": "70%"},
+    "visitor": {"left": "38%", "top": "66%", "width": "24%", "height": "18%", "visitor_left": "50%", "visitor_top": "75%"},
+}
 
 
 def esc(value: str) -> str:
@@ -1093,22 +1371,67 @@ def build_hero_html(curator_mode: str) -> str:
 def build_map_html(active_room: str, completed_rooms: list[str]) -> str:
     cards = []
     completed = set(completed_rooms)
+    visitor_room = active_room if active_room in ROOM_LAYOUT else "lobby"
     for room_id, title, kicker, copy in ROOMS:
         state = "state-idle"
         if room_id in completed:
             state = "state-complete"
         if room_id == active_room:
             state = "state-active"
+        layout = ROOM_LAYOUT[room_id]
         cards.append(
             f"""
-<div class="museum-room {state}">
+<div class="museum-room {state}" data-hall="{esc(title)}" data-room-id="{esc(room_id)}" role="button" tabindex="0" aria-label="Open {esc(title)} hall" style="left:{layout['left']};top:{layout['top']};width:{layout['width']};height:{layout['height']};">
     <div class="museum-room-kicker">{esc(kicker)}</div>
     <div class="museum-room-title">{esc(title)}</div>
     <div class="museum-room-copy">{esc(copy)}</div>
 </div>
 """
         )
-    return "<div class='museum-map'>" + "".join(cards) + "</div>"
+    visitor_layout = ROOM_LAYOUT[visitor_room]
+    blueprint = f"""
+<div class='museum-map' data-active-room='{esc(visitor_room)}'>
+    <div class='museum-blueprint-line h' style='position:absolute;left:33%;top:27%;width:34%;'></div>
+    <div class='museum-blueprint-line h' style='position:absolute;left:33%;top:72%;width:34%;'></div>
+    <div class='museum-blueprint-line v' style='position:absolute;left:50%;top:27%;height:45%;'></div>
+    <div class='museum-blueprint-line v' style='position:absolute;left:21%;top:40%;height:20%;'></div>
+    <div class='museum-blueprint-line v' style='position:absolute;left:79%;top:40%;height:20%;'></div>
+    <div class='museum-door' data-door-id='lobby' style='left:32%;top:26%;'></div>
+    <div class='museum-door' data-door-id='artifacts' style='left:66%;top:26%;'></div>
+    <div class='museum-door' data-door-id='timeline' style='left:32%;top:71%;'></div>
+    <div class='museum-door' data-door-id='newspaper' style='left:66%;top:71%;'></div>
+    <div class='museum-door' data-door-id='visitor' style='left:49%;top:65%;'></div>
+    <div class='museum-foyer'><div class='museum-foyer-label'>Central Foyer</div></div>
+    <div class='museum-visitor' id='museum-visitor' style='left:calc({visitor_layout["visitor_left"]} - 11px);top:calc({visitor_layout["visitor_top"]} - 11px);'>
+        <div class='museum-visitor-caption' id='museum-visitor-caption'>Standing in {esc(next(room[1] for room in ROOMS if room[0] == visitor_room))}</div>
+        <div class='museum-visitor-label'>You are here</div>
+    </div>
+    {''.join(cards)}
+</div>
+<div class='museum-map-help'>Move through the floor plan by clicking a hall. The marker walks to the room and opens that exhibit.</div>
+"""
+    return blueprint
+
+
+def build_loading_html(title: str, body: str, step: int, total: int, next_hall: str) -> str:
+    progress = max(8, min(100, int((step / total) * 100)))
+    return f"""
+<div class="loading-card">
+    <div>
+        <div class="loading-kicker">Museum in progress</div>
+        <div class="loading-title">{esc(title)}</div>
+        <div class="loading-copy">{esc(body)}</div>
+    </div>
+    <div>
+        <div class="loading-track"><div class="loading-bar" style="width:{progress}%"></div></div>
+        <div class="loading-meta">
+            <span>Hall {step} of {total}</span>
+            <span>Next stop: {esc(next_hall)}</span>
+            <span class="loading-dots"><span></span><span></span><span></span></span>
+        </div>
+    </div>
+</div>
+"""
 
 
 def format_concept(concept: str, curator_mode: str) -> str:
@@ -1246,7 +1569,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("lobby", [])),
         gr.update(value="<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Preparing a new impossible civilization.</div>"),
-        empty_gallery("Drafting the foundational world bible."),
+        gr.update(value=build_loading_html("Drafting the world", "The museum is defining the main rule, social order, and daily life of this civilization.", 1, 5, "Artifacts")),
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
@@ -1264,7 +1587,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_map_html("artifacts", ["lobby"])),
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
-        empty_gallery("Excavating artifacts from the collection vault."),
+        gr.update(value=build_loading_html("Excavating the collection", "The museum is cataloguing objects from this civilization and selecting the first exhibit pieces.", 2, 5, "Timeline")),
         empty_gallery("Assembling the official historical record."),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
@@ -1281,7 +1604,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=header),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": None})),
-        empty_gallery("Assembling the official historical record."),
+        gr.update(value=build_loading_html("Restoring the timeline", "The archive is assembling the sequence of events that shaped this world.", 3, 5, "Newspaper")),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
         state,
@@ -1297,7 +1620,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
-        empty_gallery("Preparing the day's newspaper edition."),
+        gr.update(value=build_loading_html("Printing the newspaper", "The press room is composing a front page from inside the civilization's own point of view.", 4, 5, "Visitor's Book")),
         empty_gallery("Opening the final testimony cabinet."),
         state,
     )
@@ -1313,7 +1636,7 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
-        empty_gallery("Opening the final testimony cabinet."),
+        gr.update(value=build_loading_html("Opening the last page", "The museum is finding one private voice that lived inside this world.", 5, 5, "Final display")),
         state,
     )
 
@@ -1416,6 +1739,119 @@ with gr.Blocks(css=CSS, title="Infinite Museum of Impossible Worlds") as demo:
 <div class="museum-footer">
     Infinite Museum of Impossible Worlds | Small-model worldbuilding | Built for Build Small Hackathon 2026
 </div>
+<script>
+const MUSEUM_ROOM_POINTS = {
+  lobby: { x: 21, y: 27 },
+  artifacts: { x: 79, y: 27 },
+  timeline: { x: 21, y: 72 },
+  newspaper: { x: 79, y: 72 },
+  visitor: { x: 50, y: 75 },
+  foyer: { x: 50, y: 50 }
+};
+
+const MUSEUM_ROOM_LABELS = {
+  lobby: "Lobby",
+  artifacts: "Artifacts",
+  timeline: "Timeline",
+  newspaper: "Newspaper",
+  visitor: "Visitor's Book",
+  foyer: "Central Foyer"
+};
+
+let museumWalkToken = 0;
+
+function setMuseumVisitorPosition(point) {
+  const marker = document.getElementById("museum-visitor");
+  const parent = marker ? marker.closest(".museum-map") : null;
+  if (!marker || !parent || !point) return;
+  const parentRect = parent.getBoundingClientRect();
+  const left = (parentRect.width * point.x / 100) - 11;
+  const top = (parentRect.height * point.y / 100) - 11;
+  marker.style.left = `${left}px`;
+  marker.style.top = `${top}px`;
+}
+
+function setMuseumVisitorCaption(text) {
+  const caption = document.getElementById("museum-visitor-caption");
+  if (caption) caption.textContent = text;
+}
+
+function setMuseumDoorTarget(roomId) {
+  document.querySelectorAll(".museum-door").forEach((door) => {
+    door.classList.toggle("is-target", door.getAttribute("data-door-id") === roomId);
+  });
+}
+
+function museumPathForRoom(roomId) {
+  const target = MUSEUM_ROOM_POINTS[roomId];
+  if (!target) return [];
+  if (roomId === "visitor") {
+    return [MUSEUM_ROOM_POINTS.foyer, { x: 50, y: 72 }, target];
+  }
+  if (roomId === "lobby" || roomId === "artifacts") {
+    return [MUSEUM_ROOM_POINTS.foyer, { x: target.x, y: 27 }, target];
+  }
+  return [MUSEUM_ROOM_POINTS.foyer, { x: target.x, y: 72 }, target];
+}
+
+function walkMuseumVisitor(room, onArrive) {
+  const marker = document.getElementById("museum-visitor");
+  if (!marker || !room) {
+    if (onArrive) onArrive();
+    return;
+  }
+
+  const roomId = room.getAttribute("data-room-id");
+  const steps = museumPathForRoom(roomId);
+  if (!steps.length) {
+    if (onArrive) onArrive();
+    return;
+  }
+
+  const token = ++museumWalkToken;
+  marker.classList.add("walking");
+  setMuseumDoorTarget(roomId);
+  setMuseumVisitorCaption(`Walking to ${MUSEUM_ROOM_LABELS[roomId] || "hall"}...`);
+
+  let index = 0;
+  const advance = () => {
+    if (token !== museumWalkToken) return;
+    setMuseumVisitorPosition(steps[index]);
+    index += 1;
+    if (index < steps.length) {
+      window.setTimeout(advance, 220);
+    } else {
+      window.setTimeout(() => {
+        if (token !== museumWalkToken) return;
+        marker.classList.remove("walking");
+        setMuseumDoorTarget("");
+        setMuseumVisitorCaption(`Standing in ${MUSEUM_ROOM_LABELS[roomId] || "the hall"}`);
+        if (onArrive) onArrive();
+      }, 140);
+    }
+  };
+
+  advance();
+}
+
+document.addEventListener("click", function (event) {
+  const room = event.target.closest("[data-hall]");
+  if (!room) return;
+  walkMuseumVisitor(room, function () {
+    const hall = room.getAttribute("data-hall");
+    const buttons = Array.from(document.querySelectorAll(".hall-tabs .tab-nav button"));
+    const target = buttons.find((button) => button.innerText.trim() === hall);
+    if (target) target.click();
+  });
+});
+document.addEventListener("keydown", function (event) {
+  const room = event.target.closest("[data-hall]");
+  if (!room) return;
+  if (event.key !== "Enter" && event.key !== " ") return;
+  event.preventDefault();
+  room.click();
+});
+</script>
 """
     )
 
