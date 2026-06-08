@@ -22,6 +22,8 @@ An atmospheric Gradio app that turns a single impossible-world prompt into a fiv
 - Newspaper
 - Visitor's Book
 
+Recent UI work adds a curated hall rail, world-specific atmospheric shifts, generated emblems, and collectible share-card exports.
+
 ## Architecture
 
 The app generates a canonical `world_bible` first, then uses it to keep every hall consistent.
