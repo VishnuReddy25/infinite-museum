@@ -1,4 +1,5 @@
 import html
+import json
 
 import gradio as gr
 
@@ -131,6 +132,151 @@ APP_HEAD = """
         typeElement(node);
       }
     });
+  }
+
+  function slugifyName(text) {
+    return String(text || "museum-world")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-{2,}/g, "-") || "museum-world";
+  }
+
+  function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, color, font, maxLines = 3) {
+    ctx.fillStyle = color;
+    ctx.font = font;
+    const words = String(text || "").split(/\\s+/).filter(Boolean);
+    const lines = [];
+    let current = "";
+
+    words.forEach((word) => {
+      const probe = current ? `${current} ${word}` : word;
+      if (ctx.measureText(probe).width <= maxWidth || !current) {
+        current = probe;
+      } else {
+        lines.push(current);
+        current = word;
+      }
+    });
+    if (current) lines.push(current);
+
+    const trimmed = lines.slice(0, maxLines);
+    if (lines.length > maxLines && trimmed.length) {
+      trimmed[trimmed.length - 1] = `${trimmed[trimmed.length - 1].replace(/[. ]+$/, "")}...`;
+    }
+
+    trimmed.forEach((line, index) => {
+      ctx.fillText(line, x, y + (index * lineHeight));
+    });
+  }
+
+  function exportShareCardFromPayload(payload) {
+    if (!payload) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 630;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const bg = "#16110f";
+    const gold = "#c8a96e";
+    const paper = "#eadfc9";
+    const white = "#f5efe3";
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const glow = ctx.createRadialGradient(600, 110, 40, 600, 110, 420);
+    glow.addColorStop(0, "rgba(200,169,110,0.12)");
+    glow.addColorStop(1, "rgba(200,169,110,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = "rgba(200,169,110,0.18)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(28, 28, 1144, 574);
+
+    ctx.fillStyle = gold;
+    ctx.font = '600 18px "Cinzel", Georgia, serif';
+    ctx.textAlign = "center";
+    ctx.letterSpacing = "3px";
+    ctx.fillText("INFINITE MUSEUM OF IMPOSSIBLE WORLDS", 600, 78);
+
+    ctx.font = '600 48px "Cinzel", Georgia, serif';
+    ctx.fillStyle = gold;
+    ctx.fillText(String(payload.museum_name || "Infinite Museum"), 600, 148);
+
+    ctx.font = 'italic 20px "Cormorant Garamond", Georgia, serif';
+    ctx.fillStyle = paper;
+    drawWrappedText(ctx, payload.tagline || "", 220, 182, 760, 28, paper, 'italic 20px "Cormorant Garamond", Georgia, serif', 2);
+
+    ctx.beginPath();
+    ctx.moveTo(160, 248);
+    ctx.lineTo(1040, 248);
+    ctx.strokeStyle = "rgba(200,169,110,0.5)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const fields = [
+      ["Premise", payload.premise],
+      ["Government", payload.government],
+      ["Artifact to Remember", payload.artifact_name],
+      ["Turning Point", payload.turning_point],
+      ["Absolute Taboo", payload.taboo],
+      ["Visual Motif", payload.visual_motif],
+    ];
+
+    const startX = 140;
+    const startY = 290;
+    const colWidth = 300;
+    const rowHeight = 110;
+    const colGap = 70;
+
+    fields.forEach(([label, value], index) => {
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const x = startX + (col * (colWidth + colGap));
+      const y = startY + (row * rowHeight);
+
+      ctx.fillStyle = gold;
+      ctx.font = '600 14px "Cinzel", Georgia, serif';
+      ctx.textAlign = "left";
+      ctx.fillText(label, x, y);
+
+      drawWrappedText(
+        ctx,
+        value || "-",
+        x,
+        y + 30,
+        colWidth,
+        24,
+        white,
+        '400 22px "Cormorant Garamond", Georgia, serif',
+        3,
+      );
+    });
+
+    ctx.fillStyle = "rgba(8,6,5,0.92)";
+    ctx.fillRect(0, 570, 1200, 60);
+    ctx.fillStyle = paper;
+    ctx.font = '500 16px "Cormorant Garamond", Georgia, serif';
+    ctx.textAlign = "left";
+    ctx.fillText("Curated by M. Vishnu Vardhan Reddy - Museum Manager", 42, 607);
+    ctx.textAlign = "right";
+    ctx.fillText("Build Small Hackathon 2026", 1158, 607);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = `${slugifyName(payload.museum_name)}.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, "image/png");
   }
 
   function retriggerTypewriters(scope) {
@@ -296,6 +442,17 @@ APP_HEAD = """
       } else {
         setActiveHall(roomId, true);
       }
+      return;
+    }
+
+    const shareButton = event.target.closest("[data-share-world]");
+    if (shareButton) {
+      event.preventDefault();
+      const raw = shareButton.getAttribute("data-share-payload");
+      if (!raw) return;
+      try {
+        exportShareCardFromPayload(JSON.parse(raw));
+      } catch (_error) {}
       return;
     }
 
@@ -779,6 +936,18 @@ body[data-museum-theme="light"] {
     font-size: 18px;
     line-height: 1.8;
     max-width: 680px;
+}
+
+.museum-header-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 0 24px 14px;
+}
+
+.museum-header-share[hidden] {
+    display: none !important;
 }
 
 .hero-plaques {
@@ -2610,6 +2779,11 @@ body[data-museum-theme="dark"] .museum-header {
         min-height: 92px;
     }
 
+    .museum-header-band {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
     .status-side {
         border-left: none;
         border-top: 1px solid rgba(200, 169, 110, 0.12);
@@ -2864,6 +3038,48 @@ def build_share_card(state: dict) -> str:
             <div class="share-card-value">{esc(first_item(world_bible.get("visual_motifs"), "No motif recorded yet."))}</div>
         </div>
     </div>
+</div>
+"""
+
+
+def build_share_payload(state: dict) -> dict:
+    state = state or {}
+    world_bible = state.get("world_bible") or {}
+    artifacts = (state.get("artifacts") or {}).get("artifacts") or []
+    premise = state.get("concept") or world_bible.get("core_premise") or ""
+    return {
+        "museum_name": world_bible.get("museum_name", "Infinite Museum"),
+        "tagline": world_bible.get("tagline", ""),
+        "premise": premise,
+        "government": world_bible.get("government", "-"),
+        "artifact_name": artifacts[0].get("name", "No artifact catalogued yet.") if artifacts else "No artifact catalogued yet.",
+        "turning_point": first_item(world_bible.get("historical_anchors"), "No turning point recorded yet."),
+        "taboo": world_bible.get("taboo", "No absolute taboo recorded yet."),
+        "visual_motif": first_item(world_bible.get("visual_motifs"), "No visual motif recorded yet."),
+    }
+
+
+def build_museum_header(state: dict | None = None, share_ready: bool = False) -> str:
+    state = state or {}
+    world_bible = state.get("world_bible") or {}
+    title = world_bible.get("museum_name", "Infinite Museum of Impossible Worlds")
+    tagline = world_bible.get("tagline", "Every idea creates a civilization. Every civilization leaves artifacts.")
+    button_html = ""
+    if world_bible:
+        payload = json.dumps(build_share_payload(state))
+        hidden_attr = "" if share_ready else " hidden"
+        button_html = (
+            f"<button class='museum-action-btn museum-header-share' type='button' data-share-world='true' "
+            f"data-share-payload='{esc_attr(payload)}'{hidden_attr}>Share This World</button>"
+        )
+
+    return f"""
+<div class="museum-header-band">
+    <div>
+        <div class="museum-title">{esc(title)}</div>
+        <div class="museum-tagline">{esc(tagline)}</div>
+    </div>
+    {button_html}
 </div>
 """
 
@@ -3518,7 +3734,7 @@ def generate_museum(concept: str, curator_mode: str):
             build_status_panel("Awaiting a world concept", "Describe an impossible civilization to open the museum.", curator_mode),
             gr.update(value=build_hero_html(curator_mode)),
             gr.update(value=build_map_html("lobby", [])),
-            gr.update(value="<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"),
+            gr.update(value=build_museum_header()),
             gr.update(value=build_room_stage()),
             empty_gallery("The museum awaits its first impossible world."),
             empty_gallery("The artifact hall is sealed."),
@@ -3536,7 +3752,7 @@ def generate_museum(concept: str, curator_mode: str):
         build_status_panel("Opening the museum", "We are drafting the world bible and preparing the first gallery.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("lobby", [])),
-        gr.update(value="<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Preparing a new impossible civilization.</div>"),
+        gr.update(value=build_museum_header({"world_bible": {"museum_name": "Infinite Museum of Impossible Worlds", "tagline": "Preparing a new impossible civilization."}}, share_ready=False)),
         gr.update(value=build_room_stage()),
         gr.update(value=build_loading_html("Drafting the world", "The museum is defining the main rule, social order, and daily life of this civilization.", 1, 5, "Artifacts")),
         empty_gallery(waiting),
@@ -3548,14 +3764,13 @@ def generate_museum(concept: str, curator_mode: str):
     )
 
     world_bible = generate_world_bible(guided_concept)
-    header = museum_heading(world_bible)
     state = build_museum_state(concept, curator_mode, world_bible)
 
     yield (
         build_status_panel("Lobby opened", "The civilization has taken shape. The first records are now on display.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("artifacts", ["lobby"])),
-        gr.update(value=header),
+        gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_loading_html("Excavating the collection", "The museum is cataloguing objects from this civilization and selecting the first exhibit pieces.", 2, 5, "Timeline")),
@@ -3573,7 +3788,7 @@ def generate_museum(concept: str, curator_mode: str):
         build_status_panel("Artifacts catalogued", "The collection vault has opened. The chronology is being assembled.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("timeline", ["lobby", "artifacts"])),
-        gr.update(value=header),
+        gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": None})),
@@ -3590,7 +3805,7 @@ def generate_museum(concept: str, curator_mode: str):
         build_status_panel("Timeline restored", "The museum now knows how this world rose, changed, and endured.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("newspaper", ["lobby", "artifacts", "timeline"])),
-        gr.update(value=header),
+        gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
@@ -3607,7 +3822,7 @@ def generate_museum(concept: str, curator_mode: str):
         build_status_panel("Presses running", "A surviving newspaper is now on display beside the official archive.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper"])),
-        gr.update(value=header),
+        gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
@@ -3624,7 +3839,7 @@ def generate_museum(concept: str, curator_mode: str):
         build_status_panel("Museum complete", "All five halls are open. The world is ready to be explored.", curator_mode),
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
-        gr.update(value=header),
+        gr.update(value=build_museum_header(state, share_ready=True)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
@@ -3695,17 +3910,12 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
             )
 
         with gr.Row(elem_classes=["share-wrap"]):
-            with gr.Column(scale=5):
-                share_html = gr.HTML("<div class='empty-state'>Generate a museum to compose a share plaque with its most memorable details.</div>")
-            with gr.Column(scale=1, min_width=210):
-                share_btn = gr.Button("Compose Share Plaque", elem_classes=["museum-action-btn"])
+            share_html = gr.HTML("<div class='empty-state'>Generate a museum to compose a share plaque with its most memorable details.</div>")
 
         with gr.Row(elem_classes=["theme-wrap"]):
             gr.HTML(build_theme_bar())
 
-        museum_header = gr.HTML(
-            "<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"
-        )
+        museum_header = gr.HTML(build_museum_header())
         shell_intro_html = gr.HTML(build_shell_intro())
         map_html = gr.HTML(build_map_html("lobby", []), elem_classes=["map-wrap"])
         room_stage_html = gr.HTML(build_room_stage())
@@ -3808,8 +4018,6 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
     regen_timeline_btn.click(lambda state: regenerate_hall(state, "timeline"), inputs=[museum_state], outputs=hall_outputs)
     regen_newspaper_btn.click(lambda state: regenerate_hall(state, "newspaper"), inputs=[museum_state], outputs=hall_outputs)
     regen_visitor_btn.click(lambda state: regenerate_hall(state, "visitor"), inputs=[museum_state], outputs=hall_outputs)
-    share_btn.click(lambda state: gr.update(value=build_share_card(state)), inputs=[museum_state], outputs=[share_html])
-
     artifact_image_outputs = [status_html, artifacts_html, museum_state]
     artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs)
     artifact_image_btn_2.click(lambda state: generate_artifact_image_action(state, 1), inputs=[museum_state], outputs=artifact_image_outputs)
