@@ -457,7 +457,7 @@ body[data-museum-theme="light"] {
 }
 
 .input-zone {
-    padding: 24px 24px 2px;
+    padding: 24px 24px 6px;
 }
 
 .input-zone textarea,
@@ -465,9 +465,16 @@ body[data-museum-theme="light"] {
     background: rgba(10, 8, 7, 0.92) !important;
     color: var(--paper) !important;
     border: 1px solid var(--line) !important;
-    border-radius: 8px !important;
+    border-radius: 14px !important;
     font-size: 17px !important;
     box-shadow: none !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.input-zone textarea:focus,
+.input-zone input:focus {
+    border-color: rgba(200, 169, 110, 0.55) !important;
+    box-shadow: 0 0 0 4px rgba(200, 169, 110, 0.08) !important;
 }
 
 .input-zone label {
@@ -589,20 +596,61 @@ body[data-museum-theme="light"] {
 
 .enter-btn {
     height: 100% !important;
-    min-height: 84px;
+    min-height: 96px;
     background: linear-gradient(180deg, #2c2117, #17100c) !important;
     color: var(--gold) !important;
     border: 1px solid rgba(200, 169, 110, 0.45) !important;
-    border-radius: 10px !important;
+    border-radius: 16px !important;
     font-family: 'Cinzel', serif !important;
     font-size: 12px !important;
     letter-spacing: 0.18em !important;
     text-transform: uppercase !important;
+    box-shadow:
+        inset 0 1px 0 rgba(200, 169, 110, 0.1),
+        0 14px 30px rgba(0, 0, 0, 0.24);
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
 }
 
 .enter-btn:hover {
     border-color: rgba(200, 169, 110, 0.8) !important;
     background: linear-gradient(180deg, #35281a, #19120d) !important;
+    transform: translateY(-1px);
+    box-shadow:
+        inset 0 1px 0 rgba(200, 169, 110, 0.12),
+        0 18px 36px rgba(0, 0, 0, 0.28);
+}
+
+.museum-action-btn,
+.museum-secondary-btn {
+    background: linear-gradient(180deg, rgba(44, 33, 23, 0.96), rgba(23, 16, 12, 0.96)) !important;
+    color: var(--gold) !important;
+    border: 1px solid rgba(200, 169, 110, 0.4) !important;
+    border-radius: 999px !important;
+    font-family: 'Cinzel', serif !important;
+    text-transform: uppercase !important;
+    box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.08);
+    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease !important;
+}
+
+.museum-action-btn {
+    min-height: 42px !important;
+    padding: 0 18px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.16em !important;
+}
+
+.museum-secondary-btn {
+    min-height: 38px !important;
+    padding: 0 14px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.14em !important;
+}
+
+.museum-action-btn:hover,
+.museum-secondary-btn:hover {
+    border-color: rgba(200, 169, 110, 0.78) !important;
+    background: linear-gradient(180deg, rgba(53, 40, 26, 0.98), rgba(25, 18, 13, 0.98)) !important;
+    transform: translateY(-1px);
 }
 
 .status-wrap {
@@ -665,11 +713,14 @@ body[data-museum-theme="light"] {
     position: relative;
     min-height: 560px;
     border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 18px;
+    border-radius: 24px;
     background:
         radial-gradient(circle at top left, rgba(200, 169, 110, 0.08), transparent 20%),
         linear-gradient(180deg, rgba(18, 13, 11, 0.92), rgba(11, 8, 7, 0.96));
     overflow: hidden;
+    box-shadow:
+        inset 0 1px 0 rgba(200, 169, 110, 0.04),
+        0 18px 44px rgba(0, 0, 0, 0.22);
 }
 
 .museum-map::before {
@@ -966,9 +1017,11 @@ body[data-museum-theme="light"] {
 }
 
 .museum-legend-item {
-    border-top: 1px solid rgba(200, 169, 110, 0.16);
-    padding-top: 12px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    border-radius: 14px;
+    padding: 12px 12px 10px;
     text-align: center;
+    background: rgba(12, 9, 7, 0.42);
 }
 
 .museum-legend-title {
@@ -1061,7 +1114,7 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 .museum-hall-shell {
     margin-top: 14px;
     border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 20px;
+    border-radius: 22px 22px 0 0;
     background:
         radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 26%),
         linear-gradient(180deg, rgba(17, 12, 10, 0.82), rgba(10, 8, 7, 0.86));
@@ -1082,10 +1135,9 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 }
 
 .museum-hall-nav {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
     padding: 0 0 18px;
     margin-top: 0;
     border-bottom: 1px solid var(--line);
@@ -1094,28 +1146,62 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 .museum-hall-nav-btn {
     appearance: none;
     border: 1px solid rgba(200, 169, 110, 0.18);
-    background: rgba(16, 12, 10, 0.42);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
+        rgba(16, 12, 10, 0.42);
     color: var(--muted);
-    border-radius: 999px;
-    padding: 12px 18px;
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    border-radius: 18px;
+    padding: 14px;
     cursor: pointer;
-    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 102px;
 }
 
 .museum-hall-nav-btn:hover,
 .museum-hall-nav-btn.is-active {
     color: var(--gold);
     border-color: rgba(200, 169, 110, 0.5);
-    background: rgba(200, 169, 110, 0.08);
+    background:
+        linear-gradient(180deg, rgba(200, 169, 110, 0.16), rgba(18, 13, 11, 0.82)),
+        rgba(200, 169, 110, 0.08);
     transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.09);
+}
+
+.museum-hall-nav-index {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.museum-hall-nav-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.museum-hall-nav-copy {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.45;
 }
 
 .museum-hall-panel {
     display: none;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-top: none;
+    border-radius: 0 0 22px 22px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.06), transparent 18%),
+        rgba(10, 8, 7, 0.84);
+    padding: 18px 18px 20px;
 }
 
 .museum-hall-panel.is-active {
@@ -1137,6 +1223,41 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 .museum-hall-panel .gr-column,
 .museum-hall-panel .gr-row {
     background: transparent !important;
+}
+
+.hall-panel-header {
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.12);
+}
+
+.hall-panel-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.hall-panel-title {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+.hall-panel-copy {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.65;
+    max-width: 820px;
+    margin-top: 8px;
+}
+
+.hall-action-row {
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
 .hall-content {
@@ -1297,10 +1418,12 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 }
 
 .lobby-summary {
-    padding: 18px 20px;
+    padding: 22px 24px;
     border: 1px solid var(--line);
-    border-radius: 12px;
-    background: rgba(14, 11, 9, 0.84);
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.06), transparent 24%),
+        rgba(14, 11, 9, 0.84);
     margin-bottom: 18px;
     line-height: 1.85;
     font-size: 18px;
@@ -1325,8 +1448,18 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 }
 
 .artifact-card {
-    padding: 18px;
+    padding: 20px 20px 18px;
     margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+}
+
+.artifact-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, rgba(200, 169, 110, 0.85), rgba(200, 169, 110, 0.15));
 }
 
 .featured-artifact {
@@ -1443,11 +1576,23 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 }
 
 .timeline-card {
-    padding: 16px 18px;
+    padding: 18px 20px;
     margin-bottom: 12px;
     display: grid;
     grid-template-columns: 120px 1fr;
     gap: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-card::before {
+    content: "";
+    position: absolute;
+    left: 110px;
+    top: 18px;
+    bottom: 18px;
+    width: 1px;
+    background: rgba(200, 169, 110, 0.16);
 }
 
 .timeline-year {
@@ -1481,9 +1626,9 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 25%),
         var(--panel-light);
-    border-radius: 12px;
+    border-radius: 18px;
     color: var(--ink) !important;
-    padding: 24px;
+    padding: 28px;
     border: 1px solid rgba(58, 42, 24, 0.18);
     box-shadow: inset 0 0 60px rgba(85, 58, 24, 0.08);
 }
@@ -1552,10 +1697,14 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 }
 
 .visitor-book {
-    padding: 34px 28px;
+    padding: 42px 32px;
     max-width: 760px;
     margin: 0 auto;
     text-align: center;
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 24%),
+        rgba(12, 9, 7, 0.72);
 }
 
 .visitor-kicker {
@@ -1607,6 +1756,14 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
         grid-template-columns: 1fr;
     }
 
+    .museum-hall-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .museum-hall-nav-btn {
+        min-height: 92px;
+    }
+
     .status-side {
         border-left: none;
         border-top: 1px solid rgba(200, 169, 110, 0.12);
@@ -1616,6 +1773,41 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 
     .museum-title {
         font-size: 28px;
+    }
+}
+
+@media (max-width: 640px) {
+    .gradio-container {
+        padding: 0 12px 24px !important;
+    }
+
+    .museum-header,
+    .control-shell,
+    .theme-wrap,
+    .status-wrap,
+    .input-zone,
+    .map-wrap,
+    .museum-hall-stack {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .museum-map {
+        min-height: 460px;
+        border-radius: 18px;
+    }
+
+    .museum-legend,
+    .museum-hall-nav {
+        grid-template-columns: 1fr;
+    }
+
+    .hall-panel-title {
+        font-size: 24px;
+    }
+
+    .timeline-card::before {
+        display: none;
     }
 }
 """
@@ -2002,10 +2194,26 @@ def build_theme_bar() -> str:
 """
 
 
+def build_panel_header(kicker: str, title: str, copy: str) -> str:
+    return f"""
+<div class="hall-panel-header">
+    <div class="hall-panel-kicker">{esc(kicker)}</div>
+    <div class="hall-panel-title">{esc(title)}</div>
+    <div class="hall-panel-copy">{esc(copy)}</div>
+</div>
+"""
+
+
 def build_hall_nav() -> str:
     buttons = "".join(
-        f"<button class='museum-hall-nav-btn{' is-active' if room_id == 'lobby' else ''}' type='button' data-hall-target='{esc(room_id)}'>{esc(title)}</button>"
-        for room_id, title, _kicker, _copy in ROOMS
+        f"""
+<button class='museum-hall-nav-btn{' is-active' if room_id == 'lobby' else ''}' type='button' data-hall-target='{esc(room_id)}'>
+    <div class='museum-hall-nav-index'>Hall {index:02d}</div>
+    <div class='museum-hall-nav-title'>{esc(title)}</div>
+    <div class='museum-hall-nav-copy'>{esc(kicker)}</div>
+</button>
+"""
+        for index, (room_id, title, kicker, _copy) in enumerate(ROOMS, start=1)
     )
     return f"<div class='museum-hall-shell'><div class='museum-hall-nav'>{buttons}</div>"
 
@@ -2264,34 +2472,39 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
     with gr.Column(elem_classes=["museum-hall-stack"]):
         gr.HTML(build_hall_nav())
         with gr.Group(elem_classes=["museum-hall-panel", "is-active"], elem_id="hall-panel-lobby"):
+            gr.HTML(build_panel_header("Hall 01", "Lobby", "Read the governing rule of the civilization, then use the floor plan to move deeper into the museum."))
             lobby_html = gr.HTML(
                 value="<div class='empty-state'>The museum awaits its first impossible world.</div>",
                 elem_classes=["hall-content"],
             )
         with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-artifacts"):
-            with gr.Row():
-                artifact_image_btn_1 = gr.Button("Generate Image for Artifact 1", size="sm")
-                artifact_image_btn_2 = gr.Button("Generate Image for Artifact 2", size="sm")
-                artifact_image_btn_3 = gr.Button("Generate Image for Artifact 3", size="sm")
-            regen_artifacts_btn = gr.Button("Regenerate Artifacts", size="sm")
+            gr.HTML(build_panel_header("Hall 02", "Artifacts", "Move between the catalog view and on-demand renders without losing the rest of the exhibition."))
+            with gr.Row(elem_classes=["hall-action-row"]):
+                artifact_image_btn_1 = gr.Button("Render Artifact 1", size="sm", elem_classes=["museum-secondary-btn"])
+                artifact_image_btn_2 = gr.Button("Render Artifact 2", size="sm", elem_classes=["museum-secondary-btn"])
+                artifact_image_btn_3 = gr.Button("Render Artifact 3", size="sm", elem_classes=["museum-secondary-btn"])
+            regen_artifacts_btn = gr.Button("Regenerate Artifacts", size="sm", elem_classes=["museum-action-btn"])
             artifacts_html = gr.HTML(
                 value="<div class='empty-state'>The artifact hall is sealed.</div>",
                 elem_classes=["hall-content"],
             )
         with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-timeline"):
-            regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm")
+            gr.HTML(build_panel_header("Hall 03", "Timeline", "Follow the civilization in sequence, from founding logic to the events that distorted everyday life."))
+            regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm", elem_classes=["museum-action-btn"])
             timeline_html = gr.HTML(
                 value="<div class='empty-state'>History has not yet been arranged.</div>",
                 elem_classes=["hall-content"],
             )
         with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-newspaper"):
-            regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm")
+            gr.HTML(build_panel_header("Hall 04", "Newspaper", "Read the world in its own public voice through a single surviving front page."))
+            regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm", elem_classes=["museum-action-btn"])
             newspaper_html = gr.HTML(
                 value="<div class='empty-state'>No front page has gone to print.</div>",
                 elem_classes=["hall-content"],
             )
         with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-visitor"):
-            regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm")
+            gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "End with one human-scale testimony so the impossible world lands emotionally, not just structurally."))
+            regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm", elem_classes=["museum-action-btn"])
             visitor_html = gr.HTML(
                 value="<div class='empty-state'>No one has yet signed the visitor's book.</div>",
                 elem_classes=["hall-content"],
