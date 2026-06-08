@@ -1430,7 +1430,7 @@ body[data-museum-theme="dark"] .museum-header {
 .museum-room-stage {
     position: relative;
     width: min(100%, 1540px);
-    min-height: 340px;
+    min-height: 470px;
     margin: 0 auto 18px;
     border: 1px solid rgba(200, 169, 110, 0.16);
     border-radius: 24px;
@@ -1438,6 +1438,9 @@ body[data-museum-theme="dark"] .museum-header {
     background:
         radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 26%),
         linear-gradient(180deg, rgba(17, 12, 10, 0.82), rgba(10, 8, 7, 0.9));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 20px 50px rgba(0, 0, 0, 0.24);
 }
 
 .museum-room-scene {
@@ -1463,6 +1466,16 @@ body[data-museum-theme="dark"] .museum-header {
     position: absolute;
     inset: 0;
     opacity: 0.95;
+}
+
+.museum-room-scene::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 30%;
+    background:
+        linear-gradient(180deg, transparent 0%, rgba(26, 18, 13, 0.18) 22%, rgba(14, 11, 9, 0.94) 100%);
+    border-top: 1px solid rgba(200, 169, 110, 0.08);
 }
 
 .museum-room-scene--lobby::before {
@@ -1511,26 +1524,182 @@ body[data-museum-theme="dark"] .museum-header {
     background: radial-gradient(circle at 50% 18%, rgba(255, 244, 218, 0.06), transparent 18%);
 }
 
+.museum-room-spotlight {
+    position: absolute;
+    top: 20px;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    filter: blur(8px);
+    background: radial-gradient(circle, rgba(255, 240, 205, 0.4) 0%, rgba(255, 240, 205, 0.16) 32%, transparent 72%);
+    opacity: 0.92;
+}
+
+.museum-room-spotlight--left {
+    left: 15%;
+}
+
+.museum-room-spotlight--center {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.museum-room-spotlight--right {
+    right: 15%;
+}
+
+.museum-room-gallery {
+    position: absolute;
+    left: 25%;
+    right: 5%;
+    top: 76px;
+    bottom: 34px;
+    display: grid;
+    grid-template-columns: 1.35fr 0.9fr;
+    gap: 22px;
+    align-items: end;
+}
+
+.museum-room-artwall {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    align-items: start;
+}
+
 .museum-room-frame {
+    position: relative;
+    min-height: 190px;
+    border-radius: 6px;
+    background:
+        linear-gradient(135deg, rgba(109, 80, 43, 0.9), rgba(48, 32, 18, 0.96));
+    padding: 10px;
+    box-shadow:
+        0 16px 30px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 234, 198, 0.1);
+}
+
+.museum-room-frame::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255, 233, 197, 0.14);
+    pointer-events: none;
+}
+
+.museum-room-canvas {
+    position: relative;
+    min-height: 170px;
+    height: 100%;
+    border: 1px solid rgba(25, 16, 10, 0.4);
+    background:
+        radial-gradient(circle at 32% 28%, rgba(255, 240, 219, 0.18), transparent 16%),
+        linear-gradient(135deg, rgba(83, 56, 29, 0.92), rgba(28, 19, 12, 0.92));
+    overflow: hidden;
+}
+
+.museum-room-canvas--tall {
+    min-height: 250px;
+}
+
+.museum-room-canvas::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 0 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%);
+    mix-blend-mode: screen;
+}
+
+.museum-room-plinth-zone {
+    position: relative;
+    min-height: 280px;
+}
+
+.museum-room-plinth {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 0;
+    height: 92px;
+    border-radius: 10px 10px 0 0;
+    background:
+        linear-gradient(180deg, rgba(215, 188, 139, 0.12), rgba(40, 27, 16, 0.96));
+    border: 1px solid rgba(230, 205, 160, 0.12);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24);
+}
+
+.museum-room-object {
     position: absolute;
     left: 50%;
-    bottom: 14%;
-    width: 64%;
-    height: 44%;
+    bottom: 72px;
     transform: translateX(-50%);
-    border: 1px solid rgba(231, 206, 157, 0.12);
-    border-radius: 18px 18px 8px 8px;
+}
+
+.museum-room-object--orb {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
     background:
-        linear-gradient(180deg, rgba(255, 240, 212, 0.04), transparent 24%),
-        rgba(12, 9, 7, 0.16);
-    box-shadow: inset 0 -70px 90px rgba(0, 0, 0, 0.24);
+        radial-gradient(circle at 35% 32%, rgba(255, 242, 214, 0.82), rgba(181, 136, 74, 0.72) 44%, rgba(74, 45, 22, 0.98) 100%);
+    box-shadow: 0 0 38px rgba(217, 176, 106, 0.16);
+}
+
+.museum-room-object--column {
+    width: 86px;
+    height: 138px;
+    border-radius: 44px 44px 10px 10px;
+    background:
+        linear-gradient(180deg, rgba(228, 214, 183, 0.24), rgba(81, 56, 31, 0.96));
+    clip-path: polygon(28% 0%, 72% 0%, 86% 16%, 86% 84%, 72% 100%, 28% 100%, 14% 84%, 14% 16%);
+}
+
+.museum-room-object--desk {
+    width: 150px;
+    height: 86px;
+    border-radius: 14px 14px 8px 8px;
+    background:
+        linear-gradient(180deg, rgba(208, 177, 123, 0.2), rgba(58, 39, 22, 0.96));
+    box-shadow: inset 0 -20px 30px rgba(0, 0, 0, 0.22);
+}
+
+.museum-room-object--book {
+    width: 120px;
+    height: 28px;
+    border-radius: 4px 4px 10px 10px;
+    background:
+        linear-gradient(180deg, rgba(240, 233, 211, 0.8), rgba(103, 76, 44, 0.94));
+    transform: translateX(-50%) rotate(-8deg);
+}
+
+.museum-room-wall-label {
+    position: absolute;
+    left: 6%;
+    bottom: 24px;
+    padding: 10px 12px 9px;
+    border: 1px solid rgba(255, 235, 203, 0.1);
+    background: rgba(14, 10, 8, 0.66);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+    max-width: 22ch;
+}
+
+.museum-room-label-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
 }
 
 .museum-room-scene-copy {
     position: absolute;
     left: 32px;
-    bottom: 28px;
-    max-width: 520px;
+    top: 34px;
+    max-width: 420px;
     z-index: 2;
 }
 
@@ -1555,7 +1724,7 @@ body[data-museum-theme="dark"] .museum-header {
     color: var(--paper);
     font-size: 17px;
     line-height: 1.7;
-    max-width: 38ch;
+    max-width: 32ch;
 }
 
 .museum-hall-shell {
@@ -2746,48 +2915,119 @@ def build_room_stage() -> str:
     return """
 <div class="museum-room-stage" data-active-room="lobby">
     <div class="museum-room-scene museum-room-scene--lobby">
+        <div class="museum-room-spotlight museum-room-spotlight--center"></div>
         <div class="museum-room-glow"></div>
-        <div class="museum-room-frame"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 01</div>
             <div class="museum-room-scene-title">Lobby</div>
             <div class="museum-room-scene-text">A calm orientation chamber where the rules of reality, government, and taboo are introduced before you cross into the deeper halls.</div>
         </div>
+        <div class="museum-room-gallery">
+            <div class="museum-room-artwall">
+                <div class="museum-room-frame"><div class="museum-room-canvas museum-room-canvas--tall"></div></div>
+                <div class="museum-room-frame"><div class="museum-room-canvas"></div></div>
+            </div>
+            <div class="museum-room-plinth-zone">
+                <div class="museum-room-plinth"></div>
+                <div class="museum-room-object museum-room-object--orb"></div>
+            </div>
+        </div>
+        <div class="museum-room-wall-label">
+            <div class="museum-room-label-title">Orientation Plaque</div>
+            Begin with the rules of the civilization before moving deeper into the collection.
+        </div>
     </div>
     <div class="museum-room-scene museum-room-scene--artifacts">
+        <div class="museum-room-spotlight museum-room-spotlight--left"></div>
+        <div class="museum-room-spotlight museum-room-spotlight--right"></div>
         <div class="museum-room-glow"></div>
-        <div class="museum-room-frame"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 02</div>
             <div class="museum-room-scene-title">Artifacts</div>
             <div class="museum-room-scene-text">A denser chamber of vitrines and object labels, where relics feel tactile, ceremonial, and slightly dangerous.</div>
         </div>
+        <div class="museum-room-gallery">
+            <div class="museum-room-artwall">
+                <div class="museum-room-frame"><div class="museum-room-canvas"></div></div>
+                <div class="museum-room-frame"><div class="museum-room-canvas museum-room-canvas--tall"></div></div>
+            </div>
+            <div class="museum-room-plinth-zone">
+                <div class="museum-room-plinth"></div>
+                <div class="museum-room-object museum-room-object--column"></div>
+            </div>
+        </div>
+        <div class="museum-room-wall-label">
+            <div class="museum-room-label-title">Collection Note</div>
+            Objects here should feel excavated, ceremonial, and slightly unstable.
+        </div>
     </div>
     <div class="museum-room-scene museum-room-scene--timeline">
+        <div class="museum-room-spotlight museum-room-spotlight--center"></div>
         <div class="museum-room-glow"></div>
-        <div class="museum-room-frame"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 03</div>
             <div class="museum-room-scene-title">Timeline</div>
             <div class="museum-room-scene-text">A long historical gallery where events feel arranged on illuminated walls, as if the civilization is being reconstructed in sequence around you.</div>
         </div>
+        <div class="museum-room-gallery">
+            <div class="museum-room-artwall">
+                <div class="museum-room-frame"><div class="museum-room-canvas museum-room-canvas--tall"></div></div>
+                <div class="museum-room-frame"><div class="museum-room-canvas museum-room-canvas--tall"></div></div>
+            </div>
+            <div class="museum-room-plinth-zone">
+                <div class="museum-room-plinth"></div>
+                <div class="museum-room-object museum-room-object--book"></div>
+            </div>
+        </div>
+        <div class="museum-room-wall-label">
+            <div class="museum-room-label-title">Archive Strip</div>
+            The room stretches into chronology, with wall-mounted sequence and timeline residue.
+        </div>
     </div>
     <div class="museum-room-scene museum-room-scene--newspaper">
+        <div class="museum-room-spotlight museum-room-spotlight--right"></div>
         <div class="museum-room-glow"></div>
-        <div class="museum-room-frame"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 04</div>
             <div class="museum-room-scene-title">Newspaper</div>
             <div class="museum-room-scene-text">A press room with pinned editions, warm desk lamps, and the feeling that the world is still speaking in its own public voice.</div>
         </div>
+        <div class="museum-room-gallery">
+            <div class="museum-room-artwall">
+                <div class="museum-room-frame"><div class="museum-room-canvas"></div></div>
+                <div class="museum-room-frame"><div class="museum-room-canvas"></div></div>
+            </div>
+            <div class="museum-room-plinth-zone">
+                <div class="museum-room-plinth"></div>
+                <div class="museum-room-object museum-room-object--desk"></div>
+            </div>
+        </div>
+        <div class="museum-room-wall-label">
+            <div class="museum-room-label-title">Press Cabinet</div>
+            Public memory lives here: editions, proclamations, and surviving headlines.
+        </div>
     </div>
     <div class="museum-room-scene museum-room-scene--visitor">
+        <div class="museum-room-spotlight museum-room-spotlight--center"></div>
         <div class="museum-room-glow"></div>
-        <div class="museum-room-frame"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 05</div>
             <div class="museum-room-scene-title">Visitor's Book</div>
             <div class="museum-room-scene-text">A quieter final room where the architecture softens and one human voice closes the exhibition at intimate scale.</div>
+        </div>
+        <div class="museum-room-gallery">
+            <div class="museum-room-artwall">
+                <div class="museum-room-frame"><div class="museum-room-canvas museum-room-canvas--tall"></div></div>
+                <div class="museum-room-frame"><div class="museum-room-canvas"></div></div>
+            </div>
+            <div class="museum-room-plinth-zone">
+                <div class="museum-room-plinth"></div>
+                <div class="museum-room-object museum-room-object--book"></div>
+            </div>
+        </div>
+        <div class="museum-room-wall-label">
+            <div class="museum-room-label-title">Closing Note</div>
+            One voice remains after the institution goes silent.
         </div>
     </div>
 </div>
