@@ -255,6 +255,225 @@ body, .gradio-container {
     padding: 0 20px 36px !important;
 }
 
+.landing-wrap {
+    width: min(100%, 1540px);
+    margin: 24px auto 0;
+}
+
+.landing-shell {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at 12% 16%, rgba(200, 169, 110, 0.14), transparent 22%),
+        radial-gradient(circle at 86% 12%, rgba(200, 169, 110, 0.08), transparent 20%),
+        linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 92%, black), var(--panel));
+    box-shadow: 0 24px 60px var(--shadow);
+}
+
+.landing-shell::before {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 22px;
+    pointer-events: none;
+}
+
+.landing-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 26px;
+    padding: 34px;
+    align-items: stretch;
+}
+
+.landing-copy {
+    padding: 10px 6px 10px 4px;
+}
+
+.landing-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.landing-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 58px;
+    line-height: 1.04;
+    max-width: 11ch;
+    text-wrap: balance;
+}
+
+.landing-subtitle {
+    margin-top: 16px;
+    color: var(--gold);
+    font-size: 22px;
+    line-height: 1.45;
+    max-width: 28ch;
+}
+
+.landing-lead {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 19px;
+    line-height: 1.8;
+    max-width: 34em;
+}
+
+.landing-plaque-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.landing-plaque {
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.landing-plaque-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.landing-plaque-value {
+    color: var(--paper);
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+.landing-cta-copy {
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 38em;
+}
+
+.landing-art {
+    position: relative;
+    min-height: 680px;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    background:
+        radial-gradient(circle at 50% 24%, rgba(245, 228, 191, 0.32), transparent 16%),
+        radial-gradient(circle at 50% 16%, rgba(200, 169, 110, 0.22), transparent 28%),
+        linear-gradient(180deg, rgba(10, 8, 7, 0.22), rgba(10, 8, 7, 0.66)),
+        linear-gradient(180deg, color-mix(in srgb, var(--panel-light) 10%, transparent), color-mix(in srgb, var(--panel-strong) 92%, black));
+}
+
+.landing-art::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 0, transparent 44%, rgba(255, 255, 255, 0.05) 50%, transparent 56%, transparent 100%);
+    opacity: 0.4;
+}
+
+.landing-skyline {
+    position: absolute;
+    inset: auto 0 0;
+    height: 64%;
+    background:
+        linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.08) 18%, rgba(0, 0, 0, 0.34) 100%);
+}
+
+.landing-dome {
+    position: absolute;
+    left: 50%;
+    bottom: 17%;
+    width: 56%;
+    aspect-ratio: 1.18 / 1;
+    transform: translateX(-50%);
+    border-radius: 50% 50% 0 0;
+    background:
+        radial-gradient(circle at 50% 20%, rgba(249, 236, 203, 0.42), transparent 24%),
+        linear-gradient(180deg, rgba(232, 211, 165, 0.24), rgba(61, 45, 27, 0.76));
+    border: 1px solid rgba(223, 198, 150, 0.18);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.landing-dome::before {
+    content: "";
+    position: absolute;
+    inset: 16% 14% auto;
+    height: 54%;
+    border-radius: 50% 50% 0 0;
+    border: 1px solid rgba(255, 244, 218, 0.16);
+}
+
+.landing-steps {
+    position: absolute;
+    left: 50%;
+    bottom: 8%;
+    width: 82%;
+    height: 26%;
+    transform: translateX(-50%);
+    background:
+        linear-gradient(180deg, rgba(243, 230, 200, 0.1), rgba(36, 26, 18, 0.82));
+    clip-path: polygon(12% 100%, 20% 74%, 31% 74%, 37% 50%, 63% 50%, 69% 74%, 80% 74%, 88% 100%);
+}
+
+.landing-pillars {
+    position: absolute;
+    inset: auto 19% 13%;
+    height: 38%;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.landing-pillars span {
+    border-radius: 999px 999px 6px 6px;
+    background: linear-gradient(180deg, rgba(245, 229, 194, 0.24), rgba(45, 32, 18, 0.88));
+    border: 1px solid rgba(245, 229, 194, 0.12);
+}
+
+.landing-caption {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: rgba(248, 240, 223, 0.82);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.museum-topbar {
+    width: min(100%, 1540px);
+    margin: 18px auto 0;
+    padding: 0 24px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.museum-topbar .museum-secondary-btn {
+    min-width: 180px;
+}
+
 body[data-museum-theme="retro"], body[data-museum-theme="retro"] .gradio-container {
     background:
         radial-gradient(circle at 12% 18%, rgba(200, 169, 110, 0.11), transparent 22%),
@@ -1835,6 +2054,7 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 @media (max-width: 900px) {
+    .landing-grid,
     .lobby-grid,
     .world-details,
     .timeline-card,
@@ -1870,6 +2090,19 @@ body[data-museum-theme="dark"] .museum-header {
     .museum-title {
         font-size: 28px;
     }
+
+    .landing-title {
+        font-size: 40px;
+        max-width: 14ch;
+    }
+
+    .landing-art {
+        min-height: 480px;
+    }
+
+    .landing-plaque-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 640px) {
@@ -1883,9 +2116,44 @@ body[data-museum-theme="dark"] .museum-header {
     .status-wrap,
     .input-zone,
     .map-wrap,
-    .museum-hall-stack {
+    .museum-hall-stack,
+    .museum-topbar {
         padding-left: 0;
         padding-right: 0;
+    }
+
+    .landing-wrap {
+        margin-top: 12px;
+    }
+
+    .landing-grid {
+        padding: 18px;
+        gap: 18px;
+    }
+
+    .landing-shell {
+        border-radius: 22px;
+    }
+
+    .landing-title {
+        font-size: 32px;
+    }
+
+    .landing-subtitle {
+        font-size: 18px;
+    }
+
+    .landing-lead {
+        font-size: 17px;
+    }
+
+    .landing-art {
+        min-height: 360px;
+    }
+
+    .landing-caption {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .museum-map {
@@ -2198,6 +2466,47 @@ def build_hero_html(curator_mode: str) -> str:
 """
 
 
+def build_landing_html(curator_mode: str) -> str:
+    mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
+    return f"""
+<div class="landing-shell">
+    <div class="landing-grid">
+        <div class="landing-copy">
+            <div class="landing-kicker">Infinite Museum Arrival Hall</div>
+            <div class="landing-title">Enter A Museum Built From Impossible Worlds</div>
+            <div class="landing-subtitle">One premise becomes architecture, memory, ritual, newsprint, and private testimony.</div>
+            <div class="landing-lead">{esc(mode["lead"])}</div>
+            <div class="landing-plaque-row">
+                <div class="landing-plaque">
+                    <div class="landing-plaque-label">Curator mode</div>
+                    <div class="landing-plaque-value">{esc(curator_mode)}</div>
+                </div>
+                <div class="landing-plaque">
+                    <div class="landing-plaque-label">Inside the museum</div>
+                    <div class="landing-plaque-value">Lobby, objects, timeline, newspaper, and one final human voice.</div>
+                </div>
+                <div class="landing-plaque">
+                    <div class="landing-plaque-label">Current lens</div>
+                    <div class="landing-plaque-value">{esc(mode["plaque"])}</div>
+                </div>
+            </div>
+            <div class="landing-cta-copy">Begin at the entrance, choose the curatorial lens, then step into the museum to describe the civilization you want to open.</div>
+        </div>
+        <div class="landing-art" aria-hidden="true">
+            <div class="landing-skyline"></div>
+            <div class="landing-dome"></div>
+            <div class="landing-steps"></div>
+            <div class="landing-pillars"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="landing-caption">
+                <span>Atmospheric entrance rendering</span>
+                <span>Impossible Civilizations Archive</span>
+            </div>
+        </div>
+    </div>
+</div>
+"""
+
+
 def build_map_html(active_room: str, completed_rooms: list[str]) -> str:
     cards = []
     completed = set(completed_rooms)
@@ -2339,6 +2648,14 @@ def build_museum_state(concept: str, curator_mode: str, world_bible: dict, artif
 
 def default_state() -> dict:
     return build_museum_state("", "Anthropology", {})
+
+
+def show_museum_shell():
+    return gr.update(visible=False), gr.update(visible=True)
+
+
+def show_landing_page():
+    return gr.update(visible=True), gr.update(visible=False)
 
 
 def generate_artifact_image_action(state: dict, artifact_index: int):
@@ -2522,98 +2839,113 @@ def generate_museum(concept: str, curator_mode: str):
 with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worlds") as demo:
     museum_state = gr.State(default_state())
     hero_html = gr.HTML(build_hero_html("Anthropology"))
-
-    with gr.Row(elem_classes=["input-zone"]):
-        with gr.Column(scale=5):
-            concept_input = gr.Textbox(
-                label="Describe an impossible world",
-                placeholder="A world where dreams are currency. A city ruled by tides that remember. A moon where gravity is negotiated each morning.",
-                lines=2,
-            )
-        with gr.Column(scale=1, min_width=190):
-            generate_btn = gr.Button("Open Museum", elem_classes=["enter-btn"])
-
-    with gr.Row(elem_classes=["control-shell"]):
-        with gr.Column(elem_classes=["control-card"]):
-            gr.HTML(
-                """
+    with gr.Column(visible=True) as landing_view:
+        with gr.Row(elem_classes=["control-shell"]):
+            with gr.Column(elem_classes=["control-card"]):
+                gr.HTML(
+                    """
 <div class="control-panel-label">Curator modes</div>
-<div class="control-panel-copy">Choose how the museum should frame the next world. The same premise can feel social, mythic, official, or intimate depending on the mode.</div>
+<div class="control-panel-copy">Choose the interpretive lens before you enter. The museum will carry that mood across every hall once you begin generating a world.</div>
 """
-            )
-            curator_mode = gr.Radio(
-                choices=list(CURATOR_MODES.keys()),
-                value="Anthropology",
-                show_label=False,
-                elem_classes=["mode-radio"],
+                )
+                curator_mode = gr.Radio(
+                    choices=list(CURATOR_MODES.keys()),
+                    value="Anthropology",
+                    show_label=False,
+                    elem_classes=["mode-radio"],
+                )
+        with gr.Row(elem_classes=["landing-wrap"]):
+            landing_html = gr.HTML(build_landing_html("Anthropology"))
+        with gr.Row(elem_classes=["input-zone"]):
+            with gr.Column(scale=4):
+                gr.HTML(
+                    """
+<div class="control-panel-copy">Step through the entrance first, then describe the impossible civilization once you are inside the museum shell.</div>
+"""
+                )
+            with gr.Column(scale=1, min_width=220):
+                landing_enter_btn = gr.Button("Enter The Museum", elem_classes=["enter-btn"])
+
+    with gr.Column(visible=False) as museum_view:
+        with gr.Row(elem_classes=["museum-topbar"]):
+            exit_btn = gr.Button("Back To Entrance", size="sm", elem_classes=["museum-secondary-btn"])
+
+        with gr.Row(elem_classes=["input-zone"]):
+            with gr.Column(scale=5):
+                concept_input = gr.Textbox(
+                    label="Describe an impossible world",
+                    placeholder="A world where dreams are currency. A city ruled by tides that remember. A moon where gravity is negotiated each morning.",
+                    lines=2,
+                )
+            with gr.Column(scale=1, min_width=190):
+                generate_btn = gr.Button("Open Museum", elem_classes=["enter-btn"])
+
+        with gr.Row(elem_classes=["status-wrap"]):
+            status_html = gr.HTML(
+                build_status_panel(
+                    "Awaiting a world concept",
+                    "Describe an impossible civilization to open the museum.",
+                    "Anthropology",
+                )
             )
 
-    with gr.Row(elem_classes=["status-wrap"]):
-        status_html = gr.HTML(
-            build_status_panel(
-                "Awaiting a world concept",
-                "Describe an impossible civilization to open the museum.",
-                "Anthropology",
-            )
+        with gr.Row(elem_classes=["theme-wrap"]):
+            gr.HTML(build_theme_bar())
+
+        museum_header = gr.HTML(
+            "<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"
         )
+        map_html = gr.HTML(build_map_html("lobby", []), elem_classes=["map-wrap"])
 
-    with gr.Row(elem_classes=["theme-wrap"]):
-        gr.HTML(build_theme_bar())
+        with gr.Column(elem_classes=["museum-hall-stack"]):
+            gr.HTML(build_hall_nav())
+            with gr.Group(elem_classes=["museum-hall-panel", "is-active"], elem_id="hall-panel-lobby"):
+                gr.HTML(build_panel_header("Hall 01", "Lobby", "Read the governing rule of the civilization, then use the floor plan to move deeper into the museum."))
+                lobby_html = gr.HTML(
+                    value="<div class='empty-state'>The museum awaits its first impossible world.</div>",
+                    elem_classes=["hall-content"],
+                )
+            with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-artifacts"):
+                gr.HTML(build_panel_header("Hall 02", "Artifacts", "Move between the catalog view and on-demand renders without losing the rest of the exhibition."))
+                with gr.Row(elem_classes=["hall-action-row"]):
+                    artifact_image_btn_1 = gr.Button("Render Artifact 1", size="sm", elem_classes=["museum-secondary-btn"])
+                    artifact_image_btn_2 = gr.Button("Render Artifact 2", size="sm", elem_classes=["museum-secondary-btn"])
+                    artifact_image_btn_3 = gr.Button("Render Artifact 3", size="sm", elem_classes=["museum-secondary-btn"])
+                regen_artifacts_btn = gr.Button("Regenerate Artifacts", size="sm", elem_classes=["museum-action-btn"])
+                artifacts_html = gr.HTML(
+                    value="<div class='empty-state'>The artifact hall is sealed.</div>",
+                    elem_classes=["hall-content"],
+                )
+            with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-timeline"):
+                gr.HTML(build_panel_header("Hall 03", "Timeline", "Follow the civilization in sequence, from founding logic to the events that distorted everyday life."))
+                regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm", elem_classes=["museum-action-btn"])
+                timeline_html = gr.HTML(
+                    value="<div class='empty-state'>History has not yet been arranged.</div>",
+                    elem_classes=["hall-content"],
+                )
+            with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-newspaper"):
+                gr.HTML(build_panel_header("Hall 04", "Newspaper", "Read the world in its own public voice through a single surviving front page."))
+                regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm", elem_classes=["museum-action-btn"])
+                newspaper_html = gr.HTML(
+                    value="<div class='empty-state'>No front page has gone to print.</div>",
+                    elem_classes=["hall-content"],
+                )
+            with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-visitor"):
+                gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "End with one human-scale testimony so the impossible world lands emotionally, not just structurally."))
+                regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm", elem_classes=["museum-action-btn"])
+                visitor_html = gr.HTML(
+                    value="<div class='empty-state'>No one has yet signed the visitor's book.</div>",
+                    elem_classes=["hall-content"],
+                )
+            gr.HTML("</div>")
 
-    museum_header = gr.HTML(
-        "<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"
-    )
-    map_html = gr.HTML(build_map_html("lobby", []), elem_classes=["map-wrap"])
-
-    with gr.Column(elem_classes=["museum-hall-stack"]):
-        gr.HTML(build_hall_nav())
-        with gr.Group(elem_classes=["museum-hall-panel", "is-active"], elem_id="hall-panel-lobby"):
-            gr.HTML(build_panel_header("Hall 01", "Lobby", "Read the governing rule of the civilization, then use the floor plan to move deeper into the museum."))
-            lobby_html = gr.HTML(
-                value="<div class='empty-state'>The museum awaits its first impossible world.</div>",
-                elem_classes=["hall-content"],
-            )
-        with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-artifacts"):
-            gr.HTML(build_panel_header("Hall 02", "Artifacts", "Move between the catalog view and on-demand renders without losing the rest of the exhibition."))
-            with gr.Row(elem_classes=["hall-action-row"]):
-                artifact_image_btn_1 = gr.Button("Render Artifact 1", size="sm", elem_classes=["museum-secondary-btn"])
-                artifact_image_btn_2 = gr.Button("Render Artifact 2", size="sm", elem_classes=["museum-secondary-btn"])
-                artifact_image_btn_3 = gr.Button("Render Artifact 3", size="sm", elem_classes=["museum-secondary-btn"])
-            regen_artifacts_btn = gr.Button("Regenerate Artifacts", size="sm", elem_classes=["museum-action-btn"])
-            artifacts_html = gr.HTML(
-                value="<div class='empty-state'>The artifact hall is sealed.</div>",
-                elem_classes=["hall-content"],
-            )
-        with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-timeline"):
-            gr.HTML(build_panel_header("Hall 03", "Timeline", "Follow the civilization in sequence, from founding logic to the events that distorted everyday life."))
-            regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm", elem_classes=["museum-action-btn"])
-            timeline_html = gr.HTML(
-                value="<div class='empty-state'>History has not yet been arranged.</div>",
-                elem_classes=["hall-content"],
-            )
-        with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-newspaper"):
-            gr.HTML(build_panel_header("Hall 04", "Newspaper", "Read the world in its own public voice through a single surviving front page."))
-            regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm", elem_classes=["museum-action-btn"])
-            newspaper_html = gr.HTML(
-                value="<div class='empty-state'>No front page has gone to print.</div>",
-                elem_classes=["hall-content"],
-            )
-        with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-visitor"):
-            gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "End with one human-scale testimony so the impossible world lands emotionally, not just structurally."))
-            regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm", elem_classes=["museum-action-btn"])
-            visitor_html = gr.HTML(
-                value="<div class='empty-state'>No one has yet signed the visitor's book.</div>",
-                elem_classes=["hall-content"],
-            )
-        gr.HTML("</div>")
-
-    gr.HTML(
-        """
+        gr.HTML(
+            """
 <div class="museum-footer">
     Infinite Museum of Impossible Worlds | Small-model worldbuilding | Built for Build Small Hackathon 2026
 </div>
 """
-    )
+        )
 
     outputs = [
         status_html,
@@ -2629,10 +2961,13 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
     ]
 
     curator_mode.change(
-        fn=lambda mode: build_hero_html(mode),
+        fn=lambda mode: (build_landing_html(mode), build_hero_html(mode)),
         inputs=[curator_mode],
-        outputs=[hero_html],
+        outputs=[landing_html, hero_html],
     )
+
+    landing_enter_btn.click(show_museum_shell, outputs=[landing_view, museum_view])
+    exit_btn.click(show_landing_page, outputs=[landing_view, museum_view])
 
     generate_btn.click(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
     concept_input.submit(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
