@@ -36,6 +36,111 @@ APP_HEAD = """
   };
 
   let walkToken = 0;
+  let audioContext = null;
+  let ambientGain = null;
+  let ambientOscillator = null;
+
+  function ensureAudioContext() {
+    if (audioContext) return audioContext;
+    const Context = window.AudioContext || window.webkitAudioContext;
+    if (!Context) return null;
+    audioContext = new Context();
+    return audioContext;
+  }
+
+  function startAmbientSound() {
+    const context = ensureAudioContext();
+    if (!context || ambientOscillator) return;
+    ambientGain = context.createGain();
+    ambientGain.gain.value = 0.008;
+    ambientOscillator = context.createOscillator();
+    ambientOscillator.type = "sine";
+    ambientOscillator.frequency.value = 58;
+
+    const filter = context.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.value = 220;
+
+    ambientOscillator.connect(filter);
+    filter.connect(ambientGain);
+    ambientGain.connect(context.destination);
+    ambientOscillator.start();
+  }
+
+  function playFootstep() {
+    const context = ensureAudioContext();
+    if (!context) return;
+    startAmbientSound();
+    if (context.state === "suspended") {
+      context.resume().catch(() => {});
+    }
+
+    const now = context.currentTime;
+    const osc = context.createOscillator();
+    const gain = context.createGain();
+    const filter = context.createBiquadFilter();
+
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(110, now);
+    osc.frequency.exponentialRampToValueAtTime(65, now + 0.12);
+
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(420, now);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.linearRampToValueAtTime(0.016, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(context.destination);
+    osc.start(now);
+    osc.stop(now + 0.18);
+  }
+
+  function typeElement(node) {
+    if (!node || node.dataset.typeDone === "true") return;
+    const fullText = node.dataset.typeText || node.textContent || "";
+    if (!fullText.trim()) {
+      node.dataset.typeDone = "true";
+      return;
+    }
+
+    node.dataset.typeDone = "typing";
+    node.textContent = "";
+    let index = 0;
+    const cadence = Number(node.dataset.typeSpeed || 16);
+
+    const tick = () => {
+      if (!node.isConnected) return;
+      index += 1;
+      node.textContent = fullText.slice(0, index);
+      if (index < fullText.length) {
+        window.setTimeout(tick, cadence);
+      } else {
+        node.dataset.typeDone = "true";
+      }
+    };
+
+    tick();
+  }
+
+  function runTypewriters(scope = document) {
+    scope.querySelectorAll("[data-type-text]").forEach((node) => {
+      if (!node.dataset.typeDone || node.dataset.typeDone === "typing") {
+        typeElement(node);
+      }
+    });
+  }
+
+  function retriggerTypewriters(scope) {
+    if (!scope) return;
+    scope.querySelectorAll("[data-type-text]").forEach((node) => {
+      node.dataset.typeDone = "";
+      node.textContent = "";
+    });
+    runTypewriters(scope);
+  }
 
   function marker() {
     return document.getElementById("museum-visitor");
@@ -85,7 +190,11 @@ APP_HEAD = """
     const stage = document.querySelector(".museum-room-stage");
     if (stage) {
       stage.setAttribute("data-active-room", roomId);
+      const activeScene = stage.querySelector(`.museum-room-scene--${roomId}`);
+      retriggerTypewriters(activeScene);
     }
+    const activePanel = document.getElementById(`hall-panel-${roomId}`);
+    retriggerTypewriters(activePanel);
     if (scrollIntoView) {
       const stack = document.querySelector(".museum-hall-stack");
       if (stack) {
@@ -136,6 +245,7 @@ APP_HEAD = """
     const advance = () => {
       if (token !== walkToken) return;
       setVisitorPosition(steps[index]);
+      playFootstep();
       index += 1;
       if (index < steps.length) {
         window.setTimeout(advance, 300);
@@ -209,7 +319,23 @@ APP_HEAD = """
     window.setTimeout(positionFromActiveRoom, 250);
     window.setTimeout(positionFromActiveRoom, 900);
     window.setTimeout(syncMapToSelectedTab, 500);
+    runTypewriters(document);
   }
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      mutation.addedNodes.forEach((node) => {
+        if (!(node instanceof HTMLElement)) return;
+        if (node.matches?.("[data-type-text]")) {
+          typeElement(node);
+        } else {
+          runTypewriters(node);
+        }
+      });
+    }
+  });
+
+  observer.observe(document.documentElement, { childList: true, subtree: true });
 
   if (document.readyState === "loading") {
     window.addEventListener("load", bootMuseumUi);
@@ -734,6 +860,31 @@ body[data-museum-theme="light"] {
     letter-spacing: 0.2em !important;
 }
 
+.concept-chip-row {
+    width: min(100%, 1540px);
+    margin: -2px auto 14px;
+    padding: 0 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.concept-chip-btn {
+    min-height: 42px !important;
+    padding: 0 16px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(200, 169, 110, 0.26) !important;
+    background: rgba(18, 13, 11, 0.72) !important;
+    color: var(--paper) !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+}
+
+.concept-chip-btn:hover {
+    border-color: rgba(200, 169, 110, 0.58) !important;
+    background: rgba(200, 169, 110, 0.12) !important;
+}
+
 .control-shell {
     padding: 0 24px 10px;
 }
@@ -905,6 +1056,73 @@ body[data-museum-theme="light"] {
 
 .status-wrap {
     padding: 2px 24px 18px;
+}
+
+.share-wrap {
+    width: min(100%, 1540px);
+    margin: 0 auto;
+    padding: 0 24px 18px;
+}
+
+.share-card {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 22px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.12), transparent 24%),
+        var(--panel);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+}
+
+.share-card-kicker,
+.share-card-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+}
+
+.share-card-kicker {
+    font-size: 10px;
+    margin-bottom: 8px;
+}
+
+.share-card-title {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.share-card-summary {
+    color: var(--paper);
+    font-size: 18px;
+    line-height: 1.65;
+    margin-bottom: 16px;
+}
+
+.share-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.share-card-stat {
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.share-card-label {
+    font-size: 9px;
+    margin-bottom: 8px;
+}
+
+.share-card-value {
+    color: var(--paper);
+    font-size: 15px;
+    line-height: 1.55;
 }
 
 .status-panel {
@@ -2285,6 +2503,17 @@ body[data-museum-theme="dark"] .museum-header {
     margin-bottom: 12px;
 }
 
+.newspaper-columns {
+    column-count: 2;
+    column-gap: 28px;
+    column-rule: 1px solid rgba(70, 50, 30, 0.18);
+}
+
+.newspaper-column-block {
+    break-inside: avoid;
+    margin-bottom: 14px;
+}
+
 .newspaper-body,
 .newspaper-secondary-body {
     font-size: 17px;
@@ -2463,6 +2692,7 @@ body[data-museum-theme="dark"] .museum-header {
         border-radius: 18px;
     }
 
+    .share-card-grid,
     .museum-legend,
     .museum-hall-nav {
         grid-template-columns: 1fr;
@@ -2474,6 +2704,10 @@ body[data-museum-theme="dark"] .museum-header {
 
     .timeline-card::before {
         display: none;
+    }
+
+    .newspaper-columns {
+        column-count: 1;
     }
 }
 """
@@ -2522,6 +2756,40 @@ def esc(value: str) -> str:
     return html.escape(str(value or ""))
 
 
+def esc_attr(value: str) -> str:
+    return html.escape(str(value or ""), quote=True)
+
+
+def type_text(text: str, class_name: str, speed: int = 16, tag: str = "div") -> str:
+    safe_text = str(text or "")
+    return f"<{tag} class='{esc_attr(class_name)}' data-type-text='{esc_attr(safe_text)}' data-type-speed='{speed}'>{esc(safe_text)}</{tag}>"
+
+
+def first_item(items, fallback: str) -> str:
+    if isinstance(items, list) and items:
+        return str(items[0] or fallback)
+    return fallback
+
+
+def normalize_timeline_event(event) -> dict:
+    if isinstance(event, dict):
+        return {
+            "year": event.get("year", ""),
+            "title": event.get("title", event.get("headline", "")),
+            "description": event.get("description", event.get("summary", "")),
+            "type": event.get("type", ""),
+        }
+
+    text = str(event or "").strip()
+    if not text:
+        return {"year": "", "title": "Unrecorded event", "description": "", "type": ""}
+
+    head, sep, tail = text.partition(", ")
+    if sep:
+        return {"year": "", "title": head, "description": tail, "type": ""}
+    return {"year": "", "title": text, "description": "", "type": ""}
+
+
 def format_list(items) -> str:
     if not items:
         return "<p>None recorded.</p>"
@@ -2550,6 +2818,56 @@ def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
 """
 
 
+def build_share_card(state: dict) -> str:
+    state = state or {}
+    world_bible = state.get("world_bible") or {}
+    if not world_bible:
+        return "<div class='empty-state'>Generate a museum first to compose a share plaque.</div>"
+
+    artifacts = (state.get("artifacts") or {}).get("artifacts") or []
+    timeline = (state.get("timeline") or {}).get("events") or []
+    lead_event_data = normalize_timeline_event(timeline[0]) if timeline else {"title": "No recorded turning point yet."}
+    museum_name = world_bible.get("museum_name", "Infinite Museum")
+    summary = world_bible.get("summary") or world_bible.get("tagline") or "An impossible civilization preserved in one continuous museum."
+    lead_artifact = artifacts[0].get("name", "No artifact catalogued yet.") if artifacts else "No artifact catalogued yet."
+    lead_event = lead_event_data.get("title") or lead_event_data.get("description") or "No recorded turning point yet."
+    taboo = world_bible.get("taboo", "No absolute taboo recorded yet.")
+
+    return f"""
+<div class="share-card">
+    <div class="share-card-kicker">Share Plaque</div>
+    <div class="share-card-title">{esc(museum_name)}</div>
+    <div class="share-card-summary">{esc(summary)}</div>
+    <div class="share-card-grid">
+        <div class="share-card-stat">
+            <div class="share-card-label">Premise</div>
+            <div class="share-card-value">{esc(state.get("concept", ""))}</div>
+        </div>
+        <div class="share-card-stat">
+            <div class="share-card-label">Government</div>
+            <div class="share-card-value">{esc(world_bible.get("government", "-"))}</div>
+        </div>
+        <div class="share-card-stat">
+            <div class="share-card-label">Artifact to remember</div>
+            <div class="share-card-value">{esc(lead_artifact)}</div>
+        </div>
+        <div class="share-card-stat">
+            <div class="share-card-label">Turning point</div>
+            <div class="share-card-value">{esc(lead_event)}</div>
+        </div>
+        <div class="share-card-stat">
+            <div class="share-card-label">Absolute taboo</div>
+            <div class="share-card-value">{esc(taboo)}</div>
+        </div>
+        <div class="share-card-stat">
+            <div class="share-card-label">Visual motif</div>
+            <div class="share-card-value">{esc(first_item(world_bible.get("visual_motifs"), "No motif recorded yet."))}</div>
+        </div>
+    </div>
+</div>
+"""
+
+
 def build_lobby_html(world_bible: dict) -> str:
     if not world_bible or "museum_name" not in world_bible:
         return "<div class='empty-state'>Describe an impossible world to open the museum.</div>"
@@ -2566,9 +2884,9 @@ def build_lobby_html(world_bible: dict) -> str:
     )
 
     return f"""
-<div class="section-heading">Orientation gallery</div>
+{type_text("Orientation gallery", "section-heading", 14)}
 <div class="lobby-grid">{stat_html}</div>
-<div class="lobby-summary">{esc(world_bible.get("summary", ""))}</div>
+{type_text(world_bible.get("summary", ""), "lobby-summary", 10)}
 <div class="world-details">
     <div class="world-detail">
         <div class="lobby-label">Laws of reality</div>
@@ -2645,19 +2963,20 @@ def build_artifacts_html(data: dict) -> str:
 </div>
 """
 
+    hall_intro = type_text("Artifacts hall", "section-heading", 14)
     for artifact in data.get("artifacts", []):
         cards.append(
             f"""
 <div class="artifact-card">
     <div class="artifact-kicker">Catalogued relic</div>
-    <div class="artifact-name">{esc(artifact.get("name", ""))}</div>
+    {type_text(artifact.get("name", ""), "artifact-name", 12)}
     <div class="artifact-meta">{esc(artifact.get("era", ""))} | {esc(artifact.get("material", ""))}</div>
     <div class="artifact-desc">{esc(artifact.get("description", ""))}</div>
     <div class="artifact-significance">{esc(artifact.get("significance", ""))}</div>
 </div>
 """
         )
-    return "<div class='section-heading'>Artifacts hall</div>" + featured_html + "".join(cards)
+    return hall_intro + featured_html + "".join(cards)
 
 
 def build_timeline_html(data: dict) -> str:
@@ -2665,20 +2984,22 @@ def build_timeline_html(data: dict) -> str:
         return "<div class='empty-state'>The archivists are still arranging the chronology.</div>"
 
     cards = []
-    for event in data.get("events", []):
+    intro = type_text("Timeline hall", "section-heading", 14)
+    for raw_event in data.get("events", []):
+        event = normalize_timeline_event(raw_event)
         cards.append(
             f"""
 <div class="timeline-card">
     <div class="timeline-year">{esc(event.get("year", ""))}</div>
     <div>
-        <div class="timeline-title">{esc(event.get("title", ""))}</div>
+        {type_text(event.get("title", ""), "timeline-title", 12)}
         <div class="timeline-desc">{esc(event.get("description", ""))}</div>
         <div class="timeline-type">{esc(event.get("type", ""))}</div>
     </div>
 </div>
 """
         )
-    return "<div class='section-heading'>Timeline hall</div>" + "".join(cards)
+    return intro + "".join(cards)
 
 
 def build_newspaper_html(data: dict) -> str:
@@ -2688,12 +3009,18 @@ def build_newspaper_html(data: dict) -> str:
     return f"""
 <div class="newspaper-shell">
     <div class="paper-kicker">Printed for the morning crowd</div>
-    <div class="newspaper-name">{esc(data.get("newspaper_name", "The Chronicle"))}</div>
+    {type_text(data.get("newspaper_name", "The Chronicle"), "newspaper-name", 12)}
     <div class="newspaper-meta">{esc(data.get("date", ""))} | {esc(data.get("weather", ""))}</div>
-    <div class="newspaper-headline">{esc(data.get("headline", ""))}</div>
-    <div class="newspaper-body">{esc(data.get("headline_body", ""))}</div>
-    <div class="newspaper-secondary-headline">{esc(data.get("secondary_headline", ""))}</div>
-    <div class="newspaper-secondary-body">{esc(data.get("secondary_body", ""))}</div>
+    {type_text(data.get("headline", ""), "newspaper-headline", 12)}
+    <div class="newspaper-columns">
+        <div class="newspaper-column-block">
+            <div class="newspaper-body">{esc(data.get("headline_body", ""))}</div>
+        </div>
+        <div class="newspaper-column-block">
+            <div class="newspaper-secondary-headline">{esc(data.get("secondary_headline", ""))}</div>
+            <div class="newspaper-secondary-body">{esc(data.get("secondary_body", ""))}</div>
+        </div>
+    </div>
     <div class="newspaper-ad">{esc(data.get("advertisement", ""))}</div>
 </div>
 """
@@ -2706,7 +3033,7 @@ def build_visitor_book_html(data: dict) -> str:
     return f"""
 <div class="visitor-book">
     <div class="visitor-kicker">Final testimony</div>
-    <div class="visitor-entry">"{esc(data.get("entry", ""))}"</div>
+    {type_text(f'"{data.get("entry", "")}"', "visitor-entry", 11)}
     <div class="visitor-signed">{esc(data.get("signed", ""))}</div>
 </div>
 """
@@ -2911,16 +3238,36 @@ def build_panel_header(kicker: str, title: str, copy: str) -> str:
 """
 
 
-def build_room_stage() -> str:
-    return """
+def build_room_stage(state: dict | None = None) -> str:
+    state = state or {}
+    world_bible = state.get("world_bible") or {}
+    artifacts = (state.get("artifacts") or {}).get("artifacts") or []
+    timeline = (state.get("timeline") or {}).get("events") or []
+    lead_timeline_event = normalize_timeline_event(timeline[0]) if timeline else {"title": "The historical sequence is still dark.", "description": "Chronology will unfurl across the walls when the archive opens."}
+    newspaper = state.get("newspaper") or {}
+    visitor_book = state.get("visitor_book") or {}
+
+    museum_name = world_bible.get("museum_name", "Infinite Museum")
+    tagline = world_bible.get("tagline", "An impossible civilization waiting to take architectural form.")
+    artifact_name = artifacts[0].get("name", "Uncatalogued ceremonial object") if artifacts else "Uncatalogued ceremonial object"
+    artifact_significance = artifacts[0].get("significance", "Its significance will be revealed once the vault opens.") if artifacts else "Its significance will be revealed once the vault opens."
+    timeline_title = lead_timeline_event.get("title") or "The historical sequence is still dark."
+    timeline_desc = lead_timeline_event.get("description") or "Chronology will unfurl across the walls when the archive opens."
+    paper_name = newspaper.get("newspaper_name", "Morning Edition Pending")
+    paper_headline = newspaper.get("headline", "No headline has survived the pressroom yet.")
+    visitor_line = visitor_book.get("entry", "No visitor has left a testimony yet.")
+    visual_motif = first_item(world_bible.get("visual_motifs"), "No visual motif recorded yet.")
+    taboo = world_bible.get("taboo", "No taboo recorded yet.")
+
+    return f"""
 <div class="museum-room-stage" data-active-room="lobby">
     <div class="museum-room-scene museum-room-scene--lobby">
         <div class="museum-room-spotlight museum-room-spotlight--center"></div>
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 01</div>
-            <div class="museum-room-scene-title">Lobby</div>
-            <div class="museum-room-scene-text">A calm orientation chamber where the rules of reality, government, and taboo are introduced before you cross into the deeper halls.</div>
+            {type_text(museum_name, "museum-room-scene-title", 12)}
+            {type_text(tagline, "museum-room-scene-text", 10)}
         </div>
         <div class="museum-room-gallery">
             <div class="museum-room-artwall">
@@ -2934,7 +3281,7 @@ def build_room_stage() -> str:
         </div>
         <div class="museum-room-wall-label">
             <div class="museum-room-label-title">Orientation Plaque</div>
-            Begin with the rules of the civilization before moving deeper into the collection.
+            {esc(visual_motif)}
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--artifacts">
@@ -2943,8 +3290,8 @@ def build_room_stage() -> str:
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 02</div>
-            <div class="museum-room-scene-title">Artifacts</div>
-            <div class="museum-room-scene-text">A denser chamber of vitrines and object labels, where relics feel tactile, ceremonial, and slightly dangerous.</div>
+            {type_text(artifact_name, "museum-room-scene-title", 12)}
+            {type_text(artifact_significance, "museum-room-scene-text", 10)}
         </div>
         <div class="museum-room-gallery">
             <div class="museum-room-artwall">
@@ -2958,7 +3305,7 @@ def build_room_stage() -> str:
         </div>
         <div class="museum-room-wall-label">
             <div class="museum-room-label-title">Collection Note</div>
-            Objects here should feel excavated, ceremonial, and slightly unstable.
+            {esc(world_bible.get("government", "Government still being deciphered."))}
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--timeline">
@@ -2966,8 +3313,8 @@ def build_room_stage() -> str:
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 03</div>
-            <div class="museum-room-scene-title">Timeline</div>
-            <div class="museum-room-scene-text">A long historical gallery where events feel arranged on illuminated walls, as if the civilization is being reconstructed in sequence around you.</div>
+            {type_text(timeline_title, "museum-room-scene-title", 12)}
+            {type_text(timeline_desc, "museum-room-scene-text", 10)}
         </div>
         <div class="museum-room-gallery">
             <div class="museum-room-artwall">
@@ -2981,7 +3328,7 @@ def build_room_stage() -> str:
         </div>
         <div class="museum-room-wall-label">
             <div class="museum-room-label-title">Archive Strip</div>
-            The room stretches into chronology, with wall-mounted sequence and timeline residue.
+            {esc(first_item(world_bible.get("historical_anchors"), "Historical anchors are still being pinned to the wall."))}
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--newspaper">
@@ -2989,8 +3336,8 @@ def build_room_stage() -> str:
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 04</div>
-            <div class="museum-room-scene-title">Newspaper</div>
-            <div class="museum-room-scene-text">A press room with pinned editions, warm desk lamps, and the feeling that the world is still speaking in its own public voice.</div>
+            {type_text(paper_name, "museum-room-scene-title", 12)}
+            {type_text(paper_headline, "museum-room-scene-text", 10)}
         </div>
         <div class="museum-room-gallery">
             <div class="museum-room-artwall">
@@ -3004,7 +3351,7 @@ def build_room_stage() -> str:
         </div>
         <div class="museum-room-wall-label">
             <div class="museum-room-label-title">Press Cabinet</div>
-            Public memory lives here: editions, proclamations, and surviving headlines.
+            {esc(taboo)}
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--visitor">
@@ -3012,8 +3359,8 @@ def build_room_stage() -> str:
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
             <div class="museum-room-scene-kicker">Hall 05</div>
-            <div class="museum-room-scene-title">Visitor's Book</div>
-            <div class="museum-room-scene-text">A quieter final room where the architecture softens and one human voice closes the exhibition at intimate scale.</div>
+            {type_text("Visitor's Book", "museum-room-scene-title", 12)}
+            {type_text(visitor_line, "museum-room-scene-text", 10)}
         </div>
         <div class="museum-room-gallery">
             <div class="museum-room-artwall">
@@ -3027,7 +3374,7 @@ def build_room_stage() -> str:
         </div>
         <div class="museum-room-wall-label">
             <div class="museum-room-label-title">Closing Note</div>
-            One voice remains after the institution goes silent.
+            {esc(world_bible.get("daily_life", "A final personal voice will settle the room once the exhibition opens."))}
         </div>
     </div>
 </div>
@@ -3112,11 +3459,13 @@ def regenerate_hall(state: dict, hall: str):
         return (
             build_status_panel("Open a museum first", "Generate a civilization before rerolling an individual hall.", curator_mode),
             gr.update(value=build_map_html("lobby", [])),
+            gr.update(value=build_room_stage(state)),
             gr.update(value=build_lobby_html(world_bible)),
             gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
             gr.update(value=build_timeline_html(state.get("timeline") or {})),
             gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
             gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+            gr.update(value=build_share_card(state)),
             state,
         )
 
@@ -3150,11 +3499,13 @@ def regenerate_hall(state: dict, hall: str):
     return (
         build_status_panel(title, subtitle, curator_mode),
         gr.update(value=build_map_html(hall if hall in {"artifacts", "timeline", "newspaper", "visitor"} else "lobby", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
-            gr.update(value=build_lobby_html(world_bible)),
-            gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
-            gr.update(value=build_timeline_html(state.get("timeline") or {})),
-            gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
-            gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+        gr.update(value=build_room_stage(state)),
+        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
+        gr.update(value=build_timeline_html(state.get("timeline") or {})),
+        gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
+        gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+        gr.update(value=build_share_card(state)),
         state,
     )
 
@@ -3168,11 +3519,13 @@ def generate_museum(concept: str, curator_mode: str):
             gr.update(value=build_hero_html(curator_mode)),
             gr.update(value=build_map_html("lobby", [])),
             gr.update(value="<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"),
+            gr.update(value=build_room_stage()),
             empty_gallery("The museum awaits its first impossible world."),
             empty_gallery("The artifact hall is sealed."),
             empty_gallery("History has not yet been arranged."),
             empty_gallery("No front page has gone to print."),
             empty_gallery("No one has yet signed the visitor's book."),
+            gr.update(value=build_share_card(default_state())),
             default_state(),
         )
         return
@@ -3184,11 +3537,13 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("lobby", [])),
         gr.update(value="<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Preparing a new impossible civilization.</div>"),
+        gr.update(value=build_room_stage()),
         gr.update(value=build_loading_html("Drafting the world", "The museum is defining the main rule, social order, and daily life of this civilization.", 1, 5, "Artifacts")),
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
+        gr.update(value=build_share_card(default_state())),
         default_state(),
     )
 
@@ -3201,11 +3556,13 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("artifacts", ["lobby"])),
         gr.update(value=header),
+        gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_loading_html("Excavating the collection", "The museum is cataloguing objects from this civilization and selecting the first exhibit pieces.", 2, 5, "Timeline")),
         empty_gallery("Assembling the official historical record."),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
+        gr.update(value=build_share_card(state)),
         state,
     )
 
@@ -3217,11 +3574,13 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("timeline", ["lobby", "artifacts"])),
         gr.update(value=header),
+        gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": None})),
         gr.update(value=build_loading_html("Restoring the timeline", "The archive is assembling the sequence of events that shaped this world.", 3, 5, "Newspaper")),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
+        gr.update(value=build_share_card(state)),
         state,
     )
 
@@ -3232,11 +3591,13 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("newspaper", ["lobby", "artifacts", "timeline"])),
         gr.update(value=header),
+        gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_loading_html("Printing the newspaper", "The press room is composing a front page from inside the civilization's own point of view.", 4, 5, "Visitor's Book")),
         empty_gallery("Opening the final testimony cabinet."),
+        gr.update(value=build_share_card(state)),
         state,
     )
 
@@ -3247,11 +3608,13 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper"])),
         gr.update(value=header),
+        gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_loading_html("Opening the last page", "The museum is finding one private voice that lived inside this world.", 5, 5, "Final display")),
+        gr.update(value=build_share_card(state)),
         state,
     )
 
@@ -3262,11 +3625,13 @@ def generate_museum(concept: str, curator_mode: str):
         gr.update(value=build_hero_html(curator_mode)),
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
         gr.update(value=header),
+        gr.update(value=build_room_stage(state)),
         gr.update(value=build_lobby_html(world_bible)),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_visitor_book_html(visitor_book)),
+        gr.update(value=build_share_card(state)),
         state,
     )
 
@@ -3315,6 +3680,11 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
             with gr.Column(scale=1, min_width=190):
                 generate_btn = gr.Button("Open Museum", elem_classes=["enter-btn"])
 
+        with gr.Row(elem_classes=["concept-chip-row"]):
+            concept_chip_1 = gr.Button("Dreams are taxed and stored in public vaults", elem_classes=["concept-chip-btn"])
+            concept_chip_2 = gr.Button("A floating city ruled by tides that remember every oath", elem_classes=["concept-chip-btn"])
+            concept_chip_3 = gr.Button("A moon colony where gravity changes by social rank", elem_classes=["concept-chip-btn"])
+
         with gr.Row(elem_classes=["status-wrap"]):
             status_html = gr.HTML(
                 build_status_panel(
@@ -3323,6 +3693,12 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
                     "Anthropology",
                 )
             )
+
+        with gr.Row(elem_classes=["share-wrap"]):
+            with gr.Column(scale=5):
+                share_html = gr.HTML("<div class='empty-state'>Generate a museum to compose a share plaque with its most memorable details.</div>")
+            with gr.Column(scale=1, min_width=210):
+                share_btn = gr.Button("Compose Share Plaque", elem_classes=["museum-action-btn"])
 
         with gr.Row(elem_classes=["theme-wrap"]):
             gr.HTML(build_theme_bar())
@@ -3389,11 +3765,13 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
         hero_html,
         map_html,
         museum_header,
+        room_stage_html,
         lobby_html,
         artifacts_html,
         timeline_html,
         newspaper_html,
         visitor_html,
+        share_html,
         museum_state,
     ]
 
@@ -3406,17 +3784,23 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
     landing_enter_btn.click(show_museum_shell, outputs=[landing_view, museum_view])
     exit_btn.click(show_landing_page, outputs=[landing_view, museum_view])
 
+    concept_chip_1.click(lambda: gr.update(value="A civilization where dreams are taxed and stored in public vaults."), outputs=[concept_input])
+    concept_chip_2.click(lambda: gr.update(value="A floating city ruled by tides that remember every oath."), outputs=[concept_input])
+    concept_chip_3.click(lambda: gr.update(value="A moon colony where gravity changes according to social rank."), outputs=[concept_input])
+
     generate_btn.click(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
     concept_input.submit(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
 
     hall_outputs = [
         status_html,
         map_html,
+        room_stage_html,
         lobby_html,
         artifacts_html,
         timeline_html,
         newspaper_html,
         visitor_html,
+        share_html,
         museum_state,
     ]
 
@@ -3424,6 +3808,7 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
     regen_timeline_btn.click(lambda state: regenerate_hall(state, "timeline"), inputs=[museum_state], outputs=hall_outputs)
     regen_newspaper_btn.click(lambda state: regenerate_hall(state, "newspaper"), inputs=[museum_state], outputs=hall_outputs)
     regen_visitor_btn.click(lambda state: regenerate_hall(state, "visitor"), inputs=[museum_state], outputs=hall_outputs)
+    share_btn.click(lambda state: gr.update(value=build_share_card(state)), inputs=[museum_state], outputs=[share_html])
 
     artifact_image_outputs = [status_html, artifacts_html, museum_state]
     artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs)
