@@ -35,8 +35,6 @@ APP_HEAD = """
     foyer: "Central Foyer"
   };
 
-  const TAB_INDEX_TO_ROOM = ["lobby", "artifacts", "timeline", "newspaper", "visitor"];
-
   let walkToken = 0;
 
   function marker() {
@@ -84,6 +82,10 @@ APP_HEAD = """
     document.querySelectorAll(".museum-hall-nav-btn").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-hall-target") === roomId);
     });
+    const stage = document.querySelector(".museum-room-stage");
+    if (stage) {
+      stage.setAttribute("data-active-room", roomId);
+    }
     if (scrollIntoView) {
       const stack = document.querySelector(".museum-hall-stack");
       if (stack) {
@@ -118,11 +120,10 @@ APP_HEAD = """
   window.museumNavigate = function museumNavigate(room) {
     if (!room) return false;
     const roomId = room.getAttribute("data-room-id");
-    const tabIndex = Number(room.getAttribute("data-tab-index"));
     const node = marker();
     const steps = pathForRoom(roomId);
     if (!node || !steps.length) {
-      openMuseumTab(tabIndex);
+      setActiveHall(roomId, true);
       return false;
     }
 
@@ -1426,6 +1427,137 @@ body[data-museum-theme="dark"] .museum-header {
     margin: 0 auto;
 }
 
+.museum-room-stage {
+    position: relative;
+    width: min(100%, 1540px);
+    min-height: 340px;
+    margin: 0 auto 18px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 26%),
+        linear-gradient(180deg, rgba(17, 12, 10, 0.82), rgba(10, 8, 7, 0.9));
+}
+
+.museum-room-scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.02);
+    transition: opacity 0.42s ease, transform 0.42s ease;
+    pointer-events: none;
+}
+
+.museum-room-stage[data-active-room="lobby"] .museum-room-scene--lobby,
+.museum-room-stage[data-active-room="artifacts"] .museum-room-scene--artifacts,
+.museum-room-stage[data-active-room="timeline"] .museum-room-scene--timeline,
+.museum-room-stage[data-active-room="newspaper"] .museum-room-scene--newspaper,
+.museum-room-stage[data-active-room="visitor"] .museum-room-scene--visitor {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.museum-room-scene::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.95;
+}
+
+.museum-room-scene--lobby::before {
+    background:
+        radial-gradient(circle at 50% 26%, rgba(244, 222, 176, 0.34), transparent 12%),
+        linear-gradient(180deg, rgba(56, 37, 24, 0.16), rgba(10, 8, 7, 0.08)),
+        linear-gradient(90deg, rgba(24, 16, 12, 0.78) 0 18%, transparent 18% 82%, rgba(24, 16, 12, 0.78) 82% 100%),
+        linear-gradient(180deg, rgba(124, 86, 48, 0.18), rgba(18, 12, 10, 0.92));
+}
+
+.museum-room-scene--artifacts::before {
+    background:
+        repeating-linear-gradient(90deg, rgba(34, 24, 18, 0.72) 0 10%, rgba(18, 13, 11, 0.82) 10% 20%),
+        radial-gradient(circle at 28% 42%, rgba(214, 191, 141, 0.12), transparent 10%),
+        radial-gradient(circle at 70% 38%, rgba(214, 191, 141, 0.12), transparent 11%),
+        linear-gradient(180deg, rgba(92, 58, 30, 0.16), rgba(14, 11, 9, 0.94));
+}
+
+.museum-room-scene--timeline::before {
+    background:
+        linear-gradient(90deg, rgba(17, 12, 10, 0.78) 0 12%, transparent 12% 88%, rgba(17, 12, 10, 0.78) 88% 100%),
+        repeating-linear-gradient(90deg, transparent 0 14%, rgba(214, 191, 141, 0.08) 14% 14.6%, transparent 14.6% 28%),
+        linear-gradient(180deg, rgba(179, 140, 81, 0.14), rgba(10, 8, 7, 0.9));
+}
+
+.museum-room-scene--newspaper::before {
+    background:
+        linear-gradient(180deg, rgba(255, 251, 239, 0.08), transparent 28%),
+        radial-gradient(circle at 78% 24%, rgba(236, 215, 170, 0.18), transparent 16%),
+        linear-gradient(90deg, rgba(22, 16, 12, 0.78) 0 16%, transparent 16% 84%, rgba(22, 16, 12, 0.78) 84% 100%),
+        linear-gradient(180deg, rgba(108, 76, 38, 0.16), rgba(12, 9, 7, 0.92));
+}
+
+.museum-room-scene--visitor::before {
+    background:
+        radial-gradient(circle at 50% 36%, rgba(232, 220, 192, 0.18), transparent 18%),
+        linear-gradient(90deg, rgba(18, 13, 11, 0.82) 0 26%, transparent 26% 74%, rgba(18, 13, 11, 0.82) 74% 100%),
+        linear-gradient(180deg, rgba(84, 64, 42, 0.14), rgba(10, 8, 7, 0.92));
+}
+
+.museum-room-glow {
+    position: absolute;
+    inset: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: radial-gradient(circle at 50% 18%, rgba(255, 244, 218, 0.06), transparent 18%);
+}
+
+.museum-room-frame {
+    position: absolute;
+    left: 50%;
+    bottom: 14%;
+    width: 64%;
+    height: 44%;
+    transform: translateX(-50%);
+    border: 1px solid rgba(231, 206, 157, 0.12);
+    border-radius: 18px 18px 8px 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 240, 212, 0.04), transparent 24%),
+        rgba(12, 9, 7, 0.16);
+    box-shadow: inset 0 -70px 90px rgba(0, 0, 0, 0.24);
+}
+
+.museum-room-scene-copy {
+    position: absolute;
+    left: 32px;
+    bottom: 28px;
+    max-width: 520px;
+    z-index: 2;
+}
+
+.museum-room-scene-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.museum-room-scene-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 34px;
+    line-height: 1.15;
+    margin-bottom: 10px;
+}
+
+.museum-room-scene-text {
+    color: var(--paper);
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 38ch;
+}
+
 .museum-hall-shell {
     margin-top: 14px;
     border: 1px solid rgba(200, 169, 110, 0.16);
@@ -2103,6 +2235,7 @@ body[data-museum-theme="dark"] .museum-header {
     .landing-plaque-row {
         grid-template-columns: 1fr;
     }
+
 }
 
 @media (max-width: 640px) {
@@ -2609,6 +2742,68 @@ def build_panel_header(kicker: str, title: str, copy: str) -> str:
 """
 
 
+def build_room_stage() -> str:
+    return """
+<div class="museum-room-stage" data-active-room="lobby">
+    <div class="museum-room-scene museum-room-scene--lobby">
+        <div class="museum-room-glow"></div>
+        <div class="museum-room-frame"></div>
+        <div class="museum-room-scene-copy">
+            <div class="museum-room-scene-kicker">Hall 01</div>
+            <div class="museum-room-scene-title">Lobby</div>
+            <div class="museum-room-scene-text">A calm orientation chamber where the rules of reality, government, and taboo are introduced before you cross into the deeper halls.</div>
+        </div>
+    </div>
+    <div class="museum-room-scene museum-room-scene--artifacts">
+        <div class="museum-room-glow"></div>
+        <div class="museum-room-frame"></div>
+        <div class="museum-room-scene-copy">
+            <div class="museum-room-scene-kicker">Hall 02</div>
+            <div class="museum-room-scene-title">Artifacts</div>
+            <div class="museum-room-scene-text">A denser chamber of vitrines and object labels, where relics feel tactile, ceremonial, and slightly dangerous.</div>
+        </div>
+    </div>
+    <div class="museum-room-scene museum-room-scene--timeline">
+        <div class="museum-room-glow"></div>
+        <div class="museum-room-frame"></div>
+        <div class="museum-room-scene-copy">
+            <div class="museum-room-scene-kicker">Hall 03</div>
+            <div class="museum-room-scene-title">Timeline</div>
+            <div class="museum-room-scene-text">A long historical gallery where events feel arranged on illuminated walls, as if the civilization is being reconstructed in sequence around you.</div>
+        </div>
+    </div>
+    <div class="museum-room-scene museum-room-scene--newspaper">
+        <div class="museum-room-glow"></div>
+        <div class="museum-room-frame"></div>
+        <div class="museum-room-scene-copy">
+            <div class="museum-room-scene-kicker">Hall 04</div>
+            <div class="museum-room-scene-title">Newspaper</div>
+            <div class="museum-room-scene-text">A press room with pinned editions, warm desk lamps, and the feeling that the world is still speaking in its own public voice.</div>
+        </div>
+    </div>
+    <div class="museum-room-scene museum-room-scene--visitor">
+        <div class="museum-room-glow"></div>
+        <div class="museum-room-frame"></div>
+        <div class="museum-room-scene-copy">
+            <div class="museum-room-scene-kicker">Hall 05</div>
+            <div class="museum-room-scene-title">Visitor's Book</div>
+            <div class="museum-room-scene-text">A quieter final room where the architecture softens and one human voice closes the exhibition at intimate scale.</div>
+        </div>
+    </div>
+</div>
+"""
+
+
+def build_shell_intro() -> str:
+    return """
+<div class="museum-section-intro">
+    <div class="museum-section-kicker">Museum shell</div>
+    <div class="museum-section-title">Move Through The Halls</div>
+    <div class="museum-section-copy">Use the floor plan or the room navigation below. The museum stays in one continuous space, and each hall reshapes the atmosphere instead of sending you to a separate app page.</div>
+</div>
+"""
+
+
 def build_hall_nav() -> str:
     buttons = "".join(
         f"""
@@ -2895,18 +3090,20 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
         museum_header = gr.HTML(
             "<div class='museum-title'>Infinite Museum of Impossible Worlds</div><div class='museum-tagline'>Every idea creates a civilization. Every civilization leaves artifacts.</div>"
         )
+        shell_intro_html = gr.HTML(build_shell_intro())
         map_html = gr.HTML(build_map_html("lobby", []), elem_classes=["map-wrap"])
+        room_stage_html = gr.HTML(build_room_stage())
 
         with gr.Column(elem_classes=["museum-hall-stack"]):
             gr.HTML(build_hall_nav())
             with gr.Group(elem_classes=["museum-hall-panel", "is-active"], elem_id="hall-panel-lobby"):
-                gr.HTML(build_panel_header("Hall 01", "Lobby", "Read the governing rule of the civilization, then use the floor plan to move deeper into the museum."))
+                gr.HTML(build_panel_header("Hall 01", "Lobby", "Read the governing rule of the civilization, then move sideways through the museum as each room changes the tone around you."))
                 lobby_html = gr.HTML(
                     value="<div class='empty-state'>The museum awaits its first impossible world.</div>",
                     elem_classes=["hall-content"],
                 )
             with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-artifacts"):
-                gr.HTML(build_panel_header("Hall 02", "Artifacts", "Move between the catalog view and on-demand renders without losing the rest of the exhibition."))
+                gr.HTML(build_panel_header("Hall 02", "Artifacts", "This room should feel denser and more tactile, as if the collection is pressing closer around you."))
                 with gr.Row(elem_classes=["hall-action-row"]):
                     artifact_image_btn_1 = gr.Button("Render Artifact 1", size="sm", elem_classes=["museum-secondary-btn"])
                     artifact_image_btn_2 = gr.Button("Render Artifact 2", size="sm", elem_classes=["museum-secondary-btn"])
@@ -2917,21 +3114,21 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
                     elem_classes=["hall-content"],
                 )
             with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-timeline"):
-                gr.HTML(build_panel_header("Hall 03", "Timeline", "Follow the civilization in sequence, from founding logic to the events that distorted everyday life."))
+                gr.HTML(build_panel_header("Hall 03", "Timeline", "The room lengthens into chronology here, with the sense that history is wrapping around the walls rather than sitting on a page."))
                 regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm", elem_classes=["museum-action-btn"])
                 timeline_html = gr.HTML(
                     value="<div class='empty-state'>History has not yet been arranged.</div>",
                     elem_classes=["hall-content"],
                 )
             with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-newspaper"):
-                gr.HTML(build_panel_header("Hall 04", "Newspaper", "Read the world in its own public voice through a single surviving front page."))
+                gr.HTML(build_panel_header("Hall 04", "Newspaper", "This room becomes more public and immediate, like stepping under reading lamps into a preserved press chamber."))
                 regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm", elem_classes=["museum-action-btn"])
                 newspaper_html = gr.HTML(
                     value="<div class='empty-state'>No front page has gone to print.</div>",
                     elem_classes=["hall-content"],
                 )
             with gr.Group(elem_classes=["museum-hall-panel"], elem_id="hall-panel-visitor"):
-                gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "End with one human-scale testimony so the impossible world lands emotionally, not just structurally."))
+                gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "The final room quiets everything down, letting one voice sit in the space after the institution has finished speaking."))
                 regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm", elem_classes=["museum-action-btn"])
                 visitor_html = gr.HTML(
                     value="<div class='empty-state'>No one has yet signed the visitor's book.</div>",
