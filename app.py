@@ -951,9 +951,9 @@ body[data-museum-theme="light"] {
 }
 
 .museum-map-help {
-    margin-top: 12px;
+    margin-top: 14px;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
     text-align: center;
 }
@@ -962,18 +962,19 @@ body[data-museum-theme="light"] {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
-    margin-top: 16px;
+    margin-top: 18px;
 }
 
 .museum-legend-item {
     border-top: 1px solid rgba(200, 169, 110, 0.16);
-    padding-top: 10px;
+    padding-top: 12px;
+    text-align: center;
 }
 
 .museum-legend-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 4px;
@@ -981,8 +982,8 @@ body[data-museum-theme="light"] {
 
 .museum-legend-copy {
     color: var(--muted);
-    font-size: 12px;
-    line-height: 1.4;
+    font-size: 13px;
+    line-height: 1.45;
 }
 
 body[data-museum-theme="light"] .museum-shell,
@@ -1028,7 +1029,7 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 
 .museum-section-intro {
     width: min(100%, 1540px);
-    margin: 10px auto 12px;
+    margin: 6px auto 10px;
     text-align: center;
 }
 
@@ -1044,28 +1045,40 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 .museum-section-title {
     color: var(--gold);
     font-family: 'Cinzel', serif;
-    font-size: 34px;
+    font-size: 38px;
     line-height: 1.15;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .museum-section-copy {
     color: var(--muted);
-    font-size: 17px;
-    line-height: 1.7;
-    max-width: 760px;
+    font-size: 18px;
+    line-height: 1.65;
+    max-width: 840px;
     margin: 0 auto;
 }
 
 .museum-hall-shell {
-    margin-top: 18px;
+    margin-top: 14px;
     border: 1px solid rgba(200, 169, 110, 0.16);
     border-radius: 20px;
     background:
         radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 26%),
         linear-gradient(180deg, rgba(17, 12, 10, 0.82), rgba(10, 8, 7, 0.86));
-    padding: 18px 20px 22px;
+    padding: 20px 24px 22px;
     box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.05);
+}
+
+.museum-hall-shell::before {
+    content: "Current Hall";
+    display: block;
+    margin-bottom: 14px;
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-align: center;
 }
 
 .museum-hall-nav {
@@ -1073,7 +1086,7 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 0 0 16px;
+    padding: 0 0 18px;
     margin-top: 0;
     border-bottom: 1px solid var(--line);
 }
@@ -1084,9 +1097,9 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
     background: rgba(16, 12, 10, 0.42);
     color: var(--muted);
     border-radius: 999px;
-    padding: 11px 16px;
+    padding: 12px 18px;
     font-family: 'Cinzel', serif;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     cursor: pointer;
@@ -1127,28 +1140,28 @@ body[data-museum-theme="dark"] .hall-tabs .tab-nav {
 }
 
 .hall-content {
-    min-height: 300px;
-    padding: 26px 4px 8px !important;
+    min-height: 220px;
+    padding: 20px 4px 4px !important;
     background: transparent !important;
-    max-width: 1180px;
+    max-width: 1240px;
     margin: 0 auto;
 }
 
 .empty-state {
-    min-height: 220px;
+    min-height: 170px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: var(--muted);
-    font-size: 18px;
+    font-size: 19px;
     font-style: italic;
     border: 1px dashed rgba(200, 169, 110, 0.18);
     border-radius: 12px;
     background:
         radial-gradient(circle at top, rgba(200, 169, 110, 0.05), transparent 28%),
         rgba(12, 9, 7, 0.28);
-    padding: 24px;
+    padding: 26px;
 }
 
 .loading-card {
