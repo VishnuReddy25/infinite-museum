@@ -202,10 +202,18 @@ def _world_bible_text(world_bible: dict) -> str:
     return json.dumps(world_bible, indent=2, ensure_ascii=True)
 
 
-def _limit_list(payload: dict, key: str, size: int) -> dict:
+def _limit_list(payload, key: str, size: int) -> dict:
+    if isinstance(payload, list):
+        return {key: payload[:size]}
+
+    if not isinstance(payload, dict):
+        return {key: []}
+
     items = payload.get(key)
     if isinstance(items, list):
         payload[key] = items[:size]
+    elif items is None:
+        payload[key] = []
     return payload
 
 
