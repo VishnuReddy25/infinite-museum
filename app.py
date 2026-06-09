@@ -4827,4 +4827,4 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
 
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(allowed_paths=[str(Path("generated_images").resolve())])
