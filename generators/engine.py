@@ -467,19 +467,22 @@ def detect_curator_notes(world_bible: dict, artifacts_payload: dict | None = Non
     newspaper_text = _compact_text(newspaper_payload)
     visitor_text = _compact_text(visitor_book)
 
-    if reference_terms and len(_keyword_set(artifact_text) & reference_terms) < 2:
+    artifact_items = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
+    timeline_events = timeline_payload.get("events") if isinstance(timeline_payload, dict) else None
+    newspaper_ready = isinstance(newspaper_payload, dict) and bool(newspaper_payload.get("headline"))
+    visitor_entry = visitor_book.get("entry") if isinstance(visitor_book, dict) else None
+
+    if reference_terms and artifact_items and len(_keyword_set(artifact_text) & reference_terms) < 2:
         notes.append({"level": "warning", "title": "Artifact hall drift", "body": "The artifact descriptions feel a little detached from the core premise. A stronger material or symbolic link would make the collection feel more inevitable."})
-    if reference_terms and len(_keyword_set(newspaper_text) & reference_terms) < 2:
+    if reference_terms and newspaper_ready and len(_keyword_set(newspaper_text) & reference_terms) < 2:
         notes.append({"level": "warning", "title": "Public record drift", "body": "The newspaper does not strongly echo the main social rule yet. The press voice could lean more on the world’s core tension."})
-    if world_bible.get("taboo"):
+    if world_bible.get("taboo") and visitor_entry:
         taboo_terms = _keyword_set(str(world_bible.get("taboo")))
         if taboo_terms and len(_keyword_set(visitor_text) & taboo_terms) == 0:
             notes.append({"level": "note", "title": "Taboo not felt personally", "body": "The private testimony does not yet brush against the stated taboo. A more intimate sign of fear or avoidance could deepen the final hall."})
-    if not timeline_payload.get("events"):
-        notes.append({"level": "warning", "title": "Timeline missing", "body": "The historical wall is too thin to support the rest of the museum."})
-    elif len((timeline_payload.get("events") or [])) < 3:
+    if timeline_events and len(timeline_events) < 3:
         notes.append({"level": "note", "title": "Thin chronology", "body": "The archive works, but a denser chain of turning points would make the civilization feel older and more inhabited."})
-    if world_bible.get("visual_motifs"):
+    if world_bible.get("visual_motifs") and (artifact_items or newspaper_ready or visitor_entry):
         motif_terms = _keyword_set(_compact_text(world_bible.get("visual_motifs")))
         combined_text = " ".join([artifact_text, newspaper_text, visitor_text]).lower()
         if motif_terms and len(_keyword_set(combined_text) & motif_terms) < 1:

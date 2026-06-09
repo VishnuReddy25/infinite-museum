@@ -1,11 +1,19 @@
 import html
 import hashlib
+import inspect
 import json
+import warnings
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote
 
 import gradio as gr
+
+warnings.filterwarnings(
+    "ignore",
+    message=r"unclosed event loop .*",
+    category=ResourceWarning,
+)
 
 from generators.engine import (
     build_world_complexity_report,
@@ -5532,10 +5540,68 @@ def reset_ambassador_state(state: dict) -> dict:
     return state
 
 
+def chatbot_supports_message_dicts() -> bool:
+    return "type" in inspect.signature(gr.Chatbot).parameters
+
+
+def format_ambassador_chat_value(history: list[dict]):
+    history = history or []
+    if chatbot_supports_message_dicts():
+        return history
+
+    pairs = []
+    pending_user = None
+    for item in history:
+        role = item.get("role")
+        content = item.get("content")
+        if role == "user":
+            pending_user = content
+        elif role == "assistant":
+            pairs.append((pending_user, content))
+            pending_user = None
+    if pending_user is not None:
+        pairs.append((pending_user, None))
+    return pairs
+
+
 def build_ambassador_chat_state(state: dict):
     state = state or default_state()
     history = state.get("ambassador_history") or []
-    return history or [{"role": "assistant", "content": "Open a world first, then a local voice will answer from inside it."}]
+    fallback = history or [{"role": "assistant", "content": "Open a world first, then a local voice will answer from inside it."}]
+    return format_ambassador_chat_value(fallback)
+
+
+def create_ambassador_chatbot():
+    kwargs = {
+        "value": [],
+        "show_label": False,
+        "elem_classes": ["ambassador-chat", "museum-ambassador-chat"],
+    }
+    if chatbot_supports_message_dicts():
+        kwargs["type"] = "messages"
+    return gr.Chatbot(**kwargs)
+
+
+def build_blocks_kwargs() -> dict:
+    launch_signature = inspect.signature(gr.Blocks.launch).parameters
+    kwargs = {"title": "Infinite Museum of Impossible Worlds"}
+    if "css" not in launch_signature:
+        kwargs["css"] = CSS
+    if "head" not in launch_signature:
+        kwargs["head"] = APP_HEAD
+    return kwargs
+
+
+def launch_demo(blocks: gr.Blocks):
+    launch_signature = inspect.signature(gr.Blocks.launch).parameters
+    launch_kwargs = {
+        "allowed_paths": [str(Path("generated_images").resolve())],
+    }
+    if "css" in launch_signature:
+        launch_kwargs["css"] = CSS
+    if "head" in launch_signature:
+        launch_kwargs["head"] = APP_HEAD
+    return blocks.launch(**launch_kwargs)
 
 
 def refresh_world_analysis(state: dict) -> dict:
@@ -5583,7 +5649,7 @@ def ask_ambassador(state: dict, question: str):
     if turns >= 3:
         return (
             build_status_panel("Ambassador conversation complete", "This local voice has answered three questions. Regenerate the Visitor's Book for a new witness.", curator_mode),
-            history,
+            build_ambassador_chat_state(state),
             state,
             gr.update(value=""),
         )
@@ -5601,7 +5667,7 @@ def ask_ambassador(state: dict, question: str):
 
     return (
         build_status_panel("Ambassador responded", f"Question {state['ambassador_turns']} of 3 has been recorded in this hall.", curator_mode),
-        history,
+        build_ambassador_chat_state(state),
         state,
         gr.update(value=""),
     )
@@ -5864,7 +5930,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
     )
 
 
-with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worlds") as demo:
+with gr.Blocks(**build_blocks_kwargs()) as demo:
     museum_state = gr.State(default_state())
     with gr.Column(visible=True) as landing_view:
         with gr.Row(elem_classes=["landing-wrap"]):
@@ -5986,12 +6052,7 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
 <div class="control-panel-copy">Ask one local resident what this world feels like from the inside. Three questions per visitor, so each answer stays special.</div>
 """
                         )
-                        ambassador_chatbot = gr.Chatbot(
-                            value=[],
-                            type="messages",
-                            show_label=False,
-                            elem_classes=["ambassador-chat", "museum-ambassador-chat"],
-                        )
+                        ambassador_chatbot = create_ambassador_chatbot()
                         with gr.Row(elem_classes=["hall-action-row"]):
                             ambassador_input = gr.Textbox(
                                 placeholder="Ask about daily life, taboo, fear, ritual, or power...",
@@ -6077,4 +6138,4 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
 
 
 if __name__ == "__main__":
-    demo.launch(allowed_paths=[str(Path("generated_images").resolve())])
+    launch_demo(demo)
