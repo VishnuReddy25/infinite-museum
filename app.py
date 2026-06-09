@@ -1,5 +1,7 @@
 import html
 import json
+from pathlib import Path
+from urllib.parse import quote
 
 import gradio as gr
 
@@ -3910,7 +3912,7 @@ def build_artifacts_html(data: dict) -> str:
         prompt_text = featured.get("prompt", "") if isinstance(featured, dict) else ""
         image_src = ""
         if isinstance(featured, dict):
-            image_src = featured.get("image_url") or featured.get("image_path") or ""
+            image_src = featured.get("image_url") or _artifact_image_src(featured.get("image_path")) or ""
         if image_src:
             media = f"<img class='featured-image' src='{esc(image_src)}' alt='{esc(lead.get('name', 'Featured artifact'))}'>"
         else:
@@ -3965,6 +3967,21 @@ def build_artifacts_html(data: dict) -> str:
 """
         )
     return hall_intro + featured_html + "".join(cards)
+
+
+def _artifact_image_src(image_path: str | None) -> str:
+    if not image_path:
+        return ""
+
+    path = str(image_path).strip()
+    if not path:
+        return ""
+
+    if path.startswith(("http://", "https://", "/gradio_api/file=", "/file=")):
+        return path
+
+    resolved = Path(path).resolve()
+    return f"/gradio_api/file={quote(str(resolved).replace('\\', '/'), safe='/:')}"
 
 
 def build_timeline_html(data: dict) -> str:
@@ -4420,8 +4437,13 @@ def generate_artifact_image_action(state: dict, artifact_index: int):
     artifacts_payload = state.get("artifacts") or {}
     world_bible = state.get("world_bible") or {}
     artifacts = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
+    print(
+        f"[IMAGE UI] Artifact button clicked | index={artifact_index} "
+        f"| has_world={bool(world_bible)} | artifact_count={len(artifacts) if artifacts else 0}"
+    )
 
     if not world_bible or not artifacts:
+        print("[IMAGE UI] Aborting because museum state is incomplete")
         return (
             build_status_panel("Open the artifact hall first", "Generate a world and its artifact collection before rendering an exhibit image.", curator_mode),
             gr.update(value=build_artifacts_html({**(artifacts_payload or {}), "featured_image": state.get("featured_image")})),
@@ -4430,6 +4452,7 @@ def generate_artifact_image_action(state: dict, artifact_index: int):
 
     featured_image = generate_featured_artifact_image(world_bible, artifacts_payload, artifact_index)
     state["featured_image"] = featured_image
+    print(f"[IMAGE UI] Featured image result keys={sorted(featured_image.keys()) if isinstance(featured_image, dict) else []}")
 
     if featured_image.get("error"):
         title = "Artifact render failed"

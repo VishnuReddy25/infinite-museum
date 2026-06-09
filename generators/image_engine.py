@@ -55,9 +55,15 @@ def generate_image(
     guidance_scale: float = IMAGE_GUIDANCE,
 ) -> dict:
     IMAGE_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    print(
+        f"[IMAGE] Starting generation | model={IMAGE_MODEL} | size={width}x{height} "
+        f"| steps={num_inference_steps} | guidance={guidance_scale}"
+    )
+    print(f"[IMAGE] Prompt preview: {prompt[:220]}")
 
     try:
         pipe, device = _load_pipeline()
+        print(f"[IMAGE] Pipeline ready on device={device}")
         image = pipe(
             prompt=prompt,
             width=width,
@@ -66,11 +72,13 @@ def generate_image(
             guidance_scale=guidance_scale,
         ).images[0]
     except Exception as exc:
+        print(f"[IMAGE ERROR] Local image generation failed: {exc}")
         return {"error": f"Local image generation failed: {exc}"}
 
     file_name = f"artifact_{abs(hash(prompt))}.png"
     file_path = IMAGE_OUTPUT_DIR / file_name
     image.save(file_path)
+    print(f"[IMAGE] Saved artifact render to {file_path.resolve()}")
 
     return {
         "image_path": str(file_path.resolve()),

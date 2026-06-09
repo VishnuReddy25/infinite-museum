@@ -389,6 +389,7 @@ def _generate_image_via_backend(prompt: str) -> dict:
 def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict, artifact_index: int = 0) -> dict:
     artifacts = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
     if not artifacts:
+        print("[IMAGE ACTION] No artifacts available for image generation")
         return {}
 
     if artifact_index < 0 or artifact_index >= len(artifacts):
@@ -396,8 +397,13 @@ def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict,
 
     artifact = artifacts[artifact_index]
     prompt = build_featured_artifact_prompt(world_bible, artifact)
+    print(
+        f"[IMAGE ACTION] runtime={IMAGE_RUNTIME} | artifact_index={artifact_index} "
+        f"| artifact_name={artifact.get('name', 'Unknown artifact')}"
+    )
 
     if IMAGE_RUNTIME == "disabled":
+        print("[IMAGE ACTION] Image runtime is disabled")
         return {
             "prompt": prompt,
             "artifact_name": artifact.get("name", ""),
@@ -405,17 +411,22 @@ def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict,
             "status": "disabled",
         }
     if IMAGE_RUNTIME == "local":
+        print("[IMAGE ACTION] Dispatching to local image generator")
         result = generate_image(prompt)
         result["prompt"] = prompt
         result["artifact_name"] = artifact.get("name", "")
         result["artifact"] = artifact
+        print(f"[IMAGE ACTION] Local image result keys={sorted(result.keys())}")
         return result
     if IMAGE_RUNTIME == "backend":
+        print("[IMAGE ACTION] Dispatching to backend image generator")
         result = _generate_image_via_backend(prompt)
         result["artifact_name"] = artifact.get("name", "")
         result["artifact"] = artifact
+        print(f"[IMAGE ACTION] Backend image result keys={sorted(result.keys())}")
         return result
 
+    print(f"[IMAGE ACTION] Unknown image runtime encountered: {IMAGE_RUNTIME}")
     return {
         "prompt": prompt,
         "artifact_name": artifact.get("name", ""),
