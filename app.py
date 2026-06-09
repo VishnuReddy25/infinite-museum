@@ -268,7 +268,7 @@ APP_HEAD = """
     ctx.restore();
   }
 
-  function exportShareCardFromPayload(payload) {
+function exportShareCardFromPayload(payload) {
     if (!payload) return;
 
     const canvas = document.createElement("canvas");
@@ -371,7 +371,10 @@ APP_HEAD = """
     ctx.fillStyle = paper;
     ctx.font = '500 16px "Cormorant Garamond", Georgia, serif';
     ctx.textAlign = "left";
-    ctx.fillText("Curated by M. Vishnu Vardhan Reddy - Museum Manager", 42, 607);
+    const visitorLine = payload.visitor_name
+      ? `Issued to ${payload.visitor_name}${payload.visitor_year ? ` • Arrived from ${payload.visitor_year}` : ""}`
+      : "Curated by M. Vishnu Vardhan Reddy - Museum Manager";
+    ctx.fillText(visitorLine, 42, 607);
     ctx.textAlign = "right";
     ctx.fillText("Build Small Hackathon 2026", 1158, 607);
 
@@ -727,6 +730,69 @@ body, .gradio-container {
         radial-gradient(circle at 86% 12%, rgba(200, 169, 110, 0.08), transparent 20%),
         linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 92%, black), var(--panel));
     box-shadow: 0 24px 60px var(--shadow);
+}
+
+.admission-welcome {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 18px;
+    padding: 26px 28px;
+    border-radius: 26px;
+    border: 1px solid rgba(200, 169, 110, 0.2);
+    background:
+        radial-gradient(circle at 18% 18%, rgba(200, 169, 110, 0.18), transparent 24%),
+        linear-gradient(135deg, rgba(19, 13, 11, 0.96), rgba(12, 8, 7, 0.94));
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.22);
+}
+
+.admission-welcome::after {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(255, 234, 198, 0.08);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.admission-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.admission-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.04;
+    max-width: 12ch;
+    margin-bottom: 12px;
+}
+
+.admission-copy {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.72;
+    max-width: 56ch;
+}
+
+.admission-rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.admission-chip {
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--paper);
+    font-size: 13px;
 }
 
 .landing-shell::before {
@@ -1154,6 +1220,13 @@ body[data-world-aura="velvet"] .gradio-container {
     font-style: italic;
     max-width: 720px;
     margin: 0 auto;
+}
+
+.museum-visitor-pass {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .museum-lead {
@@ -3787,6 +3860,8 @@ def build_share_payload(state: dict) -> dict:
         "museum_name": world_bible.get("museum_name", "Infinite Museum"),
         "tagline": world_bible.get("tagline", ""),
         "premise": premise,
+        "visitor_name": state.get("visitor_name", ""),
+        "visitor_year": state.get("visitor_year", ""),
         "government": world_bible.get("government", "-"),
         "artifact_name": artifacts[0].get("name", "No artifact catalogued yet.") if artifacts else "No artifact catalogued yet.",
         "turning_point": first_item(world_bible.get("historical_anchors"), "No turning point recorded yet."),
@@ -3834,6 +3909,8 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
     world_bible = state.get("world_bible") or {}
     title = world_bible.get("museum_name", "Infinite Museum of Impossible Worlds")
     tagline = world_bible.get("tagline", "Every idea creates a civilization. Every civilization leaves artifacts.")
+    visitor_name = (state.get("visitor_name") or "").strip()
+    visitor_year = (state.get("visitor_year") or "").strip()
     aura = world_aura(world_bible) if world_bible else "default"
     button_html = ""
     if world_bible:
@@ -3844,6 +3921,13 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
             f"data-share-payload='{esc_attr(payload)}'{hidden_attr}>Share This World</button>"
         )
 
+    visitor_html = ""
+    if visitor_name or visitor_year:
+        visitor_line = visitor_name or "Unnamed visitor"
+        if visitor_year:
+            visitor_line += f" • Arrived from {visitor_year}"
+        visitor_html = f"<div class='museum-visitor-pass'>Admission issued to {esc(visitor_line)}</div>"
+
     return f"""
 <div class="museum-header-band" data-world-aura-source="{esc_attr(aura)}">
     <div class="museum-header-identity">
@@ -3851,6 +3935,7 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
         <div>
         <div class="museum-title">{esc(title)}</div>
         <div class="museum-tagline">{esc(tagline)}</div>
+        {visitor_html}
         </div>
     </div>
     {button_html}
@@ -4104,6 +4189,16 @@ def build_hero_html(curator_mode: str) -> str:
 def build_landing_html(curator_mode: str) -> str:
     mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
     return f"""
+<div class="admission-welcome">
+    <div class="admission-kicker">Welcome Chamber</div>
+    <div class="admission-title">Welcome To The World Of Imagination</div>
+    <div class="admission-copy">Before you enter, the museum asks for one small record. Tell us your name and the year you come from. We will stamp your visit into the world you create.</div>
+    <div class="admission-rail">
+        <div class="admission-chip">One visitor identity</div>
+        <div class="admission-chip">One impossible world</div>
+        <div class="admission-chip">One museum ticket to carry out</div>
+    </div>
+</div>
 <div class="landing-shell">
     <div class="landing-grid">
             <div class="landing-copy">
@@ -4406,10 +4501,22 @@ def format_concept(concept: str, curator_mode: str) -> str:
     )
 
 
-def build_museum_state(concept: str, curator_mode: str, world_bible: dict, artifacts=None, timeline=None, newspaper=None, visitor_book=None) -> dict:
+def build_museum_state(
+    concept: str,
+    curator_mode: str,
+    world_bible: dict,
+    visitor_name: str = "",
+    visitor_year: str = "",
+    artifacts=None,
+    timeline=None,
+    newspaper=None,
+    visitor_book=None,
+) -> dict:
     return {
         "concept": concept,
         "curator_mode": curator_mode,
+        "visitor_name": visitor_name,
+        "visitor_year": visitor_year,
         "guided_concept": format_concept(concept, curator_mode),
         "world_bible": world_bible or {},
         "artifacts": artifacts or {},
@@ -4536,9 +4643,11 @@ def regenerate_hall(state: dict, hall: str):
     )
 
 
-def generate_museum(concept: str, curator_mode: str):
+def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_year: str):
     concept = (concept or "").strip()
     curator_mode = curator_mode or "Anthropology"
+    visitor_name = (visitor_name or "").strip()
+    visitor_year = (visitor_year or "").strip()
 
     if not concept:
         yield (
@@ -4577,7 +4686,7 @@ def generate_museum(concept: str, curator_mode: str):
     )
 
     world_bible = generate_world_bible(guided_concept)
-    state = build_museum_state(concept, curator_mode, world_bible)
+    state = build_museum_state(concept, curator_mode, world_bible, visitor_name, visitor_year)
 
     yield (
         gr.update(visible=False),
@@ -4693,6 +4802,16 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
                     placeholder="A world where dreams are currency.",
                     lines=2,
                 )
+                visitor_name_input = gr.Textbox(
+                    label="Visitor name",
+                    placeholder="Name for your museum ticket",
+                    lines=1,
+                )
+                visitor_year_input = gr.Textbox(
+                    label="Year you come from",
+                    placeholder="2026, 2120, 1845...",
+                    lines=1,
+                )
                 with gr.Row():
                     generate_btn = gr.Button("Create World", elem_classes=["enter-btn"])
 
@@ -4800,8 +4919,8 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
     concept_chip_2.click(lambda: gr.update(value="A floating city ruled by tides that remember every oath."), outputs=[concept_input])
     concept_chip_3.click(lambda: gr.update(value="A moon colony where gravity changes according to social rank."), outputs=[concept_input])
 
-    generate_btn.click(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
-    concept_input.submit(generate_museum, inputs=[concept_input, curator_mode], outputs=outputs)
+    generate_btn.click(generate_museum, inputs=[concept_input, curator_mode, visitor_name_input, visitor_year_input], outputs=outputs)
+    concept_input.submit(generate_museum, inputs=[concept_input, curator_mode, visitor_name_input, visitor_year_input], outputs=outputs)
 
     hall_outputs = [
         status_html,
