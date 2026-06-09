@@ -951,10 +951,8 @@ body, .gradio-container {
 .landing-wrap {
     width: min(100%, 1540px);
     margin: 24px auto 0;
-    min-height: calc(100vh - 56px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    min-height: auto;
+    display: block;
 }
 
 .landing-shell {
@@ -967,7 +965,7 @@ body, .gradio-container {
         radial-gradient(circle at 86% 12%, rgba(200, 169, 110, 0.08), transparent 20%),
         linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 92%, black), var(--panel));
     box-shadow: 0 24px 60px var(--shadow);
-    min-height: 720px;
+    min-height: 560px;
 }
 
 .admission-welcome {
@@ -1183,7 +1181,7 @@ body, .gradio-container {
 
 .landing-art {
     position: relative;
-    min-height: 680px;
+    min-height: 520px;
     border-radius: 24px;
     overflow: hidden;
     border: 1px solid rgba(200, 169, 110, 0.14);
@@ -1689,7 +1687,7 @@ body[data-world-aura="velvet"] .gradio-container {
 
 .control-shell {
     padding: 0 24px 24px;
-    margin-top: 18px;
+    margin-top: 8px;
     position: relative;
     z-index: 3;
 }
