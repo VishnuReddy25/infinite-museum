@@ -5597,6 +5597,8 @@ def launch_demo(blocks: gr.Blocks):
     launch_kwargs = {
         "allowed_paths": [str(Path("generated_images").resolve())],
     }
+    if "ssr_mode" in launch_signature:
+        launch_kwargs["ssr_mode"] = False
     if "css" in launch_signature:
         launch_kwargs["css"] = CSS
     if "head" in launch_signature:
