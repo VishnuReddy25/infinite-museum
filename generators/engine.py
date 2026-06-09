@@ -92,8 +92,6 @@ def _resolve_llamacpp_model(role: str) -> str:
 
 
 def _adapter_for_role(role: str) -> str | None:
-    if role != "world":
-        return None
     return ADAPTER_ID or None
 
 
