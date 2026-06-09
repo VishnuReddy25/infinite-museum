@@ -687,6 +687,9 @@ APP_HEAD = """
         stack.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
+    if (roomId !== "visitor") {
+      setAmbassadorModalOpen(false);
+    }
   }
 
   function syncMapToSelectedTab() {
@@ -729,6 +732,15 @@ APP_HEAD = """
   function syncWorldAura() {
     const source = document.querySelector("[data-world-aura-source]");
     document.body.setAttribute("data-world-aura", source?.getAttribute("data-world-aura-source") || "default");
+  }
+
+  function setAmbassadorModalOpen(isOpen) {
+    const modal = document.getElementById("ambassador-modal");
+    document.body.classList.toggle("is-ambassador-open", Boolean(isOpen));
+    if (modal) {
+      modal.classList.toggle("is-open", Boolean(isOpen));
+      modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    }
   }
 
   function resolveVoiceField(selector) {
@@ -782,6 +794,9 @@ APP_HEAD = """
     if (hallButton) {
       event.preventDefault();
       const roomId = hallButton.getAttribute("data-hall-target");
+      if (roomId !== "visitor") {
+        setAmbassadorModalOpen(false);
+      }
       const pseudoRoom = document.querySelector(`.museum-room[data-room-id="${roomId}"]`);
       if (pseudoRoom) {
         window.museumNavigate(pseudoRoom);
@@ -830,6 +845,24 @@ APP_HEAD = """
       window.setTimeout(() => document.body.classList.remove("is-beginning-journey"), 1400);
     }
 
+    const ambassadorOpen = event.target.closest("[data-ambassador-open]");
+    if (ambassadorOpen) {
+      event.preventDefault();
+      setAmbassadorModalOpen(true);
+      window.setTimeout(() => {
+        const field = resolveVoiceField("#ambassador-input");
+        field?.focus();
+      }, 120);
+      return;
+    }
+
+    const ambassadorClose = event.target.closest("[data-ambassador-close]");
+    if (ambassadorClose) {
+      event.preventDefault();
+      setAmbassadorModalOpen(false);
+      return;
+    }
+
     const voiceButton = event.target.closest("[data-voice-target]");
     if (voiceButton) {
       event.preventDefault();
@@ -858,6 +891,9 @@ APP_HEAD = """
   });
 
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setAmbassadorModalOpen(false);
+    }
     const room = event.target.closest(".museum-room[data-room-id]");
     if (!room) return;
     if (event.key !== "Enter" && event.key !== " ") return;
@@ -867,6 +903,7 @@ APP_HEAD = """
 
   function bootMuseumUi() {
     applyTheme(window.localStorage.getItem("museum-theme") || "retro");
+    setAmbassadorModalOpen(false);
     const conceptVoice = document.getElementById("concept-voice-btn");
     if (conceptVoice) {
       conceptVoice.setAttribute("data-voice-target", "#concept-input");
@@ -4181,25 +4218,181 @@ body[data-museum-theme="dark"] .museum-header {
     margin-top: 4px;
 }
 
-.ambassador-shell {
+.ambassador-trigger-card {
     margin-top: 18px;
-    border: 1px solid var(--line);
-    border-radius: 18px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 20px;
+    padding: 18px 18px 16px;
     background:
-        radial-gradient(circle at top right, rgba(200, 169, 110, 0.06), transparent 26%),
-        rgba(13, 10, 8, 0.84);
-    padding: 18px;
+        radial-gradient(circle at top right, rgba(125, 151, 255, 0.1), transparent 24%),
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,0.06), transparent 18%),
+        rgba(14, 10, 9, 0.82);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
 }
 
-.ambassador-intro {
+.ambassador-trigger-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ambassador-trigger-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.ambassador-trigger-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    margin-top: 6px;
+}
+
+.ambassador-trigger-copy {
     color: var(--muted);
     font-size: 16px;
-    line-height: 1.65;
-    margin-bottom: 12px;
+    line-height: 1.7;
+    max-width: 54ch;
+}
+
+.ambassador-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.ambassador-pill {
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    padding: 7px 12px;
+    color: var(--paper);
+    background: rgba(255,255,255,0.03);
+    font-size: 12px;
+}
+
+.ambassador-modal-shell {
+    position: fixed !important;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+}
+
+.ambassador-modal-shell.is-open,
+body.is-ambassador-open .ambassador-modal-shell {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ambassador-modal-shell > .gradio-container {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    width: 100%;
+    max-width: 780px;
+}
+
+.ambassador-modal-shell .gr-group,
+.ambassador-modal-shell .gr-box,
+.ambassador-modal-shell .gr-panel,
+.ambassador-modal-shell .gr-form,
+.ambassador-modal-shell .gr-column,
+.ambassador-modal-shell .gr-row {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.ambassador-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: rgba(8, 6, 10, 0.64);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+}
+
+.ambassador-modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 780px);
+    max-height: min(84vh, 900px);
+    overflow: hidden;
+    border-radius: 30px;
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    background:
+        radial-gradient(circle at top right, rgba(126, 145, 255, 0.16), transparent 24%),
+        radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 18%),
+        linear-gradient(180deg, rgba(24, 18, 16, 0.96), rgba(13, 9, 8, 0.98));
+    box-shadow: 0 36px 90px rgba(0, 0, 0, 0.4);
+    padding: 22px;
+    transform: translateY(18px) scale(0.97);
+    transition: transform 0.3s ease;
+}
+
+.ambassador-modal-shell.is-open .ambassador-modal-card,
+body.is-ambassador-open .ambassador-modal-card {
+    transform: translateY(0) scale(1);
+}
+
+.ambassador-modal-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.ambassador-modal-kicker {
+    color: #b9c6ff;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+.ambassador-modal-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 4vw, 36px);
+    line-height: 1.08;
+    margin-top: 8px;
+}
+
+.ambassador-modal-copy {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.68;
+    max-width: 44ch;
+    margin-top: 10px;
+}
+
+.ambassador-close-btn {
+    min-width: 120px;
 }
 
 .ambassador-chat {
-    min-height: 220px;
+    min-height: 360px;
+    max-height: 48vh;
+    overflow: auto;
+    border-radius: 24px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+        rgba(12, 10, 12, 0.62);
+    padding: 8px;
+    margin-bottom: 14px;
 }
 
 .ambassador-chat .message,
@@ -4207,9 +4400,18 @@ body[data-museum-theme="dark"] .museum-header {
     border-radius: 16px !important;
 }
 
+.ambassador-chat .message-wrap {
+    margin-bottom: 8px !important;
+}
+
 .ambassador-chat textarea,
 .ambassador-chat input {
     color: var(--paper) !important;
+}
+
+.ambassador-input textarea,
+.ambassador-input input {
+    min-height: 58px !important;
 }
 
 .is-listening {
@@ -4369,6 +4571,25 @@ body[data-museum-theme="dark"] .museum-header {
     .control-card {
         padding: 18px;
         border-radius: 22px;
+    }
+
+    .ambassador-modal-shell {
+        padding: 12px;
+    }
+
+    .ambassador-modal-card {
+        padding: 16px;
+        border-radius: 24px;
+        max-height: 88vh;
+    }
+
+    .ambassador-modal-head {
+        flex-direction: column;
+    }
+
+    .ambassador-trigger-top {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .journey-rail-grid,
@@ -6048,8 +6269,42 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                         )
                         gr.HTML(
                             """
-<div class="control-panel-label">Tiny World Ambassador</div>
-<div class="control-panel-copy">Ask one local resident what this world feels like from the inside. Three questions per visitor, so each answer stays special.</div>
+<div class="ambassador-trigger-card">
+    <div class="ambassador-trigger-top">
+        <div>
+            <div class="ambassador-trigger-kicker">Local voice encounter</div>
+            <div class="ambassador-trigger-title">Tiny World Ambassador</div>
+        </div>
+        <button class="museum-action-btn" type="button" data-ambassador-open="true">Open Conversation</button>
+    </div>
+    <div class="ambassador-trigger-copy">Step aside from the formal museum voice and speak to one resident of the world. Ask up to three questions about fear, ritual, work, or survival.</div>
+    <div class="ambassador-pill-row">
+        <div class="ambassador-pill">3 questions max</div>
+        <div class="ambassador-pill">In-world replies only</div>
+        <div class="ambassador-pill">Voice input ready</div>
+    </div>
+</div>
+"""
+                        )
+                    gr.HTML("</div>")
+
+                with gr.Group(elem_id="ambassador-modal", elem_classes=["ambassador-modal-shell"]):
+                    gr.HTML(
+                        """
+<button class="ambassador-modal-backdrop" type="button" data-ambassador-close="true" aria-label="Close ambassador dialog"></button>
+"""
+                    )
+                    with gr.Group(elem_classes=["ambassador-modal-card"]):
+                        gr.HTML(
+                            """
+<div class="ambassador-modal-head">
+    <div>
+        <div class="ambassador-modal-kicker">Visitor encounter</div>
+        <div class="ambassador-modal-title">Speak To A Local Voice</div>
+        <div class="ambassador-modal-copy">A separate room for one private conversation. Ask what ordinary life feels like inside the impossible world, and let the answer come back in a softer human voice.</div>
+    </div>
+    <button class="museum-secondary-btn ambassador-close-btn" type="button" data-ambassador-close="true">Close</button>
+</div>
 """
                         )
                         ambassador_chatbot = create_ambassador_chatbot()
@@ -6063,7 +6318,6 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                             )
                             ambassador_voice_btn = gr.Button("Speak Question", elem_classes=["museum-secondary-btn"], elem_id="ambassador-voice-btn")
                             ambassador_send_btn = gr.Button("Ask Ambassador", elem_classes=["museum-action-btn"])
-                    gr.HTML("</div>")
 
         gr.HTML(
             """
@@ -6124,17 +6378,17 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         museum_state,
     ]
 
-    regen_artifacts_btn.click(lambda state: regenerate_hall(state, "artifacts"), inputs=[museum_state], outputs=hall_outputs)
-    regen_timeline_btn.click(lambda state: regenerate_hall(state, "timeline"), inputs=[museum_state], outputs=hall_outputs)
-    regen_newspaper_btn.click(lambda state: regenerate_hall(state, "newspaper"), inputs=[museum_state], outputs=hall_outputs)
-    regen_visitor_btn.click(lambda state: regenerate_hall(state, "visitor"), inputs=[museum_state], outputs=hall_outputs)
+    regen_artifacts_btn.click(lambda state: regenerate_hall(state, "artifacts"), inputs=[museum_state], outputs=hall_outputs, show_progress="hidden")
+    regen_timeline_btn.click(lambda state: regenerate_hall(state, "timeline"), inputs=[museum_state], outputs=hall_outputs, show_progress="hidden")
+    regen_newspaper_btn.click(lambda state: regenerate_hall(state, "newspaper"), inputs=[museum_state], outputs=hall_outputs, show_progress="hidden")
+    regen_visitor_btn.click(lambda state: regenerate_hall(state, "visitor"), inputs=[museum_state], outputs=hall_outputs, show_progress="hidden")
     artifact_image_outputs = [status_html, artifacts_html, museum_state]
-    artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs)
-    artifact_image_btn_2.click(lambda state: generate_artifact_image_action(state, 1), inputs=[museum_state], outputs=artifact_image_outputs)
-    artifact_image_btn_3.click(lambda state: generate_artifact_image_action(state, 2), inputs=[museum_state], outputs=artifact_image_outputs)
+    artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
+    artifact_image_btn_2.click(lambda state: generate_artifact_image_action(state, 1), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
+    artifact_image_btn_3.click(lambda state: generate_artifact_image_action(state, 2), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
     ambassador_outputs = [status_html, ambassador_chatbot, museum_state, ambassador_input]
-    ambassador_send_btn.click(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs)
-    ambassador_input.submit(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs)
+    ambassador_send_btn.click(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs, show_progress="hidden")
+    ambassador_input.submit(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs, show_progress="hidden")
 
 
 if __name__ == "__main__":
