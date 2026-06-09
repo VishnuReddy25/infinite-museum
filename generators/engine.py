@@ -27,9 +27,10 @@ from generators.prompts import (
 
 load_dotenv()
 
-# Enable fast multi-threaded downloads on HuggingFace Spaces
+# Enable fast multi-threaded downloads on Hugging Face Spaces
 os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
-os.environ.setdefault("HF_HUB_CACHE", "/data/huggingface")
+os.environ.setdefault("HF_HOME", "/tmp/huggingface")
+os.environ.setdefault("HF_HUB_CACHE", "/tmp/huggingface/hub")
 
 MODEL_ID = os.environ.get("MUSEUM_MODEL_ID", "Qwen/Qwen2.5-7B-Instruct")
 WORLD_MODEL_ID = os.environ.get("MUSEUM_WORLD_MODEL_ID", MODEL_ID)
