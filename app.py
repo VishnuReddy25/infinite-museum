@@ -3981,7 +3981,8 @@ def _artifact_image_src(image_path: str | None) -> str:
         return path
 
     resolved = Path(path).resolve()
-    return f"/gradio_api/file={quote(str(resolved).replace('\\', '/'), safe='/:')}"
+    resolved_text = str(resolved).replace("\\", "/")
+    return f"/gradio_api/file={quote(resolved_text, safe='/:')}"
 
 
 def build_timeline_html(data: dict) -> str:
