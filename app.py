@@ -386,7 +386,7 @@ APP_HEAD = """
     ctx.font = '500 16px "Cormorant Garamond", Georgia, serif';
     ctx.textAlign = "left";
     const visitorLine = payload.visitor_name
-      ? `Issued to ${payload.visitor_name}${payload.visitor_year ? ` | Arrived from ${payload.visitor_year}` : ""}`
+      ? `Issued to ${payload.visitor_name}${payload.visitor_year ? ` • Arrived from ${payload.visitor_year}` : ""}`
       : "Curated by M. Vishnu Vardhan Reddy - Museum Manager";
     ctx.fillText(visitorLine, 42, 607);
     ctx.textAlign = "right";
@@ -985,28 +985,9 @@ body, .gradio-container {
     padding: 0 20px 36px !important;
 }
 
-.landing-view-shell {
+.landing-wrap {
     width: min(100%, 1540px);
     margin: 24px auto 0;
-}
-
-.arrival-shell {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
-    width: 100%;
-    align-items: stretch;
-    gap: 24px;
-}
-
-.arrival-stage-col,
-.arrival-desk-col {
-    min-width: 0;
-}
-
-.landing-wrap,
-.control-shell {
-    width: 100%;
-    margin: 0;
     min-height: auto;
     display: block;
 }
@@ -1021,7 +1002,7 @@ body, .gradio-container {
         radial-gradient(circle at 86% 12%, rgba(200, 169, 110, 0.08), transparent 20%),
         linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 92%, black), var(--panel));
     box-shadow: 0 24px 60px var(--shadow);
-    min-height: 720px;
+    min-height: 560px;
 }
 
 .admission-welcome {
@@ -1237,7 +1218,7 @@ body, .gradio-container {
 
 .landing-art {
     position: relative;
-    min-height: 560px;
+    min-height: 520px;
     border-radius: 24px;
     overflow: hidden;
     border: 1px solid rgba(200, 169, 110, 0.14);
@@ -1341,45 +1322,6 @@ body, .gradio-container {
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-}
-
-.landing-scene-plaque {
-    position: absolute;
-    left: 24px;
-    right: 24px;
-    top: 24px;
-    max-width: 280px;
-    padding: 18px 18px 16px;
-    border-radius: 18px;
-    border: 1px solid rgba(255, 236, 206, 0.1);
-    background:
-        linear-gradient(180deg, rgba(23, 17, 14, 0.84), rgba(12, 9, 8, 0.72)),
-        rgba(12, 9, 8, 0.72);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
-    backdrop-filter: blur(10px);
-}
-
-.landing-scene-kicker {
-    color: var(--gold-soft);
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.landing-scene-title {
-    color: var(--paper);
-    font-family: 'Cinzel', serif;
-    font-size: 21px;
-    line-height: 1.2;
-    margin-bottom: 8px;
-}
-
-.landing-scene-copy {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.65;
 }
 
 .museum-topbar {
@@ -1845,8 +1787,8 @@ body[data-world-aura="velvet"] .gradio-container {
 
 .control-card {
     position: relative;
-    max-width: none;
-    margin: 0;
+    max-width: 1180px;
+    margin: 0 auto;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 28px;
     padding: 28px;
@@ -1856,17 +1798,6 @@ body[data-world-aura="velvet"] .gradio-container {
     backdrop-filter: blur(18px);
     box-shadow: 0 26px 66px rgba(0, 0, 0, 0.28);
     animation: landingCardReveal 0.82s ease both;
-}
-
-.arrival-desk-card {
-    min-height: 720px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.arrival-desk-card .journey-rail {
-    margin-top: auto;
 }
 
 .admission-card-grid {
@@ -1932,11 +1863,6 @@ body[data-world-aura="velvet"] .gradio-container {
     font-size: 16px;
     line-height: 1.65;
     margin-bottom: 18px;
-}
-
-.control-panel-copy strong {
-    color: var(--paper);
-    font-weight: 600;
 }
 
 .mode-radio {
@@ -4503,7 +4429,6 @@ body.is-ambassador-open .ambassador-modal-card {
 }
 
 @media (max-width: 900px) {
-    .arrival-shell,
     .museum-workspace {
         grid-template-columns: 1fr;
     }
@@ -4580,11 +4505,6 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: 480px;
     }
 
-    .arrival-desk-card,
-    .landing-shell {
-        min-height: auto;
-    }
-
     .landing-plaque-row {
         grid-template-columns: 1fr;
     }
@@ -4613,10 +4533,6 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: auto;
     }
 
-    .landing-view-shell {
-        margin-top: 12px;
-    }
-
     .landing-grid {
         padding: 18px;
         gap: 18px;
@@ -4643,15 +4559,13 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: 360px;
     }
 
-    .landing-scene-plaque {
-        position: static;
-        margin: 16px;
-        max-width: none;
-    }
-
     .landing-caption {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .control-shell {
+        margin-top: 14px;
     }
 
     .control-card {
@@ -4799,12 +4713,12 @@ def world_aura(world_bible: dict) -> str:
 
 def hall_sigil(room_id: str) -> str:
     return {
-        "lobby": "LO",
-        "artifacts": "AR",
-        "timeline": "TI",
-        "newspaper": "PR",
-        "visitor": "VB",
-    }.get(room_id, "--")
+        "lobby": "◈",
+        "artifacts": "⬢",
+        "timeline": "⟡",
+        "newspaper": "✶",
+        "visitor": "☽",
+    }.get(room_id, "◌")
 
 
 def emblem_svg(world_bible: dict) -> str:
@@ -5138,7 +5052,7 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
     if visitor_name or visitor_year:
         visitor_line = visitor_name or "Unnamed visitor"
         if visitor_year:
-            visitor_line += f" | Arrived from {visitor_year}"
+            visitor_line += f" • Arrived from {visitor_year}"
         visitor_html = f"<div class='museum-visitor-pass'>Admission issued to {esc(visitor_line)}</div>"
 
     return f"""
@@ -5481,8 +5395,8 @@ def build_landing_html(curator_mode: str) -> str:
     <div class="landing-grid">
             <div class="landing-copy">
                 <div class="landing-kicker">Infinite Museum</div>
-                <div class="landing-title">Build One Impossible World</div>
-            <div class="landing-subtitle">Bring one clear idea. The museum will turn it into halls, objects, history, news, and one human voice.</div>
+                <div class="landing-title">Build An Impossible World</div>
+            <div class="landing-subtitle">Type one idea. We will turn it into a museum world.</div>
                 <div class="landing-lead">{esc(mode["tagline"])}</div>
             <div class="landing-plaque-row">
                 <div class="landing-plaque">
@@ -5501,11 +5415,6 @@ def build_landing_html(curator_mode: str) -> str:
             <div class="landing-cta-copy">Keep the idea simple. After your ticket is stamped, the museum opens from the lobby and begins calling you by name.</div>
         </div>
         <div class="landing-art" aria-hidden="true">
-            <div class="landing-scene-plaque">
-                <div class="landing-scene-kicker">Museum desk open</div>
-                <div class="landing-scene-title">One idea becomes a guided exhibition</div>
-                <div class="landing-scene-copy">{esc(mode["lead"])}</div>
-            </div>
             <div class="landing-skyline"></div>
             <div class="landing-dome"></div>
             <div class="landing-steps"></div>
@@ -6244,54 +6153,53 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
 
 with gr.Blocks(**build_blocks_kwargs()) as demo:
     museum_state = gr.State(default_state())
-    with gr.Column(visible=True, elem_classes=["landing-view-shell"]) as landing_view:
-        with gr.Row(elem_classes=["arrival-shell"]):
-            with gr.Column(scale=7, elem_classes=["arrival-stage-col", "landing-wrap"]):
-                landing_html = gr.HTML(build_landing_html("Anthropology"))
-            with gr.Column(scale=5, elem_classes=["arrival-desk-col", "control-shell"]):
-                with gr.Column(elem_classes=["control-card", "arrival-desk-card"]):
-                    gr.HTML(
-                        """
-<div class="control-panel-label">Museum desk</div>
-<div class="control-panel-copy"><strong>This is where the museum learns who is arriving.</strong> Tell us your name, your year, and one impossible world. The pass will stamp itself and the lobby will open for you.</div>
+    with gr.Column(visible=True) as landing_view:
+        with gr.Row(elem_classes=["landing-wrap"]):
+            landing_html = gr.HTML(build_landing_html("Anthropology"))
+        with gr.Row(elem_classes=["control-shell"]):
+            with gr.Column(elem_classes=["control-card"]):
+                gr.HTML(
+                    """
+<div class="control-panel-label">Curator mode</div>
+<div class="control-panel-copy">This should feel like stepping up to a museum desk, not filling out a form. Tell us who is arriving, what impossible world you want to open, and let the pass stamp itself into the archive.</div>
 """
-                    )
-                    with gr.Row(elem_classes=["admission-card-grid"]):
-                        with gr.Column(scale=6):
-                            gr.HTML("<div class='admission-form-label'>Choose the curatorial mood for your arrival</div>", elem_classes=["admission-card-copy"])
-                            curator_mode = gr.Radio(
-                                choices=list(CURATOR_MODES.keys()),
-                                value="Anthropology",
-                                show_label=False,
-                                elem_classes=["mode-radio"],
-                            )
-                            visitor_name_input = gr.Textbox(
-                                label="What should we call you?",
-                                placeholder="Enter your name",
-                                lines=1,
-                                elem_id="visitor-name-input",
-                                elem_classes=["admission-input"],
-                            )
-                            visitor_year_input = gr.Textbox(
-                                label="Which year are you visiting us from?",
-                                placeholder="For example, 2026",
-                                lines=1,
-                                elem_id="visitor-year-input",
-                                elem_classes=["admission-input"],
-                            )
-                            concept_input = gr.Textbox(
-                                label="What impossible world should the museum open for you?",
-                                placeholder="A world where dreams are currency.",
-                                lines=3,
-                                elem_id="concept-input",
-                                elem_classes=["admission-input"],
-                            )
-                            with gr.Row(elem_classes=["hall-action-row"]):
-                                concept_voice_btn = gr.Button("Speak World Idea", elem_classes=["museum-secondary-btn"], elem_id="concept-voice-btn")
-                                generate_btn = gr.Button("Begin My Journey ->", elem_classes=["enter-btn"], elem_id="begin-journey-btn")
-                        with gr.Column(scale=5):
-                            admission_ticket_html = gr.HTML(build_entry_ticket_preview())
-                    journey_preview_html = gr.HTML(build_journey_path_html(0))
+                )
+                with gr.Row(elem_classes=["admission-card-grid"]):
+                    with gr.Column(scale=6):
+                        gr.HTML("<div class='admission-form-label'>Choose the curatorial mood for your arrival</div>", elem_classes=["admission-card-copy"])
+                        curator_mode = gr.Radio(
+                            choices=list(CURATOR_MODES.keys()),
+                            value="Anthropology",
+                            show_label=False,
+                            elem_classes=["mode-radio"],
+                        )
+                        visitor_name_input = gr.Textbox(
+                            label="What should we call you?",
+                            placeholder="Enter your name",
+                            lines=1,
+                            elem_id="visitor-name-input",
+                            elem_classes=["admission-input"],
+                        )
+                        visitor_year_input = gr.Textbox(
+                            label="Which year are you visiting us from?",
+                            placeholder="For example, 2026",
+                            lines=1,
+                            elem_id="visitor-year-input",
+                            elem_classes=["admission-input"],
+                        )
+                        concept_input = gr.Textbox(
+                            label="What impossible world should the museum open for you?",
+                            placeholder="A world where dreams are currency.",
+                            lines=3,
+                            elem_id="concept-input",
+                            elem_classes=["admission-input"],
+                        )
+                        with gr.Row(elem_classes=["hall-action-row"]):
+                            concept_voice_btn = gr.Button("Speak World Idea", elem_classes=["museum-secondary-btn"], elem_id="concept-voice-btn")
+                            generate_btn = gr.Button("Begin My Journey →", elem_classes=["enter-btn"], elem_id="begin-journey-btn")
+                        journey_preview_html = gr.HTML(build_journey_path_html(0))
+                    with gr.Column(scale=5):
+                        admission_ticket_html = gr.HTML(build_entry_ticket_preview())
 
     with gr.Column(visible=False, elem_classes=["museum-shell"]) as museum_view:
         with gr.Row(elem_classes=["museum-topbar"]):
@@ -6485,4 +6393,3 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 
 if __name__ == "__main__":
     launch_demo(demo)
-
