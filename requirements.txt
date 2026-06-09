@@ -4,4 +4,8 @@ accelerate>=0.33.0
 huggingface_hub>=0.30.0
 hf-transfer>=0.1.4
 peft>=0.11.1
+diffusers>=0.33.1
+Pillow>=10.4.0
+safetensors>=0.4.5
+sentencepiece>=0.2.0
 spaces
