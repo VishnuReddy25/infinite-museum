@@ -5,6 +5,7 @@ import gradio as gr
 
 from generators.engine import (
     generate_artifacts,
+    generate_featured_artifact_image,
     generate_newspaper,
     generate_timeline,
     generate_visitor_book,
@@ -2370,7 +2371,7 @@ body[data-museum-theme="dark"] .museum-header {
 
 .museum-room-gallery {
     position: absolute;
-    left: 25%;
+    left: clamp(320px, 34%, 520px);
     right: 5%;
     top: 76px;
     bottom: 34px;
@@ -2527,8 +2528,10 @@ body[data-museum-theme="dark"] .museum-header {
     position: absolute;
     left: 32px;
     top: 34px;
-    max-width: 420px;
+    width: clamp(220px, 27vw, 360px);
+    max-width: calc(100% - 140px);
     z-index: 2;
+    padding: 0 10px 14px 0;
     animation: copyRevealFloat 1s ease both;
 }
 
@@ -2554,6 +2557,8 @@ body[data-museum-theme="dark"] .museum-header {
     font-size: 17px;
     line-height: 1.7;
     max-width: 32ch;
+    max-height: 12em;
+    overflow: hidden;
 }
 
 .museum-hall-shell {
