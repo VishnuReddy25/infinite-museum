@@ -32,11 +32,17 @@ os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
 os.environ.setdefault("HF_HUB_CACHE", "/data/huggingface")
 
 MODEL_ID = os.environ.get("MUSEUM_MODEL_ID", "Qwen/Qwen2.5-7B-Instruct")
+WORLD_MODEL_ID = os.environ.get("MUSEUM_WORLD_MODEL_ID", MODEL_ID)
+HALL_MODEL_ID = os.environ.get("MUSEUM_HALL_MODEL_ID", MODEL_ID)
+GUIDE_MODEL_ID = os.environ.get("MUSEUM_GUIDE_MODEL_ID", HALL_MODEL_ID)
 ADAPTER_ID = os.environ.get("MUSEUM_ADAPTER_ID", "VishnuReddy25/infinite-museum-lora")
 RUNTIME = os.environ.get("MUSEUM_RUNTIME", "local").lower()
 HF_TOKEN = os.environ.get("HF_TOKEN")
 LLAMACPP_BASE_URL = os.environ.get("LLAMACPP_BASE_URL", "http://127.0.0.1:8080")
 LLAMACPP_MODEL = os.environ.get("LLAMACPP_MODEL", "museum-gguf")
+LLAMACPP_WORLD_MODEL = os.environ.get("LLAMACPP_WORLD_MODEL", LLAMACPP_MODEL)
+LLAMACPP_HALL_MODEL = os.environ.get("LLAMACPP_HALL_MODEL", LLAMACPP_MODEL)
+LLAMACPP_GUIDE_MODEL = os.environ.get("LLAMACPP_GUIDE_MODEL", LLAMACPP_HALL_MODEL)
 LLAMACPP_API_KEY = os.environ.get("LLAMACPP_API_KEY", "")
 IMAGE_RUNTIME = os.environ.get("MUSEUM_IMAGE_RUNTIME", "disabled").lower()
 IMAGE_MODEL = os.environ.get("MUSEUM_IMAGE_MODEL", "black-forest-labs/FLUX.2-klein-4B")
@@ -69,32 +75,55 @@ def extract_json(text: str) -> dict:
     return {"error": "Could not parse JSON", "raw": text[:500]}
 
 
-@lru_cache(maxsize=1)
-def _load_local_pipeline():
+def _resolve_model_id(role: str) -> str:
+    return {
+        "world": WORLD_MODEL_ID,
+        "hall": HALL_MODEL_ID,
+        "guide": GUIDE_MODEL_ID,
+    }.get(role, MODEL_ID)
+
+
+def _resolve_llamacpp_model(role: str) -> str:
+    return {
+        "world": LLAMACPP_WORLD_MODEL,
+        "hall": LLAMACPP_HALL_MODEL,
+        "guide": LLAMACPP_GUIDE_MODEL,
+    }.get(role, LLAMACPP_MODEL)
+
+
+def _adapter_for_role(role: str) -> str | None:
+    if role != "world":
+        return None
+    return ADAPTER_ID or None
+
+
+@lru_cache(maxsize=None)
+def _load_local_pipeline(role: str = "world"):
     from transformers import pipeline
-    from peft import PeftModel, PeftConfig
-    import torch
+    from peft import PeftModel
 
-    print(f"Loading base model: {MODEL_ID}")
-    print(f"Loading adapter: {ADAPTER_ID}")
+    model_id = _resolve_model_id(role)
+    adapter_id = _adapter_for_role(role)
+    print(f"Loading {role} model: {model_id}")
+    if adapter_id:
+        print(f"Loading adapter for {role}: {adapter_id}")
 
-    # Load base model via pipeline first
     pipe = pipeline(
         "text-generation",
-        model=MODEL_ID,
+        model=model_id,
         device_map="auto",
         torch_dtype="auto",
         token=HF_TOKEN,
     )
 
-    # Attach LoRA adapter
-    pipe.model = PeftModel.from_pretrained(
-        pipe.model,
-        ADAPTER_ID,
-        token=HF_TOKEN,
-    )
-    pipe.model = pipe.model.merge_and_unload()
-    print("Adapter merged successfully.")
+    if adapter_id:
+        pipe.model = PeftModel.from_pretrained(
+            pipe.model,
+            adapter_id,
+            token=HF_TOKEN,
+        )
+        pipe.model = pipe.model.merge_and_unload()
+        print(f"Adapter merged successfully for {role}.")
     return pipe
 
 
@@ -108,8 +137,8 @@ def _load_hf_client():
 
 
 @GPU
-def _generate_with_local(messages: list[dict], max_new_tokens: int) -> str:
-    pipe = _load_local_pipeline()
+def _generate_with_local(messages: list[dict], max_new_tokens: int, role: str = "world") -> str:
+    pipe = _load_local_pipeline(role)
     output = pipe(
         messages,
         max_new_tokens=max_new_tokens,
@@ -127,10 +156,10 @@ def _generate_with_local(messages: list[dict], max_new_tokens: int) -> str:
     return str(generated).strip()
 
 
-def _generate_with_hub(messages: list[dict], max_new_tokens: int) -> str:
+def _generate_with_hub(messages: list[dict], max_new_tokens: int, role: str = "world") -> str:
     client = _load_hf_client()
     completion = client.chat_completion(
-        model=MODEL_ID,
+        model=_resolve_model_id(role),
         messages=messages,
         max_tokens=max_new_tokens,
         temperature=0.8,
@@ -138,10 +167,10 @@ def _generate_with_hub(messages: list[dict], max_new_tokens: int) -> str:
     return completion.choices[0].message.content.strip()
 
 
-def _generate_with_llamacpp(messages: list[dict], max_new_tokens: int) -> str:
+def _generate_with_llamacpp(messages: list[dict], max_new_tokens: int, role: str = "world") -> str:
     payload = json.dumps(
         {
-            "model": LLAMACPP_MODEL,
+            "model": _resolve_llamacpp_model(role),
             "messages": messages,
             "max_tokens": max_new_tokens,
             "temperature": 0.8,
@@ -173,7 +202,7 @@ def _generate_with_llamacpp(messages: list[dict], max_new_tokens: int) -> str:
         raise RuntimeError(f"Unexpected llama.cpp response: {body}") from exc
 
 
-def call_llm(prompt: str, max_new_tokens: int = 900) -> dict:
+def call_llm(prompt: str, max_new_tokens: int = 900, role: str = "world") -> dict:
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": prompt},
@@ -182,13 +211,13 @@ def call_llm(prompt: str, max_new_tokens: int = 900) -> dict:
     text = ""
     try:
         if RUNTIME == "hub":
-            text = _generate_with_hub(messages, max_new_tokens)
+            text = _generate_with_hub(messages, max_new_tokens, role)
         elif RUNTIME == "llamacpp":
-            text = _generate_with_llamacpp(messages, max_new_tokens)
+            text = _generate_with_llamacpp(messages, max_new_tokens, role)
         else:
-            text = _generate_with_local(messages, max_new_tokens)
+            text = _generate_with_local(messages, max_new_tokens, role)
 
-        print(f"[LLM RAW] {text[:300]}")
+        print(f"[LLM RAW:{role}] {text[:300]}")
         parsed = extract_json(text)
         if "error" in parsed:
             raise ValueError(parsed["error"])
@@ -224,6 +253,7 @@ def generate_world_bible(concept: str) -> dict:
             schema=WORLD_BIBLE_SCHEMA_TEXT,
         ),
         max_new_tokens=1100,
+        role="world",
     )
 
 
@@ -235,6 +265,7 @@ def generate_artifacts(concept: str, world_bible: dict) -> dict:
             hall_rules=HALL_RULES,
         ),
         max_new_tokens=900,
+        role="hall",
     )
     return _limit_list(payload, "artifacts", 3)
 
@@ -247,6 +278,7 @@ def generate_timeline(concept: str, world_bible: dict) -> dict:
             hall_rules=HALL_RULES,
         ),
         max_new_tokens=850,
+        role="hall",
     )
     return _limit_list(payload, "events", 5)
 
@@ -259,6 +291,7 @@ def generate_newspaper(concept: str, world_bible: dict) -> dict:
             hall_rules=HALL_RULES,
         ),
         max_new_tokens=850,
+        role="hall",
     )
 
 
@@ -270,6 +303,7 @@ def generate_visitor_book(concept: str, world_bible: dict) -> dict:
             hall_rules=HALL_RULES,
         ),
         max_new_tokens=500,
+        role="guide",
     )
 
 

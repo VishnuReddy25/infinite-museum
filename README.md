@@ -28,17 +28,29 @@ Recent UI work adds a curated hall rail, world-specific atmospheric shifts, gene
 
 The app generates a canonical `world_bible` first, then uses it to keep every hall consistent.
 
+The text stack now supports role-based model routing:
+
+- `world` model: structured world bible generation
+- `hall` model: artifacts, timeline, newspaper
+- `guide` model: lighter human-facing writing such as visitor-book style output
+
 Runtime modes:
 
 - `MUSEUM_RUNTIME=local` loads the model directly inside the Space or local environment.
 - `MUSEUM_RUNTIME=hub` uses hosted inference as a fallback during development.
 - `MUSEUM_RUNTIME=llamacpp` connects the app to a local `llama.cpp` OpenAI-compatible server.
 
-## Recommended model
+## Recommended models
 
 Default:
 
 - `Qwen/Qwen2.5-7B-Instruct`
+
+Recommended split:
+
+- `MUSEUM_WORLD_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
+- `MUSEUM_HALL_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
+- `MUSEUM_GUIDE_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
 
 Planned hackathon targets:
 
@@ -49,9 +61,15 @@ Planned hackathon targets:
 
 - `MUSEUM_RUNTIME=local`
 - `MUSEUM_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
+- `MUSEUM_WORLD_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
+- `MUSEUM_HALL_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
+- `MUSEUM_GUIDE_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
 - `HF_TOKEN=...` only required when `MUSEUM_RUNTIME=hub`
 - `LLAMACPP_BASE_URL=http://127.0.0.1:8080`
 - `LLAMACPP_MODEL=museum-gguf`
+- `LLAMACPP_WORLD_MODEL=museum-world-gguf`
+- `LLAMACPP_HALL_MODEL=museum-hall-gguf`
+- `LLAMACPP_GUIDE_MODEL=museum-guide-gguf`
 - `LLAMACPP_API_KEY=` optional unless your local server expects one
 - `MUSEUM_IMAGE_RUNTIME=disabled`, `local`, or `backend`
 - `MUSEUM_IMAGE_BASE_URL=http://127.0.0.1:7861` only for `backend`
@@ -80,8 +98,35 @@ Then set:
 set MUSEUM_RUNTIME=llamacpp
 set LLAMACPP_BASE_URL=http://127.0.0.1:8080
 set LLAMACPP_MODEL=museum-gguf
+set LLAMACPP_WORLD_MODEL=museum-world-gguf
+set LLAMACPP_HALL_MODEL=museum-hall-gguf
+set LLAMACPP_GUIDE_MODEL=museum-guide-gguf
 python app.py
 ```
+
+## Multi-model routing
+
+If you want a single model for everything, set only:
+
+```bash
+set MUSEUM_MODEL_ID=Qwen/Qwen2.5-7B-Instruct
+```
+
+If you want the hackathon-oriented split, set:
+
+```bash
+set MUSEUM_WORLD_MODEL_ID=Qwen/Qwen2.5-7B-Instruct
+set MUSEUM_HALL_MODEL_ID=Qwen/Qwen2.5-7B-Instruct
+set MUSEUM_GUIDE_MODEL_ID=Qwen/Qwen2.5-7B-Instruct
+```
+
+Current task routing:
+
+- `generate_world_bible()` -> `world`
+- `generate_artifacts()` -> `hall`
+- `generate_timeline()` -> `hall`
+- `generate_newspaper()` -> `hall`
+- `generate_visitor_book()` -> `guide`
 
 ## Featured artifact images
 
