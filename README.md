@@ -37,7 +37,7 @@ The text stack now supports role-based model routing:
 Runtime modes:
 
 - `MUSEUM_RUNTIME=local` loads the model directly inside the Space or local environment.
-- `MUSEUM_RUNTIME=hub` uses hosted inference as a fallback during development.
+- `MUSEUM_RUNTIME=hub` uses hosted inference, and the `world` route can attach your published LoRA through `MUSEUM_ADAPTER_ID`.
 - `MUSEUM_RUNTIME=llamacpp` connects the app to a local `llama.cpp` OpenAI-compatible server.
 
 ## Recommended models
@@ -64,6 +64,7 @@ Planned hackathon targets:
 - `MUSEUM_WORLD_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
 - `MUSEUM_HALL_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
 - `MUSEUM_GUIDE_MODEL_ID=Qwen/Qwen2.5-7B-Instruct`
+- `MUSEUM_ADAPTER_ID=VishnuReddy25/infinite-museum-lora` applies to the `world` route in `hub` and `local` runtimes
 - `HF_TOKEN=...` only required when `MUSEUM_RUNTIME=hub`
 - `LLAMACPP_BASE_URL=http://127.0.0.1:8080`
 - `LLAMACPP_MODEL=museum-gguf`
@@ -118,6 +119,7 @@ If you want the hackathon-oriented split, set:
 set MUSEUM_WORLD_MODEL_ID=Qwen/Qwen2.5-7B-Instruct
 set MUSEUM_HALL_MODEL_ID=Qwen/Qwen2.5-7B-Instruct
 set MUSEUM_GUIDE_MODEL_ID=Qwen/Qwen2.5-7B-Instruct
+set MUSEUM_ADAPTER_ID=VishnuReddy25/infinite-museum-lora
 ```
 
 Current task routing:

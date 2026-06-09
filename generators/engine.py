@@ -97,6 +97,23 @@ def _adapter_for_role(role: str) -> str | None:
     return ADAPTER_ID or None
 
 
+def _messages_to_prompt(messages: list[dict]) -> str:
+    parts: list[str] = []
+    for message in messages:
+        role = str(message.get("role", "")).strip().lower()
+        content = str(message.get("content", "")).strip()
+        if not content:
+            continue
+        if role == "system":
+            parts.append(f"System:\n{content}")
+        elif role == "user":
+            parts.append(f"User:\n{content}")
+        else:
+            parts.append(content)
+    parts.append("Assistant:\n")
+    return "\n\n".join(parts)
+
+
 @lru_cache(maxsize=None)
 def _load_local_pipeline(role: str = "world"):
     from transformers import pipeline
@@ -158,6 +175,19 @@ def _generate_with_local(messages: list[dict], max_new_tokens: int, role: str = 
 
 def _generate_with_hub(messages: list[dict], max_new_tokens: int, role: str = "world") -> str:
     client = _load_hf_client()
+    adapter_id = _adapter_for_role(role)
+    if adapter_id:
+        prompt = _messages_to_prompt(messages)
+        return client.text_generation(
+            prompt,
+            model=_resolve_model_id(role),
+            adapter_id=adapter_id,
+            max_new_tokens=max_new_tokens,
+            temperature=0.8,
+            do_sample=True,
+            return_full_text=False,
+        ).strip()
+
     completion = client.chat_completion(
         model=_resolve_model_id(role),
         messages=messages,
