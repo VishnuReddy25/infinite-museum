@@ -336,6 +336,161 @@ def generate_visitor_book(concept: str, world_bible: dict) -> dict:
     )
 
 
+def generate_world_ambassador_reply(question: str, world_bible: dict, visitor_book: dict | None = None, conversation: list[dict] | None = None) -> str:
+    visitor_book = visitor_book or {}
+    conversation = conversation or []
+    system_prompt = (
+        "You are a citizen of the generated civilization inside the Infinite Museum of Impossible Worlds. "
+        "Speak as someone who truly lives there. Be vivid, grounded, and in-world. "
+        "Do not mention being an AI, prompt, JSON, or simulation. "
+        "Keep replies under 140 words and answer directly. "
+        "If asked something impossible to know, answer from rumor, belief, or daily experience inside the world."
+    )
+    user_prompt = (
+        f"World bible:\n{_world_bible_text(world_bible)}\n\n"
+        f"Visitor testimony:\n{json.dumps(visitor_book, ensure_ascii=True)}\n\n"
+        f"Question from a museum visitor:\n{question.strip()}"
+    )
+    messages = [{"role": "system", "content": system_prompt}]
+    messages.extend(conversation[-4:])
+    messages.append({"role": "user", "content": user_prompt})
+
+    if RUNTIME == "hub":
+        return _generate_with_hub(messages, 220, "guide")
+    if RUNTIME == "llamacpp":
+        return _generate_with_llamacpp(messages, 220, "guide")
+    return _generate_with_local(messages, 220, "guide")
+
+
+def _compact_text(value) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, list):
+        return " ".join(_compact_text(item) for item in value)
+    if isinstance(value, dict):
+        return " ".join(_compact_text(item) for item in value.values())
+    return str(value)
+
+
+def _keyword_set(text: str) -> set[str]:
+    return {token for token in re.findall(r"[a-zA-Z]{4,}", text.lower()) if token not in {"that", "with", "this", "from", "have", "they", "their", "there", "about", "into", "which"}}
+
+
+def build_world_complexity_report(world_bible: dict, artifacts_payload: dict | None = None, timeline_payload: dict | None = None) -> dict:
+    world_bible = world_bible or {}
+    artifacts = (artifacts_payload or {}).get("artifacts") or []
+    timeline = (timeline_payload or {}).get("events") or []
+    laws = world_bible.get("laws_of_reality") or []
+    motifs = world_bible.get("visual_motifs") or []
+    anchors = world_bible.get("historical_anchors") or []
+    score = 28
+    score += min(22, len(laws) * 6)
+    score += min(18, len(motifs) * 4)
+    score += min(18, len(anchors) * 4)
+    score += min(14, len(artifacts) * 4)
+    score += min(10, len(timeline) * 2)
+    if world_bible.get("taboo"):
+        score += 4
+    if world_bible.get("daily_life"):
+        score += 4
+    score = max(0, min(100, score))
+
+    if score >= 85:
+        band = "Labyrinthine"
+        note = "Dense institutions, layered symbols, and strong internal texture."
+    elif score >= 70:
+        band = "Ornate"
+        note = "Rich enough to feel collectible, with several good lines of inquiry."
+    elif score >= 55:
+        band = "Layered"
+        note = "Clear central rule with enough supporting detail to explore."
+    else:
+        band = "Emergent"
+        note = "A promising world sketch that still leans on the central premise."
+
+    return {"score": score, "band": band, "note": note}
+
+
+def tag_artifacts(artifacts_payload: dict, world_bible: dict | None = None) -> dict:
+    payload = dict(artifacts_payload or {})
+    world_bible = world_bible or {}
+    motifs = _keyword_set(_compact_text(world_bible.get("visual_motifs") or []))
+    premise_terms = _keyword_set(_compact_text([world_bible.get("core_premise"), world_bible.get("government"), world_bible.get("taboo")]))
+    tagged = []
+    for artifact in payload.get("artifacts") or []:
+        artifact = dict(artifact or {})
+        text = _compact_text([artifact.get("name"), artifact.get("description"), artifact.get("significance"), artifact.get("material"), artifact.get("era")]).lower()
+        tags: list[str] = []
+        if any(word in text for word in ["crown", "seal", "decree", "scepter", "council", "ledger", "registry", "standard"]):
+            tags.append("State Relic")
+        if any(word in text for word in ["ritual", "temple", "sacred", "prayer", "omen", "oracle"]):
+            tags.append("Ritual Object")
+        if any(word in text for word in ["tool", "clock", "compass", "machine", "instrument", "device", "engine"]):
+            tags.append("Civic Tool")
+        if any(word in text for word in ["memory", "record", "archive", "book", "quill", "map"]):
+            tags.append("Archive Piece")
+        if any(word in text for word in ["mask", "dress", "garment", "uniform", "veil", "robe"]):
+            tags.append("Social Costume")
+        if premise_terms and len(_keyword_set(text) & premise_terms) >= 2:
+            tags.append("Premise Anchor")
+        if motifs and len(_keyword_set(text) & motifs) >= 1:
+            tags.append("Motif Echo")
+        if not tags:
+            tags.append("Cultural Relic")
+        artifact["curator_tags"] = tags[:3]
+        tagged.append(artifact)
+    payload["artifacts"] = tagged
+    return payload
+
+
+def detect_curator_notes(world_bible: dict, artifacts_payload: dict | None = None, timeline_payload: dict | None = None, newspaper_payload: dict | None = None, visitor_book: dict | None = None) -> dict:
+    world_bible = world_bible or {}
+    artifacts_payload = artifacts_payload or {}
+    timeline_payload = timeline_payload or {}
+    newspaper_payload = newspaper_payload or {}
+    visitor_book = visitor_book or {}
+
+    notes: list[dict] = []
+    reference_terms = _keyword_set(
+        _compact_text(
+            [
+                world_bible.get("core_premise"),
+                world_bible.get("government"),
+                world_bible.get("taboo"),
+                world_bible.get("daily_life"),
+                world_bible.get("historical_anchors"),
+            ]
+        )
+    )
+    artifact_text = _compact_text(artifacts_payload)
+    timeline_text = _compact_text(timeline_payload)
+    newspaper_text = _compact_text(newspaper_payload)
+    visitor_text = _compact_text(visitor_book)
+
+    if reference_terms and len(_keyword_set(artifact_text) & reference_terms) < 2:
+        notes.append({"level": "warning", "title": "Artifact hall drift", "body": "The artifact descriptions feel a little detached from the core premise. A stronger material or symbolic link would make the collection feel more inevitable."})
+    if reference_terms and len(_keyword_set(newspaper_text) & reference_terms) < 2:
+        notes.append({"level": "warning", "title": "Public record drift", "body": "The newspaper does not strongly echo the main social rule yet. The press voice could lean more on the world’s core tension."})
+    if world_bible.get("taboo"):
+        taboo_terms = _keyword_set(str(world_bible.get("taboo")))
+        if taboo_terms and len(_keyword_set(visitor_text) & taboo_terms) == 0:
+            notes.append({"level": "note", "title": "Taboo not felt personally", "body": "The private testimony does not yet brush against the stated taboo. A more intimate sign of fear or avoidance could deepen the final hall."})
+    if not timeline_payload.get("events"):
+        notes.append({"level": "warning", "title": "Timeline missing", "body": "The historical wall is too thin to support the rest of the museum."})
+    elif len((timeline_payload.get("events") or [])) < 3:
+        notes.append({"level": "note", "title": "Thin chronology", "body": "The archive works, but a denser chain of turning points would make the civilization feel older and more inhabited."})
+    if world_bible.get("visual_motifs"):
+        motif_terms = _keyword_set(_compact_text(world_bible.get("visual_motifs")))
+        combined_text = " ".join([artifact_text, newspaper_text, visitor_text]).lower()
+        if motif_terms and len(_keyword_set(combined_text) & motif_terms) < 1:
+            notes.append({"level": "note", "title": "Motif underused", "body": "The visual motif is recorded in the lobby but does not echo strongly enough across later halls."})
+
+    severity_penalty = sum(10 if note["level"] == "warning" else 5 for note in notes)
+    consistency_score = max(52, 100 - severity_penalty)
+    headline = "Collection feels internally consistent." if not notes else "A few curatorial tensions were detected."
+    return {"headline": headline, "consistency_score": consistency_score, "notes": notes[:4]}
+
+
 def build_featured_artifact_prompt(world_bible: dict, artifact: dict) -> str:
     motifs = ", ".join(world_bible.get("visual_motifs", [])[:3])
     laws = ", ".join(world_bible.get("laws_of_reality", [])[:2])

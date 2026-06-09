@@ -8,12 +8,16 @@ from urllib.parse import quote
 import gradio as gr
 
 from generators.engine import (
+    build_world_complexity_report,
+    detect_curator_notes,
     generate_artifacts,
     generate_featured_artifact_image,
     generate_newspaper,
     generate_timeline,
     generate_visitor_book,
+    generate_world_ambassador_reply,
     generate_world_bible,
+    tag_artifacts,
 )
 
 
@@ -458,7 +462,7 @@ APP_HEAD = """
 
     ctx.font = '500 22px "Cormorant Garamond", Georgia, serif';
     ctx.fillStyle = palette.accent;
-    ctx.fillText(payload.visitor_title || "Explorer of Forgotten Worlds", 88, 258);
+    ctx.fillText(payload.visitor_title || "Explorer of Impossible Worlds", 88, 258);
 
     ctx.strokeStyle = palette.line;
     ctx.beginPath();
@@ -470,7 +474,7 @@ APP_HEAD = """
       ["Museum", payload.museum_name || "Infinite Museum"],
       ["Visit Date", payload.visit_date || ""],
       ["Access", "Granted to the World of Imagination"],
-      ["Origin", payload.visitor_year || "Unknown year"],
+      ["Complexity", `${payload.complexity_score || "--"} ${payload.complexity_band || ""}`.trim() || "--"],
     ];
 
     labels.forEach(([label, value], index) => {
@@ -719,6 +723,45 @@ APP_HEAD = """
     document.body.setAttribute("data-world-aura", source?.getAttribute("data-world-aura-source") || "default");
   }
 
+  function resolveVoiceField(selector) {
+    const root = document.querySelector(selector);
+    if (!root) return null;
+    if (root.matches("textarea, input")) return root;
+    return root.querySelector("textarea, input");
+  }
+
+  function startVoiceIntake(selector, button) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const field = resolveVoiceField(selector);
+    if (!SpeechRecognition || !field) return;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    button.classList.add("is-listening");
+    button.textContent = "Listening...";
+    recognition.onresult = (event) => {
+      const transcript = event?.results?.[0]?.[0]?.transcript?.trim();
+      if (!transcript) return;
+      const spacer = field.value && !String(field.value).endsWith(" ") ? " " : "";
+      field.value = `${field.value || ""}${spacer}${transcript}`.trim();
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+      field.dispatchEvent(new Event("change", { bubbles: true }));
+    };
+    recognition.onend = () => {
+      button.classList.remove("is-listening");
+      button.textContent = button.getAttribute("data-voice-label") || "Speak";
+    };
+    recognition.onerror = () => {
+      button.classList.remove("is-listening");
+      button.textContent = "Voice unavailable";
+      window.setTimeout(() => {
+        button.textContent = button.getAttribute("data-voice-label") || "Speak";
+      }, 1800);
+    };
+    recognition.start();
+  }
+
   document.addEventListener("click", (event) => {
     const themeButton = event.target.closest("[data-theme-switch]");
     if (themeButton) {
@@ -779,6 +822,13 @@ APP_HEAD = """
       window.setTimeout(() => document.body.classList.remove("is-beginning-journey"), 1400);
     }
 
+    const voiceButton = event.target.closest("[data-voice-target]");
+    if (voiceButton) {
+      event.preventDefault();
+      startVoiceIntake(voiceButton.getAttribute("data-voice-target"), voiceButton);
+      return;
+    }
+
     const audioPlay = event.target.closest("[data-audio-guide-toggle]");
     if (audioPlay) {
       event.preventDefault();
@@ -809,6 +859,16 @@ APP_HEAD = """
 
   function bootMuseumUi() {
     applyTheme(window.localStorage.getItem("museum-theme") || "retro");
+    const conceptVoice = document.getElementById("concept-voice-btn");
+    if (conceptVoice) {
+      conceptVoice.setAttribute("data-voice-target", "#concept-input");
+      conceptVoice.setAttribute("data-voice-label", "Speak World Idea");
+    }
+    const ambassadorVoice = document.getElementById("ambassador-voice-btn");
+    if (ambassadorVoice) {
+      ambassadorVoice.setAttribute("data-voice-target", "#ambassador-input");
+      ambassadorVoice.setAttribute("data-voice-label", "Speak Question");
+    }
     syncWorldAura();
     positionFromActiveRoom();
     window.setTimeout(positionFromActiveRoom, 250);
@@ -3794,6 +3854,24 @@ body[data-museum-theme="dark"] .museum-header {
     margin-bottom: 10px;
 }
 
+.artifact-tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.artifact-tag {
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    background: rgba(200, 169, 110, 0.08);
+}
+
 .artifact-desc {
     color: var(--paper);
     line-height: 1.8;
@@ -3992,6 +4070,146 @@ body[data-museum-theme="dark"] .museum-header {
     letter-spacing: 0.12em;
 }
 
+.curator-notes-shell {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 18px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 24%),
+        rgba(16, 11, 9, 0.84);
+}
+
+.curator-notes-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.curator-notes-kicker {
+    color: #d7a4a4;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.curator-notes-headline {
+    color: var(--paper);
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.curator-notes-score {
+    min-width: 112px;
+    text-align: center;
+    border: 1px solid rgba(215, 164, 164, 0.2);
+    border-radius: 14px;
+    padding: 10px 12px;
+    color: #f1c9c9;
+    font-family: 'Cinzel', serif;
+}
+
+.curator-notes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.curator-note-card {
+    border: 1px solid rgba(215, 164, 164, 0.16);
+    border-radius: 14px;
+    padding: 14px;
+    background: rgba(37, 21, 19, 0.34);
+}
+
+.curator-note-level {
+    color: #f1b6b6;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.curator-note-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.curator-note-body {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.museum-complexity-badge {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 16px;
+    min-width: 128px;
+    text-align: center;
+    background: rgba(200, 169, 110, 0.08);
+}
+
+.museum-complexity-kicker {
+    color: var(--gold-soft);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.museum-complexity-score {
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 30px;
+    line-height: 1.1;
+    margin-top: 4px;
+}
+
+.museum-complexity-band {
+    color: var(--paper);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.ambassador-shell {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.06), transparent 26%),
+        rgba(13, 10, 8, 0.84);
+    padding: 18px;
+}
+
+.ambassador-intro {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.65;
+    margin-bottom: 12px;
+}
+
+.ambassador-chat {
+    min-height: 220px;
+}
+
+.ambassador-chat .message,
+.ambassador-chat .message-wrap {
+    border-radius: 16px !important;
+}
+
+.ambassador-chat textarea,
+.ambassador-chat input {
+    color: var(--paper) !important;
+}
+
+.is-listening {
+    box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.3), 0 0 24px rgba(200, 169, 110, 0.2);
+}
+
 .museum-footer {
     padding: 20px;
     text-align: center;
@@ -4015,6 +4233,7 @@ body[data-museum-theme="dark"] .museum-header {
     .landing-grid,
     .lobby-grid,
     .world-details,
+    .curator-notes-grid,
     .timeline-card,
     .hero-grid,
     .museum-audio-guide,
@@ -4420,6 +4639,10 @@ def build_entry_ticket_preview(visitor_name: str = "", visitor_year: str = "", c
                 <div class="museum-ticket-stat-label">Imaginative title</div>
                 <div class="museum-ticket-stat-value" id="landing-ticket-title">{esc(ticket_title)}</div>
             </div>
+            <div class="museum-ticket-stat">
+                <div class="museum-ticket-stat-label">Complexity seal</div>
+                <div class="museum-ticket-stat-value">Pending world generation</div>
+            </div>
         </div>
         <div class="museum-ticket-footer">
             <div class="museum-ticket-copy">Access granted to the World of Imagination.</div>
@@ -4522,6 +4745,7 @@ def build_share_payload(state: dict) -> dict:
     visitor_name = state.get("visitor_name", "")
     visitor_year = state.get("visitor_year", "")
     museum_name = world_bible.get("museum_name", "Infinite Museum")
+    complexity = state.get("complexity") or {}
     return {
         "museum_name": museum_name,
         "tagline": world_bible.get("tagline", ""),
@@ -4536,6 +4760,8 @@ def build_share_payload(state: dict) -> dict:
         "turning_point": first_item(world_bible.get("historical_anchors"), "No turning point recorded yet."),
         "taboo": world_bible.get("taboo", "No absolute taboo recorded yet."),
         "visual_motif": first_item(world_bible.get("visual_motifs"), "No visual motif recorded yet."),
+        "complexity_score": complexity.get("score", ""),
+        "complexity_band": complexity.get("band", ""),
         "aura": world_aura(world_bible),
     }
 
@@ -4581,6 +4807,7 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
     visitor_name = (state.get("visitor_name") or "").strip()
     visitor_year = (state.get("visitor_year") or "").strip()
     aura = world_aura(world_bible) if world_bible else "default"
+    complexity_html = build_complexity_badge(state.get("complexity"))
     button_html = ""
     if world_bible:
         payload = json.dumps(build_share_payload(state))
@@ -4611,12 +4838,13 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
         {visitor_html}
         </div>
     </div>
+    {complexity_html}
     {button_html}
 </div>
 """
 
 
-def build_lobby_html(world_bible: dict) -> str:
+def build_lobby_html(world_bible: dict, complexity: dict | None = None, curator_notes: dict | None = None) -> str:
     if not world_bible or "museum_name" not in world_bible:
         return "<div class='empty-state'>Describe an impossible world to open the museum.</div>"
 
@@ -4634,6 +4862,7 @@ def build_lobby_html(world_bible: dict) -> str:
     return f"""
 {type_text("Orientation gallery", "section-heading", 14)}
 <div class="lobby-grid">{stat_html}</div>
+{build_curator_notes_html(curator_notes)}
 {type_text(world_bible.get("summary", ""), "lobby-summary", 10)}
 <div class="world-details">
     <div class="world-detail">
@@ -4653,6 +4882,8 @@ def build_lobby_html(world_bible: dict) -> str:
         <p>{esc(world_bible.get("daily_life", ""))}</p>
         <div class="lobby-label" style="margin-top:16px">One absolute taboo</div>
         <p>{esc(world_bible.get("taboo", ""))}</p>
+        <div class="lobby-label" style="margin-top:16px">Complexity seal</div>
+        <p>{esc(str((complexity or {}).get("score", "Pending")))} {esc((complexity or {}).get("band", ""))}</p>
     </div>
 </div>
 """
@@ -4713,12 +4944,14 @@ def build_artifacts_html(data: dict) -> str:
 
     hall_intro = type_text("Artifacts hall", "section-heading", 14)
     for artifact in data.get("artifacts", []):
+        tags = "".join(f"<span class='artifact-tag'>{esc(tag)}</span>" for tag in artifact.get("curator_tags", []))
         cards.append(
             f"""
 <div class="artifact-card">
     <div class="artifact-kicker">Catalogued relic</div>
     {type_text(artifact.get("name", ""), "artifact-name", 12)}
     <div class="artifact-meta">{esc(artifact.get("era", ""))} | {esc(artifact.get("material", ""))}</div>
+    <div class="artifact-tag-row">{tags}</div>
     <div class="artifact-desc">{esc(artifact.get("description", ""))}</div>
     <div class="artifact-significance">{esc(artifact.get("significance", ""))}</div>
 </div>
@@ -4799,6 +5032,64 @@ def build_visitor_book_html(data: dict) -> str:
     <div class="visitor-kicker">Final testimony</div>
     {type_text(f'"{data.get("entry", "")}"', "visitor-entry", 11)}
     <div class="visitor-signed">{esc(data.get("signed", ""))}</div>
+</div>
+"""
+
+
+def build_curator_notes_html(curator_notes: dict | None) -> str:
+    curator_notes = curator_notes or {}
+    notes = curator_notes.get("notes") or []
+    if not notes:
+        return """
+<div class="curator-notes-shell">
+    <div class="curator-notes-head">
+        <div class="curator-notes-kicker">Curator Notes</div>
+        <div class="curator-notes-score">100 / 100</div>
+    </div>
+    <div class="curator-notes-headline">The museum is internally coherent so far.</div>
+</div>
+"""
+
+    cards = []
+    for note in notes:
+        level = note.get("level", "note")
+        cards.append(
+            f"""
+<div class="curator-note-card curator-note-card--{esc(level)}">
+    <div class="curator-note-level">{esc(level.title())}</div>
+    <div class="curator-note-title">{esc(note.get("title", "Curator note"))}</div>
+    <div class="curator-note-body">{esc(note.get("body", ""))}</div>
+</div>
+"""
+        )
+
+    return f"""
+<div class="curator-notes-shell">
+    <div class="curator-notes-head">
+        <div>
+            <div class="curator-notes-kicker">Curator Notes</div>
+            <div class="curator-notes-headline">{esc(curator_notes.get("headline", "A few tensions were detected."))}</div>
+        </div>
+        <div class="curator-notes-score">{esc(str(curator_notes.get("consistency_score", 100)))} / 100</div>
+    </div>
+    <div class="curator-notes-grid">
+        {''.join(cards)}
+    </div>
+</div>
+"""
+
+
+def build_complexity_badge(complexity: dict | None) -> str:
+    complexity = complexity or {}
+    score = complexity.get("score")
+    band = complexity.get("band", "Emergent")
+    if score is None:
+        return ""
+    return f"""
+<div class="museum-complexity-badge">
+    <div class="museum-complexity-kicker">World complexity</div>
+    <div class="museum-complexity-score">{esc(str(score))}</div>
+    <div class="museum-complexity-band">{esc(band)}</div>
 </div>
 """
 
@@ -5185,6 +5476,8 @@ def build_museum_state(
     timeline=None,
     newspaper=None,
     visitor_book=None,
+    complexity=None,
+    curator_notes=None,
 ) -> dict:
     return {
         "concept": concept,
@@ -5198,6 +5491,10 @@ def build_museum_state(
         "timeline": timeline or {},
         "newspaper": newspaper or {},
         "visitor_book": visitor_book or {},
+        "complexity": complexity or {},
+        "curator_notes": curator_notes or {},
+        "ambassador_history": [],
+        "ambassador_turns": 0,
     }
 
 
@@ -5211,6 +5508,103 @@ def show_museum_shell():
 
 def show_landing_page():
     return gr.update(visible=True), gr.update(visible=False)
+
+
+def build_ambassador_seed_message(state: dict) -> str:
+    state = state or {}
+    world_bible = state.get("world_bible") or {}
+    visitor_book = state.get("visitor_book") or {}
+    museum_name = world_bible.get("museum_name") or "this impossible world"
+    premise = world_bible.get("core_premise") or "life here follows one impossible rule"
+    witness = visitor_book.get("entry") or "A private testimony is still being gathered."
+    witness = " ".join(str(witness).split())[:180]
+    return (
+        f"I am speaking from inside {museum_name}. {premise}. "
+        f"Ask me about daily life, fear, power, ritual, or survival here. "
+        f"One local voice says: {witness}"
+    )
+
+
+def reset_ambassador_state(state: dict) -> dict:
+    state = state or default_state()
+    state["ambassador_history"] = [{"role": "assistant", "content": build_ambassador_seed_message(state)}]
+    state["ambassador_turns"] = 0
+    return state
+
+
+def build_ambassador_chat_state(state: dict):
+    state = state or default_state()
+    history = state.get("ambassador_history") or []
+    return history or [{"role": "assistant", "content": "Open a world first, then a local voice will answer from inside it."}]
+
+
+def refresh_world_analysis(state: dict) -> dict:
+    state = state or default_state()
+    world_bible = state.get("world_bible") or {}
+    artifacts = state.get("artifacts") or {}
+    timeline = state.get("timeline") or {}
+    newspaper = state.get("newspaper") or {}
+    visitor_book = state.get("visitor_book") or {}
+
+    if artifacts:
+        state["artifacts"] = tag_artifacts(artifacts, world_bible)
+    state["complexity"] = build_world_complexity_report(world_bible, state.get("artifacts") or {}, timeline)
+    state["curator_notes"] = detect_curator_notes(world_bible, state.get("artifacts") or {}, timeline, newspaper, visitor_book)
+    return state
+
+
+def ask_ambassador(state: dict, question: str):
+    state = state or default_state()
+    curator_mode = state.get("curator_mode") or "Anthropology"
+    question = (question or "").strip()
+
+    if not (state.get("world_bible") or {}):
+        return (
+            build_status_panel("Open a museum first", "Generate a civilization before asking someone who lives inside it.", curator_mode),
+            build_ambassador_chat_state(state),
+            state,
+            gr.update(value=""),
+        )
+
+    if not question:
+        return (
+            build_status_panel("Ask the ambassador something", "Try a question about daily life, taboo, government, ritual, or fear.", curator_mode),
+            build_ambassador_chat_state(state),
+            state,
+            gr.update(value=""),
+        )
+
+    history = list(state.get("ambassador_history") or [])
+    if not history:
+        state = reset_ambassador_state(state)
+        history = list(state.get("ambassador_history") or [])
+
+    turns = int(state.get("ambassador_turns") or 0)
+    if turns >= 3:
+        return (
+            build_status_panel("Ambassador conversation complete", "This local voice has answered three questions. Regenerate the Visitor's Book for a new witness.", curator_mode),
+            history,
+            state,
+            gr.update(value=""),
+        )
+
+    history.append({"role": "user", "content": question})
+    reply = generate_world_ambassador_reply(
+        question,
+        state.get("world_bible") or {},
+        state.get("visitor_book") or {},
+        history[:-1],
+    ).strip()
+    history.append({"role": "assistant", "content": reply or "The ambassador pauses, then lets the silence stand in place of an answer."})
+    state["ambassador_history"] = history
+    state["ambassador_turns"] = turns + 1
+
+    return (
+        build_status_panel("Ambassador responded", f"Question {state['ambassador_turns']} of 3 has been recorded in this hall.", curator_mode),
+        history,
+        state,
+        gr.update(value=""),
+    )
 
 
 def generate_artifact_image_action(state: dict, artifact_index: int):
@@ -5268,11 +5662,12 @@ def regenerate_hall(state: dict, hall: str):
             gr.update(value=build_map_html("lobby", [])),
             gr.update(value=build_room_stage(state)),
             gr.update(value=build_audio_guide(state)),
-            gr.update(value=build_lobby_html(world_bible)),
+            gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
             gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
             gr.update(value=build_timeline_html(state.get("timeline") or {})),
             gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
             gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+            gr.update(value=build_ambassador_chat_state(state)),
             state,
         )
 
@@ -5297,22 +5692,26 @@ def regenerate_hall(state: dict, hall: str):
     elif hall == "visitor":
         visitor_book = generate_visitor_book(guided_concept, world_bible)
         state["visitor_book"] = visitor_book
+        state = reset_ambassador_state(state)
         title = "Visitor's Book rerolled"
-        subtitle = "A different personal voice has been added to the same world."
+        subtitle = "A different personal voice has been added to the same world, and the ambassador has changed with it."
     else:
         title = "Unknown hall"
         subtitle = "No changes were made."
+
+    state = refresh_world_analysis(state)
 
     return (
         build_status_panel(title, subtitle, curator_mode),
         gr.update(value=build_map_html(hall if hall in {"artifacts", "timeline", "newspaper", "visitor"} else "lobby", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
-        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(state.get("timeline") or {})),
         gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
         gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+        gr.update(value=build_ambassador_chat_state(state)),
         state,
     )
 
@@ -5337,6 +5736,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
             empty_gallery("History has not yet been arranged."),
             empty_gallery("No front page has gone to print."),
             empty_gallery("No one has yet signed the visitor's book."),
+            [],
             default_state(),
         )
         return
@@ -5356,11 +5756,13 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
+        [],
         default_state(),
     )
 
     world_bible = generate_world_bible(guided_concept)
     state = build_museum_state(concept, curator_mode, world_bible, visitor_name, visitor_year)
+    state = refresh_world_analysis(state)
 
     yield (
         gr.update(visible=False),
@@ -5370,17 +5772,19 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
-        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_loading_html("Excavating the collection", "The museum is cataloguing objects from this civilization and selecting the first exhibit pieces.", 2, 5, "Timeline")),
         empty_gallery("Assembling the official historical record."),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
+        [],
         state,
     )
 
     artifacts = generate_artifacts(guided_concept, world_bible)
     state["artifacts"] = artifacts
     state["featured_image"] = None
+    state = refresh_world_analysis(state)
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
@@ -5389,16 +5793,18 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
-        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": None})),
         gr.update(value=build_loading_html("Restoring the timeline", "The archive is assembling the sequence of events that shaped this world.", 3, 5, "Newspaper")),
         empty_gallery("Preparing the day's newspaper edition."),
         empty_gallery("Opening the final testimony cabinet."),
+        [],
         state,
     )
 
     timeline = generate_timeline(guided_concept, world_bible)
     state["timeline"] = timeline
+    state = refresh_world_analysis(state)
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
@@ -5407,16 +5813,18 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
-        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_loading_html("Printing the newspaper", "The press room is composing a front page from inside the civilization's own point of view.", 4, 5, "Visitor's Book")),
         empty_gallery("Opening the final testimony cabinet."),
+        [],
         state,
     )
 
     newspaper = generate_newspaper(guided_concept, world_bible)
     state["newspaper"] = newspaper
+    state = refresh_world_analysis(state)
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
@@ -5425,16 +5833,19 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
-        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_loading_html("Opening the last page", "The museum is finding one private voice that lived inside this world.", 5, 5, "Final display")),
+        [],
         state,
     )
 
     visitor_book = generate_visitor_book(guided_concept, world_bible)
     state["visitor_book"] = visitor_book
+    state = refresh_world_analysis(state)
+    state = reset_ambassador_state(state)
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
@@ -5443,11 +5854,12 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=True)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
-        gr.update(value=build_lobby_html(world_bible)),
+        gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_visitor_book_html(visitor_book)),
+        gr.update(value=build_ambassador_chat_state(state)),
         state,
     )
 
@@ -5492,9 +5904,11 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
                             label="What impossible world should the museum open for you?",
                             placeholder="A world where dreams are currency.",
                             lines=3,
+                            elem_id="concept-input",
                             elem_classes=["admission-input"],
                         )
-                        with gr.Row():
+                        with gr.Row(elem_classes=["hall-action-row"]):
+                            concept_voice_btn = gr.Button("Speak World Idea", elem_classes=["museum-secondary-btn"], elem_id="concept-voice-btn")
                             generate_btn = gr.Button("Begin My Journey →", elem_classes=["enter-btn"], elem_id="begin-journey-btn")
                         journey_preview_html = gr.HTML(build_journey_path_html(0))
                     with gr.Column(scale=5):
@@ -5566,6 +5980,28 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
                             value="<div class='empty-state'>No one has yet signed the visitor's book.</div>",
                             elem_classes=["hall-content"],
                         )
+                        gr.HTML(
+                            """
+<div class="control-panel-label">Tiny World Ambassador</div>
+<div class="control-panel-copy">Ask one local resident what this world feels like from the inside. Three questions per visitor, so each answer stays special.</div>
+"""
+                        )
+                        ambassador_chatbot = gr.Chatbot(
+                            value=[],
+                            type="messages",
+                            show_label=False,
+                            elem_classes=["ambassador-chat", "museum-ambassador-chat"],
+                        )
+                        with gr.Row(elem_classes=["hall-action-row"]):
+                            ambassador_input = gr.Textbox(
+                                placeholder="Ask about daily life, taboo, fear, ritual, or power...",
+                                lines=2,
+                                show_label=False,
+                                elem_id="ambassador-input",
+                                elem_classes=["admission-input", "ambassador-input"],
+                            )
+                            ambassador_voice_btn = gr.Button("Speak Question", elem_classes=["museum-secondary-btn"], elem_id="ambassador-voice-btn")
+                            ambassador_send_btn = gr.Button("Ask Ambassador", elem_classes=["museum-action-btn"])
                     gr.HTML("</div>")
 
         gr.HTML(
@@ -5589,6 +6025,7 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
         timeline_html,
         newspaper_html,
         visitor_html,
+        ambassador_chatbot,
         museum_state,
     ]
 
@@ -5622,6 +6059,7 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
         timeline_html,
         newspaper_html,
         visitor_html,
+        ambassador_chatbot,
         museum_state,
     ]
 
@@ -5633,6 +6071,9 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
     artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs)
     artifact_image_btn_2.click(lambda state: generate_artifact_image_action(state, 1), inputs=[museum_state], outputs=artifact_image_outputs)
     artifact_image_btn_3.click(lambda state: generate_artifact_image_action(state, 2), inputs=[museum_state], outputs=artifact_image_outputs)
+    ambassador_outputs = [status_html, ambassador_chatbot, museum_state, ambassador_input]
+    ambassador_send_btn.click(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs)
+    ambassador_input.submit(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs)
 
 
 if __name__ == "__main__":
