@@ -948,7 +948,7 @@ body[data-world-aura="velvet"] .gradio-container {
     margin: 0 auto;
     padding: 0 24px 18px;
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
+    grid-template-columns: 250px minmax(0, 1fr);
     gap: 26px;
     align-items: start;
 }
@@ -1442,51 +1442,82 @@ body[data-world-aura="velvet"] .gradio-container {
 }
 
 .status-panel {
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 14px 16px;
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    border-radius: 18px;
+    padding: 16px;
     background:
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 22%),
+        radial-gradient(circle at top left, rgba(200, 169, 110, 0.08), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%),
         var(--panel);
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.status-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 8px;
 }
 
 .status-line {
     font-family: 'Cinzel', serif;
     color: var(--paper);
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    font-size: 16px;
+    line-height: 1.25;
+    letter-spacing: 0.06em;
+    text-wrap: balance;
 }
 
 .status-subline {
     margin-top: 6px;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .status-side {
-    border-top: 1px solid var(--line);
-    padding-top: 10px;
+    border-top: 1px solid rgba(200, 169, 110, 0.12);
+    padding-top: 12px;
 }
 
 .mode-chip {
     font-size: 9px;
     color: var(--gold-soft);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .mode-name {
     color: var(--paper);
-    font-size: 15px;
-    margin-bottom: 6px;
+    font-size: 17px;
+    margin-bottom: 4px;
 }
 
 .mode-desc {
     color: var(--muted);
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.status-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.status-tag {
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    padding: 6px 10px 5px;
+    color: var(--paper);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .map-wrap {
@@ -1520,7 +1551,7 @@ body[data-world-aura="velvet"] .gradio-container {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    padding: 0 2px 12px;
+    padding: 4px 4px 14px;
     margin-bottom: 10px;
     border-bottom: 1px solid var(--line);
 }
@@ -1613,7 +1644,8 @@ body[data-world-aura="velvet"] .gradio-container {
 }
 
 .museum-room--rail {
-    min-height: 74px;
+    min-height: 82px;
+    padding-right: 42px;
 }
 
 .museum-room-kicker {
@@ -1645,9 +1677,9 @@ body[data-world-aura="velvet"] .gradio-container {
 .museum-room-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: 19px;
+    font-size: 17px;
     letter-spacing: 0.01em;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     line-height: 1.1;
     text-wrap: balance;
 }
@@ -1655,8 +1687,9 @@ body[data-world-aura="velvet"] .gradio-container {
 .museum-room-copy {
     color: var(--muted);
     display: block;
-    font-size: 13px;
-    line-height: 1.45;
+    font-size: 12px;
+    line-height: 1.38;
+    max-width: 18ch;
 }
 
 .museum-visitor-label {
@@ -3013,11 +3046,11 @@ CURATOR_MODES = {
 }
 
 ROOMS = [
-    ("lobby", "Lobby", "World overview", "The main rule, social structure, and tension at the center of the world."),
-    ("artifacts", "Artifacts", "Object gallery", "Tools, relics, and impossible objects from everyday and public life."),
-    ("timeline", "Timeline", "History wall", "The events that shaped the civilization over time."),
-    ("newspaper", "Newspaper", "Press room", "A surviving front page from how this world saw itself."),
-    ("visitor", "Visitor's Book", "Personal voice", "A single human voice to close the museum at ground level."),
+    ("lobby", "Lobby", "World overview", "Rule, order, and the pressure point holding the world together."),
+    ("artifacts", "Artifacts", "Object gallery", "Relics and impossible tools from public and private life."),
+    ("timeline", "Timeline", "History wall", "The turns that made this civilization what it is."),
+    ("newspaper", "Newspaper", "Press room", "One surviving front page from the world speaking for itself."),
+    ("visitor", "Visitor's Book", "Personal voice", "A final human note after the institution falls quiet."),
 ]
 
 ROOM_LAYOUT = {
@@ -3151,6 +3184,7 @@ def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
     return f"""
 <div class="status-panel">
     <div>
+        <div class="status-kicker">Curator companion</div>
         <div class="status-line">{esc(title)}</div>
         <div class="status-subline">{esc(subtitle)}</div>
     </div>
@@ -3158,6 +3192,11 @@ def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
         <div class="mode-chip">Active curatorial lens</div>
         <div class="mode-name">{esc(curator_mode)}</div>
         <div class="mode-desc">{esc(mode["tagline"])}</div>
+        <div class="status-tags">
+            <div class="status-tag">5 halls</div>
+            <div class="status-tag">One impossible premise</div>
+            <div class="status-tag">Move room to room</div>
+        </div>
     </div>
 </div>
 """
