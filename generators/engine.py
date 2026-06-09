@@ -386,24 +386,39 @@ def _generate_image_via_backend(prompt: str) -> dict:
     return {"image_url": image_url, "prompt": prompt}
 
 
-def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict) -> dict:
+def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict, artifact_index: int = 0) -> dict:
     artifacts = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
     if not artifacts:
         return {}
 
-    artifact = artifacts[0]
+    if artifact_index < 0 or artifact_index >= len(artifacts):
+        artifact_index = 0
+
+    artifact = artifacts[artifact_index]
     prompt = build_featured_artifact_prompt(world_bible, artifact)
 
     if IMAGE_RUNTIME == "disabled":
-        return {"prompt": prompt, "artifact_name": artifact.get("name", ""), "status": "disabled"}
+        return {
+            "prompt": prompt,
+            "artifact_name": artifact.get("name", ""),
+            "artifact": artifact,
+            "status": "disabled",
+        }
     if IMAGE_RUNTIME == "local":
         result = generate_image(prompt)
         result["prompt"] = prompt
         result["artifact_name"] = artifact.get("name", "")
+        result["artifact"] = artifact
         return result
     if IMAGE_RUNTIME == "backend":
         result = _generate_image_via_backend(prompt)
         result["artifact_name"] = artifact.get("name", "")
+        result["artifact"] = artifact
         return result
 
-    return {"prompt": prompt, "artifact_name": artifact.get("name", ""), "status": "unknown_runtime"}
+    return {
+        "prompt": prompt,
+        "artifact_name": artifact.get("name", ""),
+        "artifact": artifact,
+        "status": "unknown_runtime",
+    }

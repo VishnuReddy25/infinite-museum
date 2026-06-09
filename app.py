@@ -4411,9 +4411,37 @@ def show_landing_page():
 
 def generate_artifact_image_action(state: dict, artifact_index: int):
     curator_mode = (state or {}).get("curator_mode") or "Anthropology"
+    state = state or default_state()
+    artifacts_payload = state.get("artifacts") or {}
+    world_bible = state.get("world_bible") or {}
+    artifacts = artifacts_payload.get("artifacts") if isinstance(artifacts_payload, dict) else None
+
+    if not world_bible or not artifacts:
+        return (
+            build_status_panel("Open the artifact hall first", "Generate a world and its artifact collection before rendering an exhibit image.", curator_mode),
+            gr.update(value=build_artifacts_html({**(artifacts_payload or {}), "featured_image": state.get("featured_image")})),
+            state,
+        )
+
+    featured_image = generate_featured_artifact_image(world_bible, artifacts_payload, artifact_index)
+    state["featured_image"] = featured_image
+
+    if featured_image.get("error"):
+        title = "Artifact render failed"
+        subtitle = featured_image["error"]
+    elif featured_image.get("status") == "disabled":
+        title = "Image generation disabled"
+        subtitle = "Set MUSEUM_IMAGE_RUNTIME=local or backend to render artifact images."
+    elif featured_image.get("status") == "unknown_runtime":
+        title = "Unknown image runtime"
+        subtitle = "The image engine runtime is not recognized by the museum."
+    else:
+        title = "Artifact rendered"
+        subtitle = f"Created a featured exhibit image for {featured_image.get('artifact_name', 'the selected artifact')}."
+
     return (
-        build_status_panel("Image generation coming soon", "Artifact image generation is not enabled yet.", curator_mode),
-        gr.update(value=build_artifacts_html({**((state or {}).get("artifacts") or {}), "featured_image": None})),
+        build_status_panel(title, subtitle, curator_mode),
+        gr.update(value=build_artifacts_html({**artifacts_payload, "featured_image": state.get("featured_image")})),
         state,
     )
 
