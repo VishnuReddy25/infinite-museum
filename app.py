@@ -4633,33 +4633,33 @@ body.is-ambassador-open .ambassador-modal-card {
 
 CURATOR_MODES = {
     "Anthropology": {
-        "tagline": "Everyday life, social rules, and how people actually live.",
-        "lead": "This mode focuses on work, ritual, family life, and the small systems that make an impossible world feel ordinary to the people inside it.",
+        "tagline": "Daily life, social rules, and how people really live.",
+        "lead": "This mode focuses on work, family life, ritual, and the small rules that shape daily life in the world.",
         "plaque": "Daily life and social rules",
     },
     "Mythic": {
-        "tagline": "Omens, sacred stories, and meaning shaped by belief.",
-        "lead": "This mode leans toward prophecy, symbols, and ritual meaning, while still grounding the world in real social life.",
+        "tagline": "Belief, sacred stories, and symbols.",
+        "lead": "This mode focuses on belief, prophecy, and symbols, while still keeping the world connected to everyday life.",
         "plaque": "Belief and ritual",
     },
     "Imperial Archive": {
-        "tagline": "Official records, institutions, and the language of the state.",
-        "lead": "This mode emphasizes chronicles, law, bureaucracy, and how powerful institutions describe the world in their own terms.",
+        "tagline": "State records, public rules, and official language.",
+        "lead": "This mode focuses on laws, records, and the way rulers explain the world in official terms.",
         "plaque": "State records",
     },
     "Melancholy": {
-        "tagline": "Loss, memory, and the human cost inside history.",
-        "lead": "This mode softens the museum into something more intimate, with fading customs, private grief, and the emotional residue of public events.",
+        "tagline": "Loss, memory, and what is fading away.",
+        "lead": "This mode focuses on memory, quiet feeling, and the sense that the world is holding on to something it may lose.",
         "plaque": "Memory and loss",
     },
 }
 
 ROOMS = [
-    ("lobby", "Lobby", "World overview", "Rule, order, and the pressure point holding the world together."),
-    ("artifacts", "Artifacts", "Object gallery", "Relics and impossible tools from public and private life."),
-    ("timeline", "Timeline", "History wall", "The turns that made this civilization what it is."),
-    ("newspaper", "Newspaper", "Press room", "One surviving front page from the world speaking for itself."),
-    ("visitor", "Visitor's Book", "Personal voice", "A final human note after the institution falls quiet."),
+    ("lobby", "Lobby", "World overview", "The main rule of the world, how it is run, and what keeps it together."),
+    ("artifacts", "Artifacts", "Object gallery", "Objects, tools, and symbols from everyday and public life."),
+    ("timeline", "Timeline", "History wall", "The main events that shaped this world."),
+    ("newspaper", "Newspaper", "Press room", "One front page showing how the world speaks in public."),
+    ("visitor", "Visitor's Book", "Personal voice", "One human voice from inside the world."),
 ]
 
 ROOM_LAYOUT = {
@@ -4793,18 +4793,18 @@ def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
     return f"""
 <div class="status-panel">
     <div>
-        <div class="status-kicker">Curator companion</div>
+        <div class="status-kicker">Museum guide</div>
         <div class="status-line">{esc(title)}</div>
         <div class="status-subline">{esc(subtitle)}</div>
     </div>
     <div class="status-side">
-        <div class="mode-chip">Active curatorial lens</div>
+        <div class="mode-chip">Current mode</div>
         <div class="mode-name">{esc(curator_mode)}</div>
         <div class="mode-desc">{esc(mode["tagline"])}</div>
         <div class="status-tags">
             <div class="status-tag">5 halls</div>
-            <div class="status-tag">One impossible premise</div>
-            <div class="status-tag">Move room to room</div>
+            <div class="status-tag">One world idea</div>
+            <div class="status-tag">Move hall by hall</div>
         </div>
     </div>
 </div>
@@ -4868,7 +4868,7 @@ def build_entry_ticket_preview(visitor_name: str = "", visitor_year: str = "", c
             </div>
             <div class="museum-ticket-stat">
                 <div class="museum-ticket-stat-label">Complexity seal</div>
-                <div class="museum-ticket-stat-value">Pending world generation</div>
+                <div class="museum-ticket-stat-value">Will appear after generation</div>
             </div>
         </div>
         <div class="museum-ticket-footer">
@@ -4876,17 +4876,17 @@ def build_entry_ticket_preview(visitor_name: str = "", visitor_year: str = "", c
             <div class="museum-ticket-qr" aria-hidden="true"></div>
         </div>
     </div>
-    <div class="museum-ticket-ribbon">Stamped for a journey through impossible halls</div>
+    <div class="museum-ticket-ribbon">Stamped for your museum visit</div>
 </div>
 """
 
 
 def build_journey_path_html(active_step: int = 0) -> str:
     steps = [
-        ("Identity Discovered", "The museum learns who is entering today."),
-        ("Ticket Created", "Your pass is printed and the seal is prepared."),
-        ("Portal Opened", "The first impossible room begins to answer back."),
-        ("Museum Journey Begins", "The halls unlock and the exhibition takes form."),
+        ("Identity recorded", "The museum records who is entering today."),
+        ("Ticket created", "Your pass is prepared and stamped."),
+        ("Museum opens", "The first hall is getting ready."),
+        ("Journey begins", "All the halls are ready to explore."),
     ]
     cards = []
     for index, (title, copy) in enumerate(steps, start=1):
@@ -4924,8 +4924,8 @@ def build_share_card(state: dict) -> str:
     timeline = (state.get("timeline") or {}).get("events") or []
     lead_event_data = normalize_timeline_event(timeline[0]) if timeline else {"title": "No recorded turning point yet."}
     museum_name = world_bible.get("museum_name", "Infinite Museum")
-    summary = world_bible.get("summary") or world_bible.get("tagline") or "An impossible civilization preserved in one continuous museum."
-    lead_artifact = artifacts[0].get("name", "No artifact catalogued yet.") if artifacts else "No artifact catalogued yet."
+    summary = world_bible.get("summary") or world_bible.get("tagline") or "An impossible world shown across one museum."
+    lead_artifact = artifacts[0].get("name", "No artifact ready yet.") if artifacts else "No artifact ready yet."
     lead_event = lead_event_data.get("title") or lead_event_data.get("description") or "No recorded turning point yet."
     taboo = world_bible.get("taboo", "No absolute taboo recorded yet.")
 
@@ -4983,7 +4983,7 @@ def build_share_payload(state: dict) -> dict:
         "ticket_number": issue_ticket_number(visitor_name, visitor_year, museum_name),
         "visit_date": visit_date_label(),
         "government": world_bible.get("government", "-"),
-        "artifact_name": artifacts[0].get("name", "No artifact catalogued yet.") if artifacts else "No artifact catalogued yet.",
+        "artifact_name": artifacts[0].get("name", "No artifact ready yet.") if artifacts else "No artifact ready yet.",
         "turning_point": first_item(world_bible.get("historical_anchors"), "No turning point recorded yet."),
         "taboo": world_bible.get("taboo", "No absolute taboo recorded yet."),
         "visual_motif": first_item(world_bible.get("visual_motifs"), "No visual motif recorded yet."),
@@ -4997,9 +4997,9 @@ def build_audio_guide(state: dict | None = None) -> str:
     state = state or {}
     world_bible = state.get("world_bible") or {}
     museum_name = world_bible.get("museum_name", "Infinite Museum of Impossible Worlds")
-    title = f"Audio Guide: {museum_name}" if world_bible else "Curator audio guide"
+    title = f"Audio Guide: {museum_name}" if world_bible else "Audio guide"
     copy = (
-        "Press play to hear a short guide for the hall you are viewing. The text changes as you move through the museum."
+        "Press play to hear a short guide for the hall you are viewing. It changes as you move through the museum."
         if world_bible
         else "Generate a world first. Then the guide will speak for the active hall."
     )
@@ -5007,7 +5007,7 @@ def build_audio_guide(state: dict | None = None) -> str:
     return f"""
 <div class="museum-audio-guide">
     <div class="museum-audio-copyblock">
-        <div class="museum-audio-kicker">Curator audio guide</div>
+        <div class="museum-audio-kicker">Audio guide</div>
         <div class="museum-audio-title" id="museum-audio-title">{esc(title)}</div>
         <div class="museum-audio-copy" id="museum-audio-copy">{esc(copy)}</div>
     </div>
@@ -5030,7 +5030,7 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
     state = state or {}
     world_bible = state.get("world_bible") or {}
     title = world_bible.get("museum_name", "Infinite Museum of Impossible Worlds")
-    tagline = world_bible.get("tagline", "Every idea creates a civilization. Every civilization leaves artifacts.")
+    tagline = world_bible.get("tagline", "Every idea creates a world. Every world leaves objects behind.")
     visitor_name = (state.get("visitor_name") or "").strip()
     visitor_year = (state.get("visitor_year") or "").strip()
     aura = world_aura(world_bible) if world_bible else "default"
@@ -5052,7 +5052,7 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
     if visitor_name or visitor_year:
         visitor_line = visitor_name or "Unnamed visitor"
         if visitor_year:
-            visitor_line += f" • Arrived from {visitor_year}"
+            visitor_line += f" | Arrived from {visitor_year}"
         visitor_html = f"<div class='museum-visitor-pass'>Admission issued to {esc(visitor_line)}</div>"
 
     return f"""
@@ -5073,7 +5073,7 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
 
 def build_lobby_html(world_bible: dict, complexity: dict | None = None, curator_notes: dict | None = None) -> str:
     if not world_bible or "museum_name" not in world_bible:
-        return "<div class='empty-state'>Describe an impossible world to open the museum.</div>"
+        return "<div class='empty-state'>Describe a world to open the museum.</div>"
 
     stats = [
         ("Government", world_bible.get("government", "-")),
@@ -5118,7 +5118,7 @@ def build_lobby_html(world_bible: dict, complexity: dict | None = None, curator_
 
 def build_artifacts_html(data: dict) -> str:
     if not data or "artifacts" not in data:
-        return "<div class='empty-state'>The artifact hall is still being catalogued.</div>"
+        return "<div class='empty-state'>The artifact hall is still being prepared.</div>"
 
     cards = []
     featured = data.get("featured_image") if isinstance(data, dict) else None
@@ -5161,7 +5161,7 @@ def build_artifacts_html(data: dict) -> str:
             <div>
                 <div class="featured-label">Artifact image</div>
                 <div class="featured-title">On-demand generation</div>
-                <div class="featured-text">The museum no longer slows down by generating images automatically. Click an artifact image button when you want to render one object.</div>
+                <div class="featured-text">Artifact images are generated only when you ask for them. Click a render button when you want to create one.</div>
             </div>
             <div class="featured-prompt">The chosen artifact prompt will appear here after generation.</div>
         </div>
@@ -5205,7 +5205,7 @@ def _artifact_image_src(image_path: str | None) -> str:
 
 def build_timeline_html(data: dict) -> str:
     if not data or "events" not in data:
-        return "<div class='empty-state'>The archivists are still arranging the chronology.</div>"
+        return "<div class='empty-state'>The timeline is still being arranged.</div>"
 
     cards = []
     intro = type_text("Timeline hall", "section-heading", 14)
@@ -5252,11 +5252,11 @@ def build_newspaper_html(data: dict) -> str:
 
 def build_visitor_book_html(data: dict) -> str:
     if not data or "entry" not in data:
-        return "<div class='empty-state'>The visitor's book remains unopened.</div>"
+        return "<div class='empty-state'>The visitor's book is still empty.</div>"
 
     return f"""
 <div class="visitor-book">
-    <div class="visitor-kicker">Final testimony</div>
+    <div class="visitor-kicker">Final note</div>
     {type_text(f'"{data.get("entry", "")}"', "visitor-entry", 11)}
     <div class="visitor-signed">{esc(data.get("signed", ""))}</div>
 </div>
@@ -5273,7 +5273,7 @@ def build_curator_notes_html(curator_notes: dict | None) -> str:
         <div class="curator-notes-kicker">Curator Notes</div>
         <div class="curator-notes-score">100 / 100</div>
     </div>
-    <div class="curator-notes-headline">The museum is internally coherent so far.</div>
+    <div class="curator-notes-headline">The world is consistent so far.</div>
 </div>
 """
 
@@ -5349,7 +5349,7 @@ def build_hero_html(curator_mode: str) -> str:
             <div class="hero-main">
                 <div class="museum-kicker">Infinite Museum of Impossible Worlds</div>
                 <div class="museum-title">Step Into A Civilization That Should Not Exist</div>
-                <div class="museum-tagline">Every idea creates a civilization. Every civilization leaves artifacts.</div>
+                <div class="museum-tagline">Every idea creates a world. Every world leaves traces behind.</div>
                 <div class="museum-lead">{esc(mode["lead"])}</div>
                 <div class="hero-plaques">
                     <div class="hero-plaque">
@@ -5358,7 +5358,7 @@ def build_hero_html(curator_mode: str) -> str:
                     </div>
                     <div class="hero-plaque">
                         <div class="hero-plaque-label">What this does</div>
-                        <div class="hero-plaque-value">One idea becomes a full civilization.</div>
+                        <div class="hero-plaque-value">One idea becomes a full world.</div>
                     </div>
                     <div class="hero-plaque">
                         <div class="hero-plaque-label">Focus</div>
@@ -5412,7 +5412,7 @@ def build_landing_html(curator_mode: str) -> str:
                     <div class="landing-plaque-value">{esc(mode["plaque"])}</div>
                 </div>
             </div>
-            <div class="landing-cta-copy">Keep the idea simple. After your ticket is stamped, the museum opens from the lobby and begins calling you by name.</div>
+            <div class="landing-cta-copy">Keep the idea simple. After your ticket is stamped, the museum opens from the lobby and starts calling you by name.</div>
         </div>
         <div class="landing-art" aria-hidden="true">
             <div class="landing-skyline"></div>
@@ -5515,28 +5515,28 @@ def build_room_stage(state: dict | None = None) -> str:
     world_bible = state.get("world_bible") or {}
     artifacts = (state.get("artifacts") or {}).get("artifacts") or []
     timeline = (state.get("timeline") or {}).get("events") or []
-    lead_timeline_event = normalize_timeline_event(timeline[0]) if timeline else {"title": "The historical sequence is still dark.", "description": "Chronology will unfurl across the walls when the archive opens."}
+    lead_timeline_event = normalize_timeline_event(timeline[0]) if timeline else {"title": "The history is still hidden.", "description": "The timeline will appear when this hall opens."}
     newspaper = state.get("newspaper") or {}
     visitor_book = state.get("visitor_book") or {}
 
     museum_name = world_bible.get("museum_name", "Infinite Museum")
-    tagline = world_bible.get("tagline", "An impossible civilization waiting to take architectural form.")
-    artifact_name = artifacts[0].get("name", "Uncatalogued ceremonial object") if artifacts else "Uncatalogued ceremonial object"
-    artifact_significance = artifacts[0].get("significance", "Its significance will be revealed once the vault opens.") if artifacts else "Its significance will be revealed once the vault opens."
-    timeline_title = lead_timeline_event.get("title") or "The historical sequence is still dark."
-    timeline_desc = lead_timeline_event.get("description") or "Chronology will unfurl across the walls when the archive opens."
-    paper_name = newspaper.get("newspaper_name", "Morning Edition Pending")
-    paper_headline = newspaper.get("headline", "No headline has survived the pressroom yet.")
-    visitor_line = visitor_book.get("entry", "No visitor has left a testimony yet.")
+    tagline = world_bible.get("tagline", "An impossible world is taking shape.")
+    artifact_name = artifacts[0].get("name", "Unknown object") if artifacts else "Unknown object"
+    artifact_significance = artifacts[0].get("significance", "Its meaning will appear when this hall opens.") if artifacts else "Its meaning will appear when this hall opens."
+    timeline_title = lead_timeline_event.get("title") or "The history is still hidden."
+    timeline_desc = lead_timeline_event.get("description") or "The timeline will appear when this hall opens."
+    paper_name = newspaper.get("newspaper_name", "Morning edition pending")
+    paper_headline = newspaper.get("headline", "No headline is ready yet.")
+    visitor_line = visitor_book.get("entry", "No visitor has written here yet.")
     visual_motif = first_item(world_bible.get("visual_motifs"), "No visual motif recorded yet.")
     taboo = world_bible.get("taboo", "No taboo recorded yet.")
-    concept = state.get("concept") or world_bible.get("summary") or "An impossible civilization is taking shape."
+    concept = state.get("concept") or world_bible.get("summary") or "An impossible world is taking shape."
 
-    lobby_guide = f"Welcome to {museum_name}. This world starts with one core idea: {concept}. In the lobby you can see the rule, social order, and everyday life of the world."
-    artifact_guide = f"This hall shows {artifact_name}. {artifact_significance} It helps explain what this world values and how people live inside it."
-    timeline_guide = f"This hall is built around {timeline_title}. {timeline_desc} It shows the key turns that shaped the world."
-    newspaper_guide = f"In this hall, {paper_name} leads with: {paper_headline} It shows how the world spoke about itself in public."
-    visitor_guide = f"This last hall gives one personal voice. {visitor_line} It helps bring the world down to a human level."
+    lobby_guide = f"Welcome to {museum_name}. This world starts with one core idea: {concept}. In the lobby you can see the main rule, the social order, and daily life."
+    artifact_guide = f"This hall shows {artifact_name}. {artifact_significance} It helps explain what this world values and how people live in it."
+    timeline_guide = f"This hall is built around {timeline_title}. {timeline_desc} It shows the main turns that shaped the world."
+    newspaper_guide = f"In this hall, {paper_name} leads with: {paper_headline} It shows how the world speaks about itself in public."
+    visitor_guide = f"This last hall gives one personal voice. {visitor_line} It brings the world down to a human level."
 
     return f"""
 <div class="museum-room-stage" data-active-room="lobby">
@@ -5743,7 +5743,7 @@ def build_ambassador_seed_message(state: dict) -> str:
     visitor_book = state.get("visitor_book") or {}
     museum_name = world_bible.get("museum_name") or "this impossible world"
     premise = world_bible.get("core_premise") or "life here follows one impossible rule"
-    witness = visitor_book.get("entry") or "A private testimony is still being gathered."
+    witness = visitor_book.get("entry") or "A personal note is still being gathered."
     witness = " ".join(str(witness).split())[:180]
     return (
         f"I am speaking from inside {museum_name}. {premise}. "
@@ -5847,7 +5847,7 @@ def ask_ambassador(state: dict, question: str):
 
     if not (state.get("world_bible") or {}):
         return (
-            build_status_panel("Open a museum first", "Generate a civilization before asking someone who lives inside it.", curator_mode),
+            build_status_panel("Open a museum first", "Generate a world before asking someone who lives inside it.", curator_mode),
             build_ambassador_chat_state(state),
             state,
             gr.update(value=""),
@@ -5869,7 +5869,7 @@ def ask_ambassador(state: dict, question: str):
     turns = int(state.get("ambassador_turns") or 0)
     if turns >= 3:
         return (
-            build_status_panel("Ambassador conversation complete", "This local voice has answered three questions. Regenerate the Visitor's Book for a new witness.", curator_mode),
+            build_status_panel("Ambassador conversation complete", "This local voice has answered three questions. Regenerate the Visitor's Book if you want a new voice.", curator_mode),
             build_ambassador_chat_state(state),
             state,
             gr.update(value=""),
@@ -5908,7 +5908,7 @@ def generate_artifact_image_action(state: dict, artifact_index: int):
     if not world_bible or not artifacts:
         print("[IMAGE UI] Aborting because museum state is incomplete")
         return (
-            build_status_panel("Open the artifact hall first", "Generate a world and its artifact collection before rendering an exhibit image.", curator_mode),
+            build_status_panel("Open the artifact hall first", "Generate a world and its artifact collection before rendering an image.", curator_mode),
             gr.update(value=build_artifacts_html({**(artifacts_payload or {}), "featured_image": state.get("featured_image")})),
             state,
         )
@@ -5945,7 +5945,7 @@ def regenerate_hall(state: dict, hall: str):
 
     if not concept or not world_bible:
         return (
-            build_status_panel("Open a museum first", "Generate a civilization before rerolling an individual hall.", curator_mode),
+            build_status_panel("Open a museum first", "Generate a world before rerolling one hall.", curator_mode),
             gr.update(value=build_map_html("lobby", [])),
             gr.update(value=build_room_stage(state)),
             gr.update(value=build_audio_guide(state)),
@@ -5970,18 +5970,18 @@ def regenerate_hall(state: dict, hall: str):
         timeline = generate_timeline(guided_concept, world_bible)
         state["timeline"] = timeline
         title = "Timeline rerolled"
-        subtitle = "The history wall has been rebuilt while the civilization stays intact."
+        subtitle = "The history hall has been rebuilt while the rest of the world stays the same."
     elif hall == "newspaper":
         newspaper = generate_newspaper(guided_concept, world_bible)
         state["newspaper"] = newspaper
         title = "Newspaper rerolled"
-        subtitle = "A new front page has been printed for the same civilization."
+        subtitle = "A new front page has been printed for the same world."
     elif hall == "visitor":
         visitor_book = generate_visitor_book(guided_concept, world_bible)
         state["visitor_book"] = visitor_book
         state = reset_ambassador_state(state)
         title = "Visitor's Book rerolled"
-        subtitle = "A different personal voice has been added to the same world, and the ambassador has changed with it."
+        subtitle = "A different personal voice has been added to the same world, and the ambassador has changed too."
     else:
         title = "Unknown hall"
         subtitle = "No changes were made."
@@ -6018,27 +6018,27 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
             gr.update(value=build_museum_header()),
             gr.update(value=build_room_stage()),
             gr.update(value=build_audio_guide()),
-            empty_gallery("The museum awaits its first impossible world."),
-            empty_gallery("The artifact hall is sealed."),
-            empty_gallery("History has not yet been arranged."),
-            empty_gallery("No front page has gone to print."),
-            empty_gallery("No one has yet signed the visitor's book."),
+            empty_gallery("The museum is waiting for its first world."),
+            empty_gallery("The artifact hall is closed for now."),
+            empty_gallery("The timeline is not ready yet."),
+            empty_gallery("The newspaper is not ready yet."),
+            empty_gallery("No one has written in the visitor's book yet."),
             [],
             default_state(),
         )
         return
 
-    waiting = "The curatorial staff is preparing this hall."
+    waiting = "This hall is being prepared."
     guided_concept = format_concept(concept, curator_mode)
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
-        build_status_panel("Opening the museum", "We are drafting the world bible and preparing the first gallery.", curator_mode),
+        build_status_panel("Opening the museum", "We are building the world and preparing the first hall.", curator_mode),
         gr.update(value=build_map_html("lobby", [])),
-        gr.update(value=build_museum_header({"world_bible": {"museum_name": "Infinite Museum of Impossible Worlds", "tagline": "Preparing a new impossible civilization."}}, share_ready=False)),
+        gr.update(value=build_museum_header({"world_bible": {"museum_name": "Infinite Museum of Impossible Worlds", "tagline": "Preparing a new impossible world."}}, share_ready=False)),
         gr.update(value=build_room_stage()),
         gr.update(value=build_audio_guide()),
-        gr.update(value=build_loading_html("Drafting the world", "The museum is defining the main rule, social order, and daily life of this civilization.", 1, 5, "Artifacts")),
+        gr.update(value=build_loading_html("Building the world", "The museum is defining the main rule, social order, and daily life of this world.", 1, 5, "Artifacts")),
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
@@ -6054,16 +6054,16 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
-        build_status_panel("Lobby opened", "The civilization has taken shape. The first records are now on display.", curator_mode),
+        build_status_panel("Lobby opened", "The world has taken shape. The first details are now on display.", curator_mode),
         gr.update(value=build_map_html("artifacts", ["lobby"])),
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
-        gr.update(value=build_loading_html("Excavating the collection", "The museum is cataloguing objects from this civilization and selecting the first exhibit pieces.", 2, 5, "Timeline")),
-        empty_gallery("Assembling the official historical record."),
-        empty_gallery("Preparing the day's newspaper edition."),
-        empty_gallery("Opening the final testimony cabinet."),
+        gr.update(value=build_loading_html("Preparing the collection", "The museum is selecting the first objects from this world.", 2, 5, "Timeline")),
+        empty_gallery("The timeline is being prepared."),
+        empty_gallery("The newspaper is being prepared."),
+        empty_gallery("The visitor's book is being prepared."),
         [],
         state,
     )
@@ -6075,16 +6075,16 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
-        build_status_panel("Artifacts catalogued", "The collection vault has opened. The chronology is being assembled.", curator_mode),
+        build_status_panel("Artifacts ready", "The object hall is open. The timeline is being prepared.", curator_mode),
         gr.update(value=build_map_html("timeline", ["lobby", "artifacts"])),
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": None})),
-        gr.update(value=build_loading_html("Restoring the timeline", "The archive is assembling the sequence of events that shaped this world.", 3, 5, "Newspaper")),
-        empty_gallery("Preparing the day's newspaper edition."),
-        empty_gallery("Opening the final testimony cabinet."),
+        gr.update(value=build_loading_html("Building the timeline", "The museum is arranging the main events that shaped this world.", 3, 5, "Newspaper")),
+        empty_gallery("The newspaper is being prepared."),
+        empty_gallery("The visitor's book is being prepared."),
         [],
         state,
     )
@@ -6095,7 +6095,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
-        build_status_panel("Timeline restored", "The museum now knows how this world rose, changed, and endured.", curator_mode),
+        build_status_panel("Timeline ready", "The museum now shows how this world changed over time.", curator_mode),
         gr.update(value=build_map_html("newspaper", ["lobby", "artifacts", "timeline"])),
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
@@ -6103,8 +6103,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
-        gr.update(value=build_loading_html("Printing the newspaper", "The press room is composing a front page from inside the civilization's own point of view.", 4, 5, "Visitor's Book")),
-        empty_gallery("Opening the final testimony cabinet."),
+        gr.update(value=build_loading_html("Printing the newspaper", "The museum is preparing a front page from inside the world.", 4, 5, "Visitor's Book")),
+        empty_gallery("The visitor's book is being prepared."),
         [],
         state,
     )
@@ -6115,7 +6115,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
-        build_status_panel("Presses running", "A surviving newspaper is now on display beside the official archive.", curator_mode),
+        build_status_panel("Newspaper ready", "A front page from the world is now on display.", curator_mode),
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper"])),
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
@@ -6124,7 +6124,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
-        gr.update(value=build_loading_html("Opening the last page", "The museum is finding one private voice that lived inside this world.", 5, 5, "Final display")),
+        gr.update(value=build_loading_html("Opening the last page", "The museum is finding one personal voice from inside this world.", 5, 5, "Final display")),
         [],
         state,
     )
@@ -6136,7 +6136,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
     yield (
         gr.update(visible=False),
         gr.update(visible=True),
-        build_status_panel("Museum complete", "All five halls are open. The world is ready to be explored.", curator_mode),
+        build_status_panel("Museum complete", "All five halls are open. The world is ready to explore.", curator_mode),
         gr.update(value=build_map_html("visitor", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
         gr.update(value=build_museum_header(state, share_ready=True)),
         gr.update(value=build_room_stage(state)),
@@ -6161,7 +6161,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                 gr.HTML(
                     """
 <div class="control-panel-label">Curator mode</div>
-<div class="control-panel-copy">This should feel like stepping up to a museum desk, not filling out a form. Tell us who is arriving, what impossible world you want to open, and let the pass stamp itself into the archive.</div>
+<div class="control-panel-copy">This should feel like stepping up to a museum desk, not filling out a form. Tell us who is arriving, what world you want to open, and let the pass stamp itself into the museum.</div>
 """
                 )
                 with gr.Row(elem_classes=["admission-card-grid"]):
@@ -6188,7 +6188,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                             elem_classes=["admission-input"],
                         )
                         concept_input = gr.Textbox(
-                            label="What impossible world should the museum open for you?",
+                            label="What world should the museum open for you?",
                             placeholder="A world where dreams are currency.",
                             lines=3,
                             elem_id="concept-input",
@@ -6216,7 +6216,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                 status_html = gr.HTML(
                     build_status_panel(
                         "Awaiting a world concept",
-                        "Describe an impossible civilization to open the museum.",
+                        "Describe a world to open the museum.",
                         "Anthropology",
                     ),
                     elem_classes=["status-wrap"],
@@ -6230,41 +6230,41 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 
                 with gr.Column(elem_classes=["museum-hall-stack"]):
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--lobby", "is-active"], elem_id="hall-panel-lobby"):
-                        gr.HTML(build_panel_header("Hall 01", "Lobby", "Read the governing rule of the civilization, then move sideways through the museum as each room changes the tone around you."))
+                        gr.HTML(build_panel_header("Hall 01", "Lobby", "Start here. Read the main rule of the world, then move hall by hall."))
                         lobby_html = gr.HTML(
-                            value="<div class='empty-state'>The museum awaits its first impossible world.</div>",
+                            value="<div class='empty-state'>The museum is waiting for its first world.</div>",
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--artifacts"], elem_id="hall-panel-artifacts"):
-                        gr.HTML(build_panel_header("Hall 02", "Artifacts", "This room should feel denser and more tactile, as if the collection is pressing closer around you."))
+                        gr.HTML(build_panel_header("Hall 02", "Artifacts", "This hall shows the main objects from the world."))
                         with gr.Row(elem_classes=["hall-action-row"]):
                             artifact_image_btn_1 = gr.Button("Render Artifact 1", size="sm", elem_classes=["museum-secondary-btn"])
                             artifact_image_btn_2 = gr.Button("Render Artifact 2", size="sm", elem_classes=["museum-secondary-btn"])
                             artifact_image_btn_3 = gr.Button("Render Artifact 3", size="sm", elem_classes=["museum-secondary-btn"])
                         regen_artifacts_btn = gr.Button("Regenerate Artifacts", size="sm", elem_classes=["museum-action-btn"])
                         artifacts_html = gr.HTML(
-                            value="<div class='empty-state'>The artifact hall is sealed.</div>",
+                            value="<div class='empty-state'>The artifact hall is closed for now.</div>",
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--timeline"], elem_id="hall-panel-timeline"):
-                        gr.HTML(build_panel_header("Hall 03", "Timeline", "The room lengthens into chronology here, with the sense that history is wrapping around the walls rather than sitting on a page."))
+                        gr.HTML(build_panel_header("Hall 03", "Timeline", "This hall shows the history of the world step by step."))
                         regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm", elem_classes=["museum-action-btn"])
                         timeline_html = gr.HTML(
-                            value="<div class='empty-state'>History has not yet been arranged.</div>",
+                            value="<div class='empty-state'>The timeline is not ready yet.</div>",
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--newspaper"], elem_id="hall-panel-newspaper"):
-                        gr.HTML(build_panel_header("Hall 04", "Newspaper", "This room becomes more public and immediate, like stepping under reading lamps into a preserved press chamber."))
+                        gr.HTML(build_panel_header("Hall 04", "Newspaper", "This hall shows how the world sounds in public."))
                         regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm", elem_classes=["museum-action-btn"])
                         newspaper_html = gr.HTML(
-                            value="<div class='empty-state'>No front page has gone to print.</div>",
+                            value="<div class='empty-state'>The newspaper is not ready yet.</div>",
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--visitor"], elem_id="hall-panel-visitor"):
-                        gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "The final room quiets everything down, letting one voice sit in the space after the institution has finished speaking."))
+                        gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "This last hall gives one personal voice from inside the world."))
                         regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm", elem_classes=["museum-action-btn"])
                         visitor_html = gr.HTML(
-                            value="<div class='empty-state'>No one has yet signed the visitor's book.</div>",
+                            value="<div class='empty-state'>No one has written in the visitor's book yet.</div>",
                             elem_classes=["hall-content"],
                         )
                         gr.HTML(
@@ -6301,7 +6301,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
     <div>
         <div class="ambassador-modal-kicker">Visitor encounter</div>
         <div class="ambassador-modal-title">Speak To A Local Voice</div>
-        <div class="ambassador-modal-copy">A separate room for one private conversation. Ask what ordinary life feels like inside the impossible world, and let the answer come back in a softer human voice.</div>
+        <div class="ambassador-modal-copy">This is a private chat with one person from the world. Ask about daily life, fear, ritual, power, or survival.</div>
     </div>
     <button class="museum-secondary-btn ambassador-close-btn" type="button" data-ambassador-close="true">Close</button>
 </div>
@@ -6357,7 +6357,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 
     exit_btn.click(show_landing_page, outputs=[landing_view, museum_view])
 
-    concept_chip_1.click(lambda: gr.update(value="A civilization where dreams are taxed and stored in public vaults."), outputs=[concept_input])
+    concept_chip_1.click(lambda: gr.update(value="A world where dreams are taxed and stored in public vaults."), outputs=[concept_input])
     concept_chip_2.click(lambda: gr.update(value="A floating city ruled by tides that remember every oath."), outputs=[concept_input])
     concept_chip_3.click(lambda: gr.update(value="A moon colony where gravity changes according to social rank."), outputs=[concept_input])
 
