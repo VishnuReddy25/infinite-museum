@@ -1,5 +1,7 @@
 import html
+import hashlib
 import json
+from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote
 
@@ -268,7 +270,7 @@ APP_HEAD = """
     ctx.restore();
   }
 
-function exportShareCardFromPayload(payload) {
+  function exportShareCardFromPayload(payload) {
     if (!payload) return;
 
     const canvas = document.createElement("canvas");
@@ -388,6 +390,141 @@ function exportShareCardFromPayload(payload) {
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, "image/png");
+  }
+
+  function drawQrGlyph(ctx, x, y, size, seed, palette) {
+    const cells = 11;
+    const cell = size / cells;
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.fillRect(x, y, size, size);
+    for (let row = 0; row < cells; row += 1) {
+      for (let col = 0; col < cells; col += 1) {
+        const value = ((seed + (row * 13) + (col * 29)) ^ (row * col * 7)) % 5;
+        if (value === 0 || value === 2) {
+          ctx.fillStyle = palette.accent;
+          ctx.fillRect(x + (col * cell), y + (row * cell), cell - 1, cell - 1);
+        }
+      }
+    }
+    ctx.strokeStyle = palette.line;
+    ctx.strokeRect(x, y, size, size);
+    ctx.restore();
+  }
+
+  function renderTicketCanvas(payload) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 620;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    const seed = hashString([payload.ticket_number, payload.visitor_name, payload.visitor_year, payload.museum_name].join("|"));
+    const palette = paletteFromSeed(seed);
+    ctx.fillStyle = "#120d0a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const shimmer = ctx.createLinearGradient(120, 40, 900, 560);
+    shimmer.addColorStop(0, "rgba(255,255,255,0.02)");
+    shimmer.addColorStop(0.5, palette.glow);
+    shimmer.addColorStop(1, "rgba(255,255,255,0.01)");
+    ctx.fillStyle = shimmer;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    drawNoise(ctx, canvas.width, canvas.height, seed);
+
+    ctx.fillStyle = "rgba(16,12,10,0.92)";
+    ctx.fillRect(42, 42, 996, 536);
+    ctx.strokeStyle = palette.line;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(42, 42, 996, 536);
+    ctx.strokeRect(58, 58, 964, 504);
+
+    ctx.fillStyle = palette.accent;
+    ctx.font = '600 16px "Cinzel", Georgia, serif';
+    ctx.textAlign = "left";
+    ctx.fillText("INFINITE MUSEUM OF IMPOSSIBLE WORLDS", 86, 96);
+    ctx.textAlign = "right";
+    ctx.fillText(payload.ticket_number || "IM-0000", 990, 96);
+
+    ctx.fillStyle = "#f5efe3";
+    ctx.font = '600 56px "Cinzel", Georgia, serif';
+    ctx.textAlign = "left";
+    ctx.fillText(`ADMIT ONE: ${String(payload.visitor_name || "VISITOR").toUpperCase()}`, 86, 170);
+
+    ctx.font = 'italic 28px "Cormorant Garamond", Georgia, serif';
+    ctx.fillStyle = "#eadfc9";
+    ctx.fillText(`Traveller from the Year ${payload.visitor_year || "Unknown"}`, 88, 214);
+
+    ctx.font = '500 22px "Cormorant Garamond", Georgia, serif';
+    ctx.fillStyle = palette.accent;
+    ctx.fillText(payload.visitor_title || "Explorer of Forgotten Worlds", 88, 258);
+
+    ctx.strokeStyle = palette.line;
+    ctx.beginPath();
+    ctx.moveTo(86, 282);
+    ctx.lineTo(990, 282);
+    ctx.stroke();
+
+    const labels = [
+      ["Museum", payload.museum_name || "Infinite Museum"],
+      ["Visit Date", payload.visit_date || ""],
+      ["Access", "Granted to the World of Imagination"],
+      ["Origin", payload.visitor_year || "Unknown year"],
+    ];
+
+    labels.forEach(([label, value], index) => {
+      const y = 334 + (index * 58);
+      ctx.fillStyle = palette.accent;
+      ctx.font = '600 14px "Cinzel", Georgia, serif';
+      ctx.fillText(label, 88, y);
+      ctx.fillStyle = "#f5efe3";
+      ctx.font = '400 24px "Cormorant Garamond", Georgia, serif';
+      ctx.fillText(value, 88, y + 28);
+    });
+
+    drawQrGlyph(ctx, 790, 330, 180, seed, palette);
+    ctx.fillStyle = "#eadfc9";
+    ctx.font = '500 16px "Cormorant Garamond", Georgia, serif';
+    ctx.textAlign = "center";
+    ctx.fillText("Museum Passage Seal", 880, 536);
+
+    return canvas;
+  }
+
+  function downloadTicketFromPayload(payload) {
+    const canvas = renderTicketCanvas(payload);
+    if (!canvas) return;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = `${slugifyName(payload.visitor_name || payload.museum_name || "museum-ticket")}-ticket.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, "image/png");
+  }
+
+  async function shareTicketFromPayload(payload) {
+    const canvas = renderTicketCanvas(payload);
+    if (!canvas) return;
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      const file = new File([blob], `${slugifyName(payload.visitor_name || payload.museum_name || "museum-ticket")}-ticket.png`, { type: "image/png" });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: payload.museum_name || "Infinite Museum Ticket",
+            text: `I just opened ${payload.museum_name || "an impossible museum world"} as ${payload.visitor_name || "a visitor"}.`,
+            files: [file],
+          });
+          return;
+        } catch (_error) {}
+      }
+      downloadTicketFromPayload(payload);
     }, "image/png");
   }
 
@@ -614,6 +751,34 @@ function exportShareCardFromPayload(payload) {
       return;
     }
 
+    const shareTicketButton = event.target.closest("[data-share-ticket]");
+    if (shareTicketButton) {
+      event.preventDefault();
+      const raw = shareTicketButton.getAttribute("data-ticket-payload");
+      if (!raw) return;
+      try {
+        shareTicketFromPayload(JSON.parse(raw));
+      } catch (_error) {}
+      return;
+    }
+
+    const downloadTicketButton = event.target.closest("[data-download-ticket]");
+    if (downloadTicketButton) {
+      event.preventDefault();
+      const raw = downloadTicketButton.getAttribute("data-ticket-payload");
+      if (!raw) return;
+      try {
+        downloadTicketFromPayload(JSON.parse(raw));
+      } catch (_error) {}
+      return;
+    }
+
+    const beginJourneyButton = event.target.closest("#begin-journey-btn");
+    if (beginJourneyButton) {
+      document.body.classList.add("is-beginning-journey");
+      window.setTimeout(() => document.body.classList.remove("is-beginning-journey"), 1400);
+    }
+
     const audioPlay = event.target.closest("[data-audio-guide-toggle]");
     if (audioPlay) {
       event.preventDefault();
@@ -718,6 +883,10 @@ body, .gradio-container {
 .landing-wrap {
     width: min(100%, 1540px);
     margin: 24px auto 0;
+    min-height: calc(100vh - 56px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .landing-shell {
@@ -730,19 +899,22 @@ body, .gradio-container {
         radial-gradient(circle at 86% 12%, rgba(200, 169, 110, 0.08), transparent 20%),
         linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 92%, black), var(--panel));
     box-shadow: 0 24px 60px var(--shadow);
+    min-height: 720px;
 }
 
 .admission-welcome {
     position: relative;
     overflow: hidden;
-    margin-bottom: 18px;
-    padding: 26px 28px;
+    margin-bottom: 22px;
+    padding: 32px 32px 28px;
     border-radius: 26px;
     border: 1px solid rgba(200, 169, 110, 0.2);
     background:
         radial-gradient(circle at 18% 18%, rgba(200, 169, 110, 0.18), transparent 24%),
         linear-gradient(135deg, rgba(19, 13, 11, 0.96), rgba(12, 8, 7, 0.94));
     box-shadow: 0 20px 44px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(14px);
+    animation: landingCardReveal 0.78s ease both;
 }
 
 .admission-welcome::after {
@@ -801,6 +973,18 @@ body, .gradio-container {
     inset: 18px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 22px;
+    pointer-events: none;
+}
+
+.landing-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 24%, rgba(255,255,255,0.08), transparent 12%),
+        radial-gradient(circle at 74% 18%, rgba(197, 143, 255, 0.14), transparent 14%),
+        radial-gradient(circle at 82% 54%, rgba(255, 220, 161, 0.14), transparent 15%);
+    animation: museumMotes 12s linear infinite;
     pointer-events: none;
 }
 
@@ -887,6 +1071,46 @@ body, .gradio-container {
     font-size: 15px;
     line-height: 1.7;
     max-width: 38em;
+}
+
+.landing-floating-fragments {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.landing-floating-fragments span {
+    position: absolute;
+    width: 76px;
+    height: 96px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 232, 196, 0.12);
+    background:
+        linear-gradient(145deg, rgba(255,255,255,0.05), rgba(200,169,110,0.02)),
+        rgba(22, 16, 13, 0.28);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.16);
+    backdrop-filter: blur(8px);
+}
+
+.landing-floating-fragments span:nth-child(1) {
+    left: 7%;
+    top: 14%;
+    transform: rotate(-14deg);
+    animation: fragmentFloat 9s ease-in-out infinite;
+}
+
+.landing-floating-fragments span:nth-child(2) {
+    right: 10%;
+    top: 12%;
+    transform: rotate(11deg);
+    animation: fragmentFloat 10s ease-in-out infinite -2s;
+}
+
+.landing-floating-fragments span:nth-child(3) {
+    right: 14%;
+    bottom: 14%;
+    transform: rotate(-9deg);
+    animation: fragmentFloat 8.6s ease-in-out infinite -3.2s;
 }
 
 .landing-art {
@@ -1396,7 +1620,10 @@ body[data-world-aura="velvet"] .gradio-container {
 }
 
 .control-shell {
-    padding: 0 24px 10px;
+    padding: 0 24px 24px;
+    margin-top: 18px;
+    position: relative;
+    z-index: 3;
 }
 
 .theme-wrap {
@@ -1456,12 +1683,67 @@ body[data-world-aura="velvet"] .gradio-container {
 }
 
 .control-card {
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 18px;
+    position: relative;
+    max-width: 1180px;
+    margin: 0 auto;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 28px;
+    padding: 28px;
     background:
-        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 24%),
-        var(--panel);
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.12), transparent 24%),
+        linear-gradient(135deg, rgba(17, 13, 11, 0.62), rgba(11, 9, 8, 0.78));
+    backdrop-filter: blur(18px);
+    box-shadow: 0 26px 66px rgba(0, 0, 0, 0.28);
+    animation: landingCardReveal 0.82s ease both;
+}
+
+.admission-card-grid {
+    align-items: start;
+    gap: 20px;
+}
+
+.admission-card-copy {
+    margin-bottom: 16px;
+}
+
+.admission-form-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.admission-input .wrap,
+.admission-input textarea,
+.admission-input input {
+    border-radius: 18px !important;
+}
+
+.admission-input textarea,
+.admission-input input {
+    min-height: 64px !important;
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(200, 169, 110, 0.34) !important;
+    color: var(--paper) !important;
+    font-size: 18px !important;
+    padding: 16px 18px !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 12px 30px rgba(0, 0, 0, 0.12);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease !important;
+}
+
+.admission-input textarea:focus,
+.admission-input input:focus {
+    border-color: rgba(200,169,110,0.58) !important;
+    box-shadow: 0 0 0 1px rgba(200,169,110,0.18), 0 0 26px rgba(200,169,110,0.12) !important;
+    transform: translateY(-1px);
+}
+
+.admission-input label span {
+    color: var(--paper) !important;
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
 }
 
 .control-panel-label {
@@ -1512,15 +1794,15 @@ body[data-world-aura="velvet"] .gradio-container {
 
 .enter-btn {
     height: 100% !important;
-    min-height: 96px;
+    min-height: 84px;
     background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 28%, var(--panel-strong)), var(--panel-strong)) !important;
     color: var(--gold) !important;
     border: 1px solid rgba(200, 169, 110, 0.45) !important;
-    border-radius: 16px !important;
+    border-radius: 18px !important;
     font-family: 'Cinzel', serif !important;
-    font-size: 12px !important;
-    letter-spacing: 0.18em !important;
-    text-transform: uppercase !important;
+    font-size: 14px !important;
+    letter-spacing: 0.12em !important;
+    text-transform: none !important;
     box-shadow:
         inset 0 1px 0 rgba(200, 169, 110, 0.1),
         0 14px 30px rgba(0, 0, 0, 0.24);
@@ -1534,6 +1816,234 @@ body[data-world-aura="velvet"] .gradio-container {
     box-shadow:
         inset 0 1px 0 rgba(200, 169, 110, 0.12),
         0 18px 36px rgba(0, 0, 0, 0.28);
+}
+
+.museum-ticket-preview {
+    position: relative;
+    overflow: hidden;
+    border-radius: 26px;
+    border: 1px solid rgba(200,169,110,0.18);
+    background:
+        linear-gradient(135deg, rgba(21, 15, 12, 0.96), rgba(10, 8, 7, 0.94));
+    min-height: 100%;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.museum-ticket-preview::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.museum-ticket-body {
+    padding: 28px 28px 22px;
+}
+
+.museum-ticket-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.museum-ticket-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 34px;
+    line-height: 1.06;
+    margin-bottom: 10px;
+}
+
+.museum-ticket-subtitle {
+    color: var(--paper);
+    font-size: 19px;
+    line-height: 1.55;
+    font-style: italic;
+    margin-bottom: 18px;
+}
+
+.museum-ticket-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.museum-ticket-stat {
+    border-radius: 16px;
+    border: 1px solid rgba(200,169,110,0.14);
+    background: rgba(255,255,255,0.03);
+    padding: 12px 14px;
+}
+
+.museum-ticket-stat-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.museum-ticket-stat-value {
+    color: var(--paper);
+    font-size: 18px;
+    line-height: 1.45;
+}
+
+.museum-ticket-qr {
+    width: 116px;
+    height: 116px;
+    border-radius: 18px;
+    border: 1px solid rgba(200,169,110,0.16);
+    background:
+        linear-gradient(90deg, rgba(255,255,255,0.06) 8%, transparent 8% 16%, rgba(255,255,255,0.03) 16% 24%, transparent 24%),
+        linear-gradient(rgba(255,255,255,0.06) 8%, transparent 8% 16%, rgba(255,255,255,0.03) 16% 24%, transparent 24%),
+        rgba(13, 10, 8, 0.8);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.museum-ticket-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+}
+
+.museum-ticket-copy {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 20ch;
+}
+
+.museum-ticket-ribbon {
+    margin-top: 12px;
+    padding: 12px 18px;
+    background: linear-gradient(90deg, rgba(200,169,110,0.18), rgba(111,83,154,0.14));
+    border-top: 1px solid rgba(255,255,255,0.06);
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.journey-rail {
+    margin-top: 22px;
+    border-radius: 22px;
+    border: 1px solid rgba(200,169,110,0.14);
+    background: rgba(255,255,255,0.03);
+    padding: 18px;
+}
+
+.journey-rail-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.journey-rail-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.journey-stop {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid rgba(200,169,110,0.12);
+    background: rgba(12,9,7,0.58);
+    padding: 16px 14px 14px;
+    min-height: 128px;
+}
+
+.journey-stop::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 5px rgba(255,255,255,0.02);
+}
+
+.journey-stop.is-active,
+.journey-stop.is-complete {
+    border-color: rgba(200,169,110,0.42);
+    box-shadow: inset 0 1px 0 rgba(200,169,110,0.08), 0 0 28px rgba(200,169,110,0.08);
+}
+
+.journey-stop.is-active::before,
+.journey-stop.is-complete::before {
+    background: var(--gold);
+}
+
+.journey-stop-index {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.journey-stop-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 17px;
+    line-height: 1.3;
+    margin-bottom: 8px;
+}
+
+.journey-stop-copy {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.museum-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+}
+
+.museum-ticket-btn {
+    min-width: 180px;
+}
+
+body.is-beginning-journey .control-card {
+    transform: scale(0.985) rotate(-0.6deg);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+body.is-beginning-journey .control-card::after {
+    content: "ADMISSION STAMPED";
+    position: absolute;
+    inset: 28px auto auto 28px;
+    color: rgba(255, 208, 150, 0.88);
+    border: 1px solid rgba(255, 208, 150, 0.34);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: rgba(52, 22, 18, 0.34);
+    transform: rotate(-11deg) scale(0.86);
+    animation: stampFlash 0.9s ease;
 }
 
 .museum-action-btn,
@@ -3010,6 +3520,11 @@ body[data-museum-theme="dark"] .museum-header {
     100% { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes landingCardReveal {
+    0% { opacity: 0; transform: translateY(28px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 @keyframes hallPanelReveal {
     0% { opacity: 0; transform: translateY(16px) scale(0.985); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -3045,6 +3560,22 @@ body[data-museum-theme="dark"] .museum-header {
     50% { transform: translateY(-6px); opacity: 1; }
 }
 
+@keyframes fragmentFloat {
+    0%, 100% { opacity: 0.72; }
+    50% { opacity: 1; }
+}
+
+@keyframes museumMotes {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+}
+
+@keyframes stampFlash {
+    0% { opacity: 0; transform: rotate(-16deg) scale(1.12); }
+    45% { opacity: 1; transform: rotate(-11deg) scale(1); }
+    100% { opacity: 0.92; transform: rotate(-11deg) scale(0.94); }
+}
+
 @keyframes museumEqualizer {
     0%, 100% { transform: scaleY(0.7); opacity: 0.45; }
     50% { transform: scaleY(1.55); opacity: 1; }
@@ -3068,6 +3599,8 @@ body[data-museum-theme="dark"] .museum-header {
     .museum-installation-aura,
     .museum-installation-orb,
     .museum-audio-meter span,
+    .landing-shell::after,
+    .landing-floating-fragments span,
     .landing-art,
     .landing-skyline,
     .landing-dome,
@@ -3487,7 +4020,8 @@ body[data-museum-theme="dark"] .museum-header {
     .museum-audio-guide,
     .museum-installation-shell,
     .status-panel,
-    .featured-grid {
+    .featured-grid,
+    .admission-card-grid {
         grid-template-columns: 1fr;
     }
 
@@ -3497,6 +4031,11 @@ body[data-museum-theme="dark"] .museum-header {
 
     .hero-plaques {
         grid-template-columns: 1fr;
+    }
+
+    .journey-rail-grid,
+    .museum-ticket-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .museum-hall-nav {
@@ -3564,6 +4103,7 @@ body[data-museum-theme="dark"] .museum-header {
 
     .landing-wrap {
         margin-top: 12px;
+        min-height: auto;
     }
 
     .landing-grid {
@@ -3573,6 +4113,7 @@ body[data-museum-theme="dark"] .museum-header {
 
     .landing-shell {
         border-radius: 22px;
+        min-height: auto;
     }
 
     .landing-title {
@@ -3594,6 +4135,29 @@ body[data-museum-theme="dark"] .museum-header {
     .landing-caption {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .control-shell {
+        margin-top: 14px;
+    }
+
+    .control-card {
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .journey-rail-grid,
+    .museum-ticket-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .museum-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .museum-ticket-title {
+        font-size: 28px;
     }
 
     .museum-map {
@@ -3801,6 +4365,105 @@ def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
 """
 
 
+def visitor_title_from_payload(visitor_name: str, visitor_year: str, curator_mode: str) -> str:
+    mode_titles = {
+        "Anthropology": "Explorer of impossible worlds",
+        "Mythic": "Bearer of impossible myths",
+        "Imperial Archive": "Archivist of impossible empires",
+        "Melancholy": "Keeper of impossible rooms",
+    }
+    if visitor_year and str(visitor_year).isdigit():
+        year_value = int(visitor_year)
+        if year_value >= 2400:
+            return "Witness from the far future"
+        if year_value <= 1900:
+            return "Time-displaced museum guest"
+    return mode_titles.get(curator_mode, "Explorer of impossible worlds")
+
+
+def issue_ticket_number(visitor_name: str, visitor_year: str, museum_name: str) -> str:
+    seed = f"{visitor_name}|{visitor_year}|{museum_name}".encode("utf-8")
+    digest = hashlib.sha1(seed).hexdigest().upper()
+    return f"IM-{digest[:4]}-{digest[4:8]}"
+
+
+def visit_date_label() -> str:
+    return datetime.now().strftime("%d %b %Y")
+
+
+def build_entry_ticket_preview(visitor_name: str = "", visitor_year: str = "", curator_mode: str = "Anthropology") -> str:
+    safe_name = (visitor_name or "").strip() or "Future Guest"
+    safe_year = (visitor_year or "").strip() or "2026"
+    museum_name = "Infinite Museum of Impossible Worlds"
+    ticket_title = visitor_title_from_payload(safe_name, safe_year, curator_mode)
+    ticket_number = issue_ticket_number(safe_name, safe_year, museum_name)
+    return f"""
+<div class="museum-ticket-preview">
+    <div class="museum-ticket-body">
+        <div class="museum-ticket-kicker">Museum Admission Pass</div>
+        <div class="museum-ticket-title">Admit One: <span id="landing-visitor-name">{esc(safe_name)}</span></div>
+        <div class="museum-ticket-subtitle">Traveller from the Year <span id="landing-visitor-year">{esc(safe_year)}</span></div>
+        <div class="museum-ticket-meta">
+            <div class="museum-ticket-stat">
+                <div class="museum-ticket-stat-label">Ticket number</div>
+                <div class="museum-ticket-stat-value" id="landing-ticket-number">{esc(ticket_number)}</div>
+            </div>
+            <div class="museum-ticket-stat">
+                <div class="museum-ticket-stat-label">Date of visit</div>
+                <div class="museum-ticket-stat-value" id="landing-visit-date">{esc(visit_date_label())}</div>
+            </div>
+            <div class="museum-ticket-stat">
+                <div class="museum-ticket-stat-label">Museum name</div>
+                <div class="museum-ticket-stat-value">{esc(museum_name)}</div>
+            </div>
+            <div class="museum-ticket-stat">
+                <div class="museum-ticket-stat-label">Imaginative title</div>
+                <div class="museum-ticket-stat-value" id="landing-ticket-title">{esc(ticket_title)}</div>
+            </div>
+        </div>
+        <div class="museum-ticket-footer">
+            <div class="museum-ticket-copy">Access granted to the World of Imagination.</div>
+            <div class="museum-ticket-qr" aria-hidden="true"></div>
+        </div>
+    </div>
+    <div class="museum-ticket-ribbon">Stamped for a journey through impossible halls</div>
+</div>
+"""
+
+
+def build_journey_path_html(active_step: int = 0) -> str:
+    steps = [
+        ("Identity Discovered", "The museum learns who is entering today."),
+        ("Ticket Created", "Your pass is printed and the seal is prepared."),
+        ("Portal Opened", "The first impossible room begins to answer back."),
+        ("Museum Journey Begins", "The halls unlock and the exhibition takes form."),
+    ]
+    cards = []
+    for index, (title, copy) in enumerate(steps, start=1):
+        state = "is-idle"
+        if active_step >= index:
+            state = "is-complete"
+        elif active_step + 1 == index:
+            state = "is-active"
+        if active_step == 0 and index == 1:
+            state = "is-active"
+        cards.append(
+            f"""
+<div class="journey-stop {state}">
+    <div class="journey-stop-index">Stage {index:02d}</div>
+    <div class="journey-stop-title">{esc(title)}</div>
+    <div class="journey-stop-copy">{esc(copy)}</div>
+</div>
+"""
+        )
+    return f"""
+<div class="journey-rail">
+    <div class="journey-rail-kicker">Visitor Path</div>
+    <div class="journey-rail-grid">{''.join(cards)}</div>
+</div>
+"""
+
+
 def build_share_card(state: dict) -> str:
     state = state or {}
     world_bible = state.get("world_bible") or {}
@@ -3856,12 +4519,18 @@ def build_share_payload(state: dict) -> dict:
     world_bible = state.get("world_bible") or {}
     artifacts = (state.get("artifacts") or {}).get("artifacts") or []
     premise = state.get("concept") or world_bible.get("core_premise") or ""
+    visitor_name = state.get("visitor_name", "")
+    visitor_year = state.get("visitor_year", "")
+    museum_name = world_bible.get("museum_name", "Infinite Museum")
     return {
-        "museum_name": world_bible.get("museum_name", "Infinite Museum"),
+        "museum_name": museum_name,
         "tagline": world_bible.get("tagline", ""),
         "premise": premise,
-        "visitor_name": state.get("visitor_name", ""),
-        "visitor_year": state.get("visitor_year", ""),
+        "visitor_name": visitor_name,
+        "visitor_year": visitor_year,
+        "visitor_title": visitor_title_from_payload(visitor_name, visitor_year, state.get("curator_mode", "Anthropology")),
+        "ticket_number": issue_ticket_number(visitor_name, visitor_year, museum_name),
+        "visit_date": visit_date_label(),
         "government": world_bible.get("government", "-"),
         "artifact_name": artifacts[0].get("name", "No artifact catalogued yet.") if artifacts else "No artifact catalogued yet.",
         "turning_point": first_item(world_bible.get("historical_anchors"), "No turning point recorded yet."),
@@ -3917,8 +4586,12 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
         payload = json.dumps(build_share_payload(state))
         hidden_attr = "" if share_ready else " hidden"
         button_html = (
+            f"<div class='museum-header-actions'>"
+            f"<button class='museum-secondary-btn museum-ticket-btn' type='button' data-share-ticket='true' data-ticket-payload='{esc_attr(payload)}'{hidden_attr}>Share My Ticket</button>"
+            f"<button class='museum-action-btn museum-ticket-btn' type='button' data-download-ticket='true' data-ticket-payload='{esc_attr(payload)}'{hidden_attr}>Download Ticket</button>"
             f"<button class='museum-action-btn museum-header-share' type='button' data-share-world='true' "
             f"data-share-payload='{esc_attr(payload)}'{hidden_attr}>Share This World</button>"
+            f"</div>"
         )
 
     visitor_html = ""
@@ -4200,6 +4873,7 @@ def build_landing_html(curator_mode: str) -> str:
     </div>
 </div>
 <div class="landing-shell">
+    <div class="landing-floating-fragments" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="landing-grid">
             <div class="landing-copy">
                 <div class="landing-kicker">Infinite Museum</div>
@@ -4220,7 +4894,7 @@ def build_landing_html(curator_mode: str) -> str:
                     <div class="landing-plaque-value">{esc(mode["plaque"])}</div>
                 </div>
             </div>
-            <div class="landing-cta-copy">Keep the idea simple. After you click, the museum opens from the lobby.</div>
+            <div class="landing-cta-copy">Keep the idea simple. After your ticket is stamped, the museum opens from the lobby and begins calling you by name.</div>
         </div>
         <div class="landing-art" aria-hidden="true">
             <div class="landing-skyline"></div>
@@ -4273,7 +4947,7 @@ def build_map_html(active_room: str, completed_rooms: list[str]) -> str:
 
 
 def build_loading_html(title: str, body: str, step: int, total: int, next_hall: str) -> str:
-    progress = max(8, min(100, int((step / total) * 100)))
+    journey_stage = min(4, max(1, step))
     return f"""
 <div class="loading-card">
     <div>
@@ -4282,7 +4956,7 @@ def build_loading_html(title: str, body: str, step: int, total: int, next_hall: 
         <div class="loading-copy">{esc(body)}</div>
     </div>
     <div>
-        <div class="loading-track"><div class="loading-bar" style="width:{progress}%"></div></div>
+        {build_journey_path_html(journey_stage)}
         <div class="loading-meta">
             <span>Hall {step} of {total}</span>
             <span>Next stop: {esc(next_hall)}</span>
@@ -4788,32 +5462,43 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
                 gr.HTML(
                     """
 <div class="control-panel-label">Curator mode</div>
-<div class="control-panel-copy">Choose the mood, write one world idea, and open the museum.</div>
+<div class="control-panel-copy">This should feel like stepping up to a museum desk, not filling out a form. Tell us who is arriving, what impossible world you want to open, and let the pass stamp itself into the archive.</div>
 """
                 )
-                curator_mode = gr.Radio(
-                    choices=list(CURATOR_MODES.keys()),
-                    value="Anthropology",
-                    show_label=False,
-                    elem_classes=["mode-radio"],
-                )
-                concept_input = gr.Textbox(
-                    label="World prompt",
-                    placeholder="A world where dreams are currency.",
-                    lines=2,
-                )
-                visitor_name_input = gr.Textbox(
-                    label="Visitor name",
-                    placeholder="Name for your museum ticket",
-                    lines=1,
-                )
-                visitor_year_input = gr.Textbox(
-                    label="Year you come from",
-                    placeholder="2026, 2120, 1845...",
-                    lines=1,
-                )
-                with gr.Row():
-                    generate_btn = gr.Button("Create World", elem_classes=["enter-btn"])
+                with gr.Row(elem_classes=["admission-card-grid"]):
+                    with gr.Column(scale=6):
+                        gr.HTML("<div class='admission-form-label'>Choose the curatorial mood for your arrival</div>", elem_classes=["admission-card-copy"])
+                        curator_mode = gr.Radio(
+                            choices=list(CURATOR_MODES.keys()),
+                            value="Anthropology",
+                            show_label=False,
+                            elem_classes=["mode-radio"],
+                        )
+                        visitor_name_input = gr.Textbox(
+                            label="What should we call you?",
+                            placeholder="Enter your name",
+                            lines=1,
+                            elem_id="visitor-name-input",
+                            elem_classes=["admission-input"],
+                        )
+                        visitor_year_input = gr.Textbox(
+                            label="Which year are you visiting us from?",
+                            placeholder="For example, 2026",
+                            lines=1,
+                            elem_id="visitor-year-input",
+                            elem_classes=["admission-input"],
+                        )
+                        concept_input = gr.Textbox(
+                            label="What impossible world should the museum open for you?",
+                            placeholder="A world where dreams are currency.",
+                            lines=3,
+                            elem_classes=["admission-input"],
+                        )
+                        with gr.Row():
+                            generate_btn = gr.Button("Begin My Journey →", elem_classes=["enter-btn"], elem_id="begin-journey-btn")
+                        journey_preview_html = gr.HTML(build_journey_path_html(0))
+                    with gr.Column(scale=5):
+                        admission_ticket_html = gr.HTML(build_entry_ticket_preview())
 
     with gr.Column(visible=False, elem_classes=["museum-shell"]) as museum_view:
         with gr.Row(elem_classes=["museum-topbar"]):
@@ -4912,6 +5597,11 @@ with gr.Blocks(css=CSS, head=APP_HEAD, title="Infinite Museum of Impossible Worl
         inputs=[curator_mode],
         outputs=[landing_html],
     )
+    preview_inputs = [visitor_name_input, visitor_year_input, curator_mode]
+    preview_updater = lambda name, year, mode: build_entry_ticket_preview(name, year, mode)
+    visitor_name_input.input(fn=preview_updater, inputs=preview_inputs, outputs=[admission_ticket_html])
+    visitor_year_input.input(fn=preview_updater, inputs=preview_inputs, outputs=[admission_ticket_html])
+    curator_mode.change(fn=preview_updater, inputs=preview_inputs, outputs=[admission_ticket_html])
 
     exit_btn.click(show_landing_page, outputs=[landing_view, museum_view])
 
