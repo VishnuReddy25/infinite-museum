@@ -2460,7 +2460,44 @@ body[data-world-aura="velvet"] .museum-hall-panel {
     font-size: 19px;
     line-height: 1.55;
     font-style: italic;
+    margin-bottom: 14px;
+}
+
+.museum-ticket-modeband {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px 7px;
+    border-radius: 999px;
+    border: 1px solid rgba(200,169,110,0.16);
+    background: rgba(255,255,255,0.03);
     margin-bottom: 18px;
+}
+
+.museum-ticket-mode-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.museum-ticket-mode-value {
+    color: var(--paper);
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.museum-ticket-preview[data-curator-mode="Mythic"] .museum-ticket-modeband {
+    border-color: rgba(180, 144, 230, 0.2);
+}
+
+.museum-ticket-preview[data-curator-mode="Imperial Archive"] .museum-ticket-modeband {
+    border-color: rgba(94, 160, 182, 0.2);
+}
+
+.museum-ticket-preview[data-curator-mode="Melancholy"] .museum-ticket-modeband {
+    border-color: rgba(160, 169, 187, 0.18);
 }
 
 .museum-ticket-meta {
@@ -6166,6 +6203,10 @@ def build_entry_ticket_preview(visitor_name: str = "", visitor_year: str = "", c
         </div>
         <div class="museum-ticket-title">Admit One: <span id="landing-visitor-name">{esc(safe_name)}</span></div>
         <div class="museum-ticket-subtitle">Traveller from the Year <span id="landing-visitor-year">{esc(safe_year)}</span></div>
+        <div class="museum-ticket-modeband">
+            <div class="museum-ticket-mode-label">Curatorial Mood</div>
+            <div class="museum-ticket-mode-value">{esc(curator_mode)}</div>
+        </div>
         <div class="museum-ticket-meta">
             <div class="museum-ticket-stat">
                 <div class="museum-ticket-stat-label">Ticket number</div>
