@@ -2,6 +2,7 @@ import html
 import hashlib
 import inspect
 import json
+import shutil
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -22,6 +23,7 @@ from generators.engine import (
     generate_featured_artifact_image,
     generate_newspaper,
     generate_timeline,
+    generate_visitor_world_portrait,
     generate_visitor_book,
     generate_world_ambassador_reply,
     generate_world_bible,
@@ -689,6 +691,7 @@ APP_HEAD = """
     }
     if (roomId !== "visitor") {
       setAmbassadorModalOpen(false);
+      setPortraitModalOpen(false);
     }
   }
 
@@ -737,6 +740,15 @@ APP_HEAD = """
   function setAmbassadorModalOpen(isOpen) {
     const modal = document.getElementById("ambassador-modal");
     document.body.classList.toggle("is-ambassador-open", Boolean(isOpen));
+    if (modal) {
+      modal.classList.toggle("is-open", Boolean(isOpen));
+      modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    }
+  }
+
+  function setPortraitModalOpen(isOpen) {
+    const modal = document.getElementById("portrait-modal");
+    document.body.classList.toggle("is-portrait-open", Boolean(isOpen));
     if (modal) {
       modal.classList.toggle("is-open", Boolean(isOpen));
       modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
@@ -796,6 +808,7 @@ APP_HEAD = """
       const roomId = hallButton.getAttribute("data-hall-target");
       if (roomId !== "visitor") {
         setAmbassadorModalOpen(false);
+        setPortraitModalOpen(false);
       }
       const pseudoRoom = document.querySelector(`.museum-room[data-room-id="${roomId}"]`);
       if (pseudoRoom) {
@@ -856,6 +869,20 @@ APP_HEAD = """
       return;
     }
 
+    const portraitOpen = event.target.closest("[data-portrait-open]");
+    if (portraitOpen) {
+      event.preventDefault();
+      setPortraitModalOpen(true);
+      return;
+    }
+
+    const portraitClose = event.target.closest("[data-portrait-close]");
+    if (portraitClose) {
+      event.preventDefault();
+      setPortraitModalOpen(false);
+      return;
+    }
+
     const ambassadorClose = event.target.closest("[data-ambassador-close]");
     if (ambassadorClose) {
       event.preventDefault();
@@ -893,6 +920,7 @@ APP_HEAD = """
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       setAmbassadorModalOpen(false);
+      setPortraitModalOpen(false);
     }
     const room = event.target.closest(".museum-room[data-room-id]");
     if (!room) return;
@@ -904,6 +932,7 @@ APP_HEAD = """
   function bootMuseumUi() {
     applyTheme(window.localStorage.getItem("museum-theme") || "retro");
     setAmbassadorModalOpen(false);
+    setPortraitModalOpen(false);
     const conceptVoice = document.getElementById("concept-voice-btn");
     if (conceptVoice) {
       conceptVoice.setAttribute("data-voice-target", "#concept-input");
@@ -4382,6 +4411,229 @@ body.is-ambassador-open .ambassador-modal-card {
     min-width: 120px;
 }
 
+.portrait-trigger-card {
+    margin-top: 14px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 22px;
+    padding: 18px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 28%),
+        rgba(11, 8, 7, 0.76);
+}
+
+.portrait-trigger-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(220px, 0.9fr);
+    gap: 18px;
+    align-items: center;
+}
+
+.portrait-trigger-copy {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.portrait-trigger-art {
+    min-height: 180px;
+    border-radius: 18px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    background:
+        radial-gradient(circle at 45% 26%, rgba(240, 226, 188, 0.22), transparent 18%),
+        linear-gradient(180deg, rgba(35, 25, 17, 0.72), rgba(9, 7, 6, 0.86));
+    position: relative;
+    overflow: hidden;
+}
+
+.portrait-trigger-art::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(255, 240, 214, 0.08);
+    border-radius: 14px;
+}
+
+.portrait-trigger-silhouette {
+    position: absolute;
+    left: 50%;
+    bottom: 12%;
+    width: 34%;
+    height: 56%;
+    transform: translateX(-50%);
+    border-radius: 999px 999px 18px 18px;
+    background:
+        radial-gradient(circle at 50% 16%, rgba(255, 242, 212, 0.34), transparent 20%),
+        linear-gradient(180deg, rgba(194, 156, 98, 0.4), rgba(57, 39, 21, 0.9));
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+.portrait-trigger-silhouette::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -24%;
+    width: 42%;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(243, 226, 193, 0.44), rgba(81, 57, 30, 0.86));
+}
+
+.portrait-modal-shell {
+    position: fixed !important;
+    inset: 0;
+    z-index: 60;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+
+.portrait-modal-shell.is-open,
+body.is-portrait-open .portrait-modal-shell {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.portrait-modal-shell > .gradio-container {
+    width: 100%;
+    max-width: 1220px;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.portrait-modal-shell .gr-group,
+.portrait-modal-shell .gr-box,
+.portrait-modal-shell .gr-panel,
+.portrait-modal-shell .gr-form,
+.portrait-modal-shell .gr-column,
+.portrait-modal-shell .gr-row {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.portrait-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(5, 4, 4, 0.7);
+    backdrop-filter: blur(9px);
+    cursor: pointer;
+}
+
+.portrait-modal-card {
+    position: relative;
+    width: min(1120px, calc(100vw - 34px));
+    max-height: 90vh;
+    overflow: auto;
+    border: 1px solid rgba(255, 236, 206, 0.12);
+    border-radius: 28px;
+    padding: 24px;
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(22, 16, 13, 0.98), rgba(10, 8, 7, 0.96));
+    box-shadow: 0 38px 90px rgba(0, 0, 0, 0.46);
+}
+
+.portrait-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 22px;
+}
+
+.portrait-panel,
+.portrait-result-shell {
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    border-radius: 22px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.portrait-result-card {
+    display: grid;
+    gap: 16px;
+}
+
+.portrait-result-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) 160px;
+    gap: 16px;
+    align-items: start;
+}
+
+.portrait-frame {
+    border-radius: 20px;
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    background: rgba(8, 6, 5, 0.82);
+    overflow: hidden;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.portrait-frame img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.portrait-reference {
+    display: grid;
+    gap: 10px;
+}
+
+.portrait-reference .portrait-frame {
+    min-height: 160px;
+}
+
+.portrait-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.portrait-meta-card {
+    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 14px;
+}
+
+.portrait-meta-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.portrait-meta-value {
+    color: var(--paper);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+.portrait-prompt {
+    border-top: 1px solid rgba(200, 169, 110, 0.12);
+    padding-top: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.portrait-result-copy {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
 .ambassador-chat {
     min-height: 360px;
     max-height: 48vh;
@@ -4448,7 +4700,10 @@ body.is-ambassador-open .ambassador-modal-card {
     .museum-installation-shell,
     .status-panel,
     .featured-grid,
-    .admission-card-grid {
+    .admission-card-grid,
+    .portrait-trigger-grid,
+    .portrait-layout,
+    .portrait-result-hero {
         grid-template-columns: 1fr;
     }
 
@@ -4592,8 +4847,15 @@ body.is-ambassador-open .ambassador-modal-card {
         align-items: flex-start;
     }
 
+    .portrait-modal-card {
+        padding: 16px;
+        border-radius: 24px;
+        max-height: 88vh;
+    }
+
     .journey-rail-grid,
-    .museum-ticket-meta {
+    .museum-ticket-meta,
+    .portrait-meta-grid {
         grid-template-columns: 1fr;
     }
 
@@ -5041,6 +5303,7 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
         hidden_attr = "" if share_ready else " hidden"
         button_html = (
             f"<div class='museum-header-actions'>"
+            f"<button class='museum-secondary-btn museum-ticket-btn' type='button' data-portrait-open='true'{hidden_attr}>See Yourself In This World</button>"
             f"<button class='museum-secondary-btn museum-ticket-btn' type='button' data-share-ticket='true' data-ticket-payload='{esc_attr(payload)}'{hidden_attr}>Share My Ticket</button>"
             f"<button class='museum-action-btn museum-ticket-btn' type='button' data-download-ticket='true' data-ticket-payload='{esc_attr(payload)}'{hidden_attr}>Download Ticket</button>"
             f"<button class='museum-action-btn museum-header-share' type='button' data-share-world='true' "
@@ -5670,6 +5933,93 @@ def build_shell_intro() -> str:
 """
 
 
+def _copy_visitor_reference(photo_path: str | None) -> str:
+    if not photo_path:
+        return ""
+    source = Path(str(photo_path)).expanduser()
+    if not source.exists():
+        return ""
+
+    target_dir = Path("generated_images") / "visitor_references"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    suffix = source.suffix.lower() if source.suffix else ".png"
+    digest = hashlib.sha1(f"{source.resolve()}|{source.stat().st_mtime_ns}".encode("utf-8")).hexdigest()[:12]
+    target = target_dir / f"visitor-reference-{digest}{suffix}"
+    if source.resolve() != target.resolve():
+        shutil.copy2(source, target)
+    return str(target.resolve())
+
+
+def build_visitor_portrait_html(result: dict | None = None) -> str:
+    result = result or {}
+    if not result:
+        return """
+<div class="portrait-result-shell">
+    <div class="featured-label">Visitor Portrait Studio</div>
+    <div class="featured-title">See yourself in this world</div>
+    <div class="portrait-result-copy">Upload a visitor photo, choose a portrait style, and let the museum assign you a role from the active world.</div>
+    <div class="portrait-trigger-art" aria-hidden="true">
+        <div class="portrait-trigger-silhouette"></div>
+    </div>
+</div>
+"""
+
+    generated_src = result.get("image_url") or _artifact_image_src(result.get("image_path")) or ""
+    reference_src = _artifact_image_src(result.get("reference_image_path")) or ""
+    generated_media = (
+        f"<img src='{esc(generated_src)}' alt='{esc(result.get('visitor_name', 'Visitor portrait'))}'>"
+        if generated_src
+        else "<div class='featured-placeholder'>The portrait has not rendered yet.</div>"
+    )
+    reference_media = (
+        f"<img src='{esc(reference_src)}' alt='Visitor reference photo'>"
+        if reference_src
+        else "<div class='featured-placeholder'>Upload a photo to save a visitor reference.</div>"
+    )
+    style = result.get("style", "Citizen Portrait")
+    role = result.get("assigned_role", "World visitor")
+    museum_name = result.get("museum_name", "Infinite Museum")
+    note = result.get("note") or "The uploaded photo is used as visitor reference. The portrait is generated from the world details and chosen style."
+    prompt = result.get("prompt", "")
+    return f"""
+<div class="portrait-result-shell">
+    <div class="portrait-result-card">
+        <div>
+            <div class="featured-label">Visitor portrait</div>
+            <div class="featured-title">{esc(result.get('visitor_name') or 'Museum visitor')}</div>
+            <div class="portrait-result-copy">{esc(note)}</div>
+        </div>
+        <div class="portrait-result-hero">
+            <div class="portrait-frame">{generated_media}</div>
+            <div class="portrait-reference">
+                <div class="portrait-meta-label">Reference photo</div>
+                <div class="portrait-frame">{reference_media}</div>
+            </div>
+        </div>
+        <div class="portrait-meta-grid">
+            <div class="portrait-meta-card">
+                <div class="portrait-meta-label">Assigned role</div>
+                <div class="portrait-meta-value">{esc(role.title())}</div>
+            </div>
+            <div class="portrait-meta-card">
+                <div class="portrait-meta-label">Portrait style</div>
+                <div class="portrait-meta-value">{esc(style)}</div>
+            </div>
+            <div class="portrait-meta-card">
+                <div class="portrait-meta-label">Museum</div>
+                <div class="portrait-meta-value">{esc(museum_name)}</div>
+            </div>
+            <div class="portrait-meta-card">
+                <div class="portrait-meta-label">Download</div>
+                <div class="portrait-meta-value">{'Ready' if generated_src else 'Waiting'}</div>
+            </div>
+        </div>
+        <div class="portrait-prompt">Prompt: {esc(prompt or 'The portrait prompt will appear after generation.')}</div>
+    </div>
+</div>
+"""
+
+
 def build_hall_nav() -> str:
     buttons = "".join(
         f"""
@@ -5718,6 +6068,7 @@ def build_museum_state(
         "timeline": timeline or {},
         "newspaper": newspaper or {},
         "visitor_book": visitor_book or {},
+        "portrait_result": {},
         "complexity": complexity or {},
         "curator_notes": curator_notes or {},
         "ambassador_history": [],
@@ -5937,6 +6288,65 @@ def generate_artifact_image_action(state: dict, artifact_index: int):
     )
 
 
+def generate_visitor_portrait_action(state: dict, visitor_photo: str | None, portrait_style: str):
+    state = state or default_state()
+    curator_mode = state.get("curator_mode") or "Anthropology"
+    world_bible = state.get("world_bible") or {}
+    visitor_name = (state.get("visitor_name") or "").strip() or "Museum Visitor"
+
+    if not world_bible:
+        portrait_html = build_visitor_portrait_html(state.get("portrait_result"))
+        return (
+            build_status_panel("Open a museum first", "Generate a world before creating a visitor portrait.", curator_mode),
+            gr.update(value=portrait_html),
+            gr.update(value=portrait_html),
+            state,
+        )
+
+    if not visitor_photo:
+        portrait_html = build_visitor_portrait_html(state.get("portrait_result"))
+        return (
+            build_status_panel("Upload a photo first", "Add one visitor photo so the museum has a personal reference.", curator_mode),
+            gr.update(value=portrait_html),
+            gr.update(value=portrait_html),
+            state,
+        )
+
+    reference_image_path = _copy_visitor_reference(visitor_photo)
+    portrait = generate_visitor_world_portrait(
+        world_bible=world_bible,
+        visitor_name=visitor_name,
+        curator_mode=curator_mode,
+        portrait_style=portrait_style or "Citizen Portrait",
+    )
+    portrait["reference_image_path"] = reference_image_path
+    portrait["visitor_name"] = visitor_name
+    portrait["museum_name"] = world_bible.get("museum_name", "Infinite Museum")
+    portrait["note"] = "Your uploaded photo is kept as a visitor reference. The museum then generates a world portrait in the chosen style."
+    state["portrait_result"] = portrait
+
+    if portrait.get("error"):
+        title = "Portrait generation failed"
+        subtitle = portrait["error"]
+    elif portrait.get("status") == "disabled":
+        title = "Portrait generation disabled"
+        subtitle = "Set MUSEUM_IMAGE_RUNTIME=local or backend to create visitor portraits."
+    elif portrait.get("status") == "unknown_runtime":
+        title = "Unknown image runtime"
+        subtitle = "The museum does not recognize the current image runtime."
+    else:
+        title = "Visitor portrait created"
+        subtitle = f"Created a {portrait.get('style', 'world portrait').lower()} for {visitor_name}."
+
+    portrait_html = build_visitor_portrait_html(portrait)
+    return (
+        build_status_panel(title, subtitle, curator_mode),
+        gr.update(value=portrait_html),
+        gr.update(value=portrait_html),
+        state,
+    )
+
+
 def regenerate_hall(state: dict, hall: str):
     state = state or default_state()
     concept = (state.get("concept") or "").strip()
@@ -5954,6 +6364,8 @@ def regenerate_hall(state: dict, hall: str):
             gr.update(value=build_timeline_html(state.get("timeline") or {})),
             gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
             gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+            gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
+            gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
             gr.update(value=build_ambassador_chat_state(state)),
             state,
         )
@@ -5998,6 +6410,8 @@ def regenerate_hall(state: dict, hall: str):
         gr.update(value=build_timeline_html(state.get("timeline") or {})),
         gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
         gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
+        gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
+        gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
         gr.update(value=build_ambassador_chat_state(state)),
         state,
     )
@@ -6023,6 +6437,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
             empty_gallery("The timeline is not ready yet."),
             empty_gallery("The newspaper is not ready yet."),
             empty_gallery("No one has written in the visitor's book yet."),
+            build_visitor_portrait_html(),
+            build_visitor_portrait_html(),
             [],
             default_state(),
         )
@@ -6043,6 +6459,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
+        build_visitor_portrait_html(),
+        build_visitor_portrait_html(),
         [],
         default_state(),
     )
@@ -6064,6 +6482,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         empty_gallery("The timeline is being prepared."),
         empty_gallery("The newspaper is being prepared."),
         empty_gallery("The visitor's book is being prepared."),
+        build_visitor_portrait_html(state.get("portrait_result")),
+        build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
     )
@@ -6085,6 +6505,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_loading_html("Building the timeline", "The museum is arranging the main events that shaped this world.", 3, 5, "Newspaper")),
         empty_gallery("The newspaper is being prepared."),
         empty_gallery("The visitor's book is being prepared."),
+        build_visitor_portrait_html(state.get("portrait_result")),
+        build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
     )
@@ -6105,6 +6527,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_loading_html("Printing the newspaper", "The museum is preparing a front page from inside the world.", 4, 5, "Visitor's Book")),
         empty_gallery("The visitor's book is being prepared."),
+        build_visitor_portrait_html(state.get("portrait_result")),
+        build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
     )
@@ -6125,6 +6549,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_loading_html("Opening the last page", "The museum is finding one personal voice from inside this world.", 5, 5, "Final display")),
+        build_visitor_portrait_html(state.get("portrait_result")),
+        build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
     )
@@ -6146,6 +6572,8 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_visitor_book_html(visitor_book)),
+        gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
+        gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
         gr.update(value=build_ambassador_chat_state(state)),
         state,
     )
@@ -6286,6 +6714,31 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 </div>
 """
                         )
+                        gr.HTML(
+                            """
+<div class="portrait-trigger-card">
+    <div class="portrait-trigger-grid">
+        <div>
+            <div class="ambassador-trigger-kicker">Visitor portrait studio</div>
+            <div class="ambassador-trigger-title">See Yourself In This World</div>
+            <div class="portrait-trigger-copy">Upload one visitor photo, let the museum assign you a role, and create a world portrait that matches the active hall and its visual motifs.</div>
+            <div class="ambassador-pill-row">
+                <div class="ambassador-pill">Upload one photo</div>
+                <div class="ambassador-pill">Museum role assigned</div>
+                <div class="ambassador-pill">Download after render</div>
+            </div>
+            <div style="margin-top:14px">
+                <button class="museum-action-btn" type="button" data-portrait-open="true">Open Portrait Studio</button>
+            </div>
+        </div>
+        <div class="portrait-trigger-art" aria-hidden="true">
+            <div class="portrait-trigger-silhouette"></div>
+        </div>
+    </div>
+</div>
+"""
+                        )
+                        portrait_hall_html = gr.HTML(build_visitor_portrait_html())
                     gr.HTML("</div>")
 
                 with gr.Group(elem_id="ambassador-modal", elem_classes=["ambassador-modal-shell"]):
@@ -6319,6 +6772,43 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                             ambassador_voice_btn = gr.Button("Speak Question", elem_classes=["museum-secondary-btn"], elem_id="ambassador-voice-btn")
                             ambassador_send_btn = gr.Button("Ask Ambassador", elem_classes=["museum-action-btn"])
 
+                with gr.Group(elem_id="portrait-modal", elem_classes=["portrait-modal-shell"]):
+                    gr.HTML(
+                        """
+<button class="portrait-modal-backdrop" type="button" data-portrait-close="true" aria-label="Close portrait studio"></button>
+"""
+                    )
+                    with gr.Group(elem_classes=["portrait-modal-card"]):
+                        gr.HTML(
+                            """
+<div class="ambassador-modal-head">
+    <div>
+        <div class="ambassador-modal-kicker">Visitor portrait studio</div>
+        <div class="ambassador-modal-title">See Yourself In This World</div>
+        <div class="ambassador-modal-copy">Upload a visitor photo, choose a portrait style, and let the museum create a keepsake from the active world.</div>
+    </div>
+    <button class="museum-secondary-btn ambassador-close-btn" type="button" data-portrait-close="true">Close</button>
+</div>
+"""
+                        )
+                        with gr.Row(elem_classes=["portrait-layout"]):
+                            with gr.Column(elem_classes=["portrait-panel"]):
+                                portrait_upload = gr.Image(
+                                    label="Visitor photo",
+                                    type="filepath",
+                                    sources=["upload"],
+                                    elem_classes=["admission-input"],
+                                )
+                                portrait_style = gr.Radio(
+                                    choices=["Citizen Portrait", "Official Archive ID", "Ceremonial Portrait"],
+                                    value="Citizen Portrait",
+                                    label="Portrait style",
+                                    elem_classes=["mode-radio"],
+                                )
+                                portrait_generate_btn = gr.Button("Create World Portrait", elem_classes=["museum-action-btn"])
+                            with gr.Column():
+                                portrait_modal_html = gr.HTML(build_visitor_portrait_html())
+
         gr.HTML(
             """
 <div class="museum-footer">
@@ -6340,6 +6830,8 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         timeline_html,
         newspaper_html,
         visitor_html,
+        portrait_hall_html,
+        portrait_modal_html,
         ambassador_chatbot,
         museum_state,
     ]
@@ -6374,6 +6866,8 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         timeline_html,
         newspaper_html,
         visitor_html,
+        portrait_hall_html,
+        portrait_modal_html,
         ambassador_chatbot,
         museum_state,
     ]
@@ -6386,6 +6880,13 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
     artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
     artifact_image_btn_2.click(lambda state: generate_artifact_image_action(state, 1), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
     artifact_image_btn_3.click(lambda state: generate_artifact_image_action(state, 2), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
+    portrait_outputs = [status_html, portrait_hall_html, portrait_modal_html, museum_state]
+    portrait_generate_btn.click(
+        generate_visitor_portrait_action,
+        inputs=[museum_state, portrait_upload, portrait_style],
+        outputs=portrait_outputs,
+        show_progress="hidden",
+    )
     ambassador_outputs = [status_html, ambassador_chatbot, museum_state, ambassador_input]
     ambassador_send_btn.click(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs, show_progress="hidden")
     ambassador_input.submit(ask_ambassador, inputs=[museum_state, ambassador_input], outputs=ambassador_outputs, show_progress="hidden")

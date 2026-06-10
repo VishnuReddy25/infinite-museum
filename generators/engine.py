@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -509,6 +510,80 @@ def build_featured_artifact_prompt(world_bible: dict, artifact: dict) -> str:
     ).strip()
 
 
+def infer_visitor_world_role(world_bible: dict, curator_mode: str = "Anthropology") -> str:
+    world_bible = world_bible or {}
+    text = " ".join(
+        _compact_text(value)
+        for value in [
+            world_bible.get("museum_name"),
+            world_bible.get("core_premise"),
+            world_bible.get("government"),
+            world_bible.get("visual_motifs"),
+            world_bible.get("taboo"),
+        ]
+    ).lower()
+
+    keyword_roles = [
+        (("memory", "scribe", "archive", "record", "ledger"), "memory clerk"),
+        (("dream", "sleep", "night"), "dream registrar"),
+        (("tide", "water", "canal", "sea"), "tide keeper"),
+        (("gravity", "rank", "orbit", "moon"), "gravity surveyor"),
+        (("food", "feast", "hunger", "grain"), "ration keeper"),
+        (("mirror", "reflection", "glass"), "mirror guide"),
+        (("clock", "time", "hour", "season"), "time keeper"),
+        (("law", "seal", "decree", "council"), "seal bearer"),
+        (("tax", "coin", "currency", "market"), "market registrar"),
+    ]
+    for keywords, role in keyword_roles:
+        if any(keyword in text for keyword in keywords):
+            return role
+
+    mode_roles = {
+        "Anthropology": ["street archivist", "market guide", "civic recorder", "district keeper"],
+        "Mythic": ["ritual guide", "shrine keeper", "omen reader", "ceremonial singer"],
+        "Imperial Archive": ["records clerk", "seal bearer", "registry officer", "state recorder"],
+        "Melancholy": ["lamp keeper", "memorial guide", "night watcher", "letter carrier"],
+    }
+    candidates = mode_roles.get(curator_mode, mode_roles["Anthropology"])
+    seed = hashlib.sha1(
+        f"{world_bible.get('museum_name', '')}|{curator_mode}|{world_bible.get('government', '')}".encode("utf-8")
+    ).hexdigest()
+    return candidates[int(seed[:2], 16) % len(candidates)]
+
+
+def build_visitor_portrait_prompt(
+    world_bible: dict,
+    visitor_name: str = "",
+    curator_mode: str = "Anthropology",
+    portrait_style: str = "Citizen Portrait",
+    assigned_role: str | None = None,
+) -> tuple[str, str]:
+    world_bible = world_bible or {}
+    role = assigned_role or infer_visitor_world_role(world_bible, curator_mode)
+    museum_name = world_bible.get("museum_name", "Infinite Museum")
+    premise = world_bible.get("core_premise") or world_bible.get("summary") or "one impossible rule shapes daily life"
+    government = world_bible.get("government") or "an unknown civic order"
+    motifs = _compact_text(world_bible.get("visual_motifs") or []) or "ornate civic symbols"
+    laws = _compact_text(world_bible.get("laws_of_reality") or []) or "one impossible law"
+    taboo = world_bible.get("taboo") or "an unnamed taboo"
+    mood = {
+        "Citizen Portrait": "cinematic museum portrait, clear face, half-body framing, real clothing, one person",
+        "Official Archive ID": "formal archive portrait, direct pose, crisp lighting, identity-card framing, one person",
+        "Ceremonial Portrait": "ornate ceremonial portrait, rich costume details, symbolic objects, dramatic light, one person",
+    }.get(portrait_style, "cinematic museum portrait, one person")
+    subject_name = visitor_name.strip() or "the visitor"
+    prompt = (
+        f"Museum portrait of {subject_name} as a {role} from {museum_name}. "
+        f"World premise: {premise}. Government: {government}. "
+        f"Visual motifs: {motifs}. Laws of reality: {laws}. "
+        f"Taboo: {taboo}. Style: {portrait_style}. "
+        f"Show one person only, centered composition, believable clothing from this world, "
+        f"museum-quality portrait, detailed face, no text, no watermark, no extra people. "
+        f"Overall mood: {mood}."
+    ).strip()
+    return prompt, role
+
+
 def _generate_image_via_backend(prompt: str) -> dict:
     IMAGE_BASE_URL = os.environ.get("MUSEUM_IMAGE_BASE_URL", "http://127.0.0.1:7861")
     payload = json.dumps(
@@ -589,5 +664,50 @@ def generate_featured_artifact_image(world_bible: dict, artifacts_payload: dict,
         "prompt": prompt,
         "artifact_name": artifact.get("name", ""),
         "artifact": artifact,
+        "status": "unknown_runtime",
+    }
+
+
+def generate_visitor_world_portrait(
+    world_bible: dict,
+    visitor_name: str = "",
+    curator_mode: str = "Anthropology",
+    portrait_style: str = "Citizen Portrait",
+) -> dict:
+    prompt, role = build_visitor_portrait_prompt(
+        world_bible=world_bible,
+        visitor_name=visitor_name,
+        curator_mode=curator_mode,
+        portrait_style=portrait_style,
+    )
+    print(
+        f"[PORTRAIT ACTION] runtime={IMAGE_RUNTIME} | style={portrait_style} "
+        f"| role={role} | visitor_name={visitor_name or 'Unknown visitor'}"
+    )
+
+    if IMAGE_RUNTIME == "disabled":
+        return {
+            "prompt": prompt,
+            "style": portrait_style,
+            "assigned_role": role,
+            "status": "disabled",
+        }
+    if IMAGE_RUNTIME == "local":
+        result = generate_image(prompt)
+        result["prompt"] = prompt
+        result["style"] = portrait_style
+        result["assigned_role"] = role
+        return result
+    if IMAGE_RUNTIME == "backend":
+        result = _generate_image_via_backend(prompt)
+        result["prompt"] = prompt
+        result["style"] = portrait_style
+        result["assigned_role"] = role
+        return result
+
+    return {
+        "prompt": prompt,
+        "style": portrait_style,
+        "assigned_role": role,
         "status": "unknown_runtime",
     }
