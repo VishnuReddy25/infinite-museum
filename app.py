@@ -1762,6 +1762,98 @@ body[data-world-aura="velvet"] .museum-hall-panel {
         linear-gradient(180deg, rgba(18, 10, 24, 0.95), rgba(9, 6, 13, 0.98)) !important;
 }
 
+body[data-world-aura="ember"] .museum-room-frame,
+body[data-world-aura="ember"] .museum-installation-frame {
+    background:
+        linear-gradient(135deg, rgba(128, 68, 42, 0.96), rgba(52, 24, 16, 0.98)) !important;
+}
+
+body[data-world-aura="tide"] .museum-room-frame,
+body[data-world-aura="tide"] .museum-installation-frame {
+    background:
+        linear-gradient(135deg, rgba(46, 88, 108, 0.96), rgba(12, 28, 38, 0.98)) !important;
+}
+
+body[data-world-aura="verdant"] .museum-room-frame,
+body[data-world-aura="verdant"] .museum-installation-frame {
+    background:
+        linear-gradient(135deg, rgba(76, 96, 58, 0.96), rgba(18, 30, 18, 0.98)) !important;
+}
+
+body[data-world-aura="velvet"] .museum-room-frame,
+body[data-world-aura="velvet"] .museum-installation-frame {
+    background:
+        linear-gradient(135deg, rgba(88, 60, 112, 0.96), rgba(22, 12, 30, 0.98)) !important;
+}
+
+body[data-world-aura="ember"] .museum-room-canvas {
+    background:
+        radial-gradient(circle at 32% 28%, rgba(255, 225, 198, 0.18), transparent 16%),
+        linear-gradient(135deg, rgba(102, 54, 32, 0.94), rgba(36, 17, 12, 0.96)) !important;
+}
+
+body[data-world-aura="tide"] .museum-room-canvas {
+    background:
+        radial-gradient(circle at 32% 28%, rgba(220, 244, 250, 0.18), transparent 16%),
+        linear-gradient(135deg, rgba(49, 84, 100, 0.94), rgba(14, 24, 34, 0.96)) !important;
+}
+
+body[data-world-aura="verdant"] .museum-room-canvas {
+    background:
+        radial-gradient(circle at 32% 28%, rgba(230, 243, 220, 0.18), transparent 16%),
+        linear-gradient(135deg, rgba(74, 94, 58, 0.94), rgba(16, 24, 15, 0.96)) !important;
+}
+
+body[data-world-aura="velvet"] .museum-room-canvas {
+    background:
+        radial-gradient(circle at 32% 28%, rgba(239, 229, 250, 0.18), transparent 16%),
+        linear-gradient(135deg, rgba(85, 61, 107, 0.94), rgba(18, 12, 28, 0.96)) !important;
+}
+
+body[data-world-aura="ember"] .museum-room-plinth,
+body[data-world-aura="ember"] .museum-installation-pedestal {
+    background:
+        linear-gradient(180deg, rgba(226, 182, 138, 0.16), rgba(54, 24, 15, 0.98)) !important;
+}
+
+body[data-world-aura="tide"] .museum-room-plinth,
+body[data-world-aura="tide"] .museum-installation-pedestal {
+    background:
+        linear-gradient(180deg, rgba(171, 222, 236, 0.16), rgba(14, 29, 39, 0.98)) !important;
+}
+
+body[data-world-aura="verdant"] .museum-room-plinth,
+body[data-world-aura="verdant"] .museum-installation-pedestal {
+    background:
+        linear-gradient(180deg, rgba(188, 214, 167, 0.16), rgba(17, 27, 16, 0.98)) !important;
+}
+
+body[data-world-aura="velvet"] .museum-room-plinth,
+body[data-world-aura="velvet"] .museum-installation-pedestal {
+    background:
+        linear-gradient(180deg, rgba(198, 181, 225, 0.16), rgba(19, 11, 29, 0.98)) !important;
+}
+
+body[data-world-aura="ember"] .museum-installation-bust::after {
+    background:
+        linear-gradient(180deg, rgba(255, 236, 214, 0.84), rgba(204, 132, 85, 0.44) 26%, rgba(81, 34, 22, 0.92) 100%) !important;
+}
+
+body[data-world-aura="tide"] .museum-installation-bust::after {
+    background:
+        linear-gradient(180deg, rgba(234, 248, 252, 0.84), rgba(108, 182, 204, 0.42) 26%, rgba(18, 37, 50, 0.92) 100%) !important;
+}
+
+body[data-world-aura="verdant"] .museum-installation-bust::after {
+    background:
+        linear-gradient(180deg, rgba(242, 248, 232, 0.84), rgba(144, 182, 104, 0.42) 26%, rgba(22, 37, 18, 0.92) 100%) !important;
+}
+
+body[data-world-aura="velvet"] .museum-installation-bust::after {
+    background:
+        linear-gradient(180deg, rgba(245, 237, 252, 0.84), rgba(156, 116, 194, 0.42) 26%, rgba(28, 16, 40, 0.92) 100%) !important;
+}
+
 .museum-shell {
     position: relative;
     border: 1px solid rgba(210, 184, 139, 0.14);
