@@ -691,7 +691,6 @@ APP_HEAD = """
     }
     if (roomId !== "visitor") {
       setAmbassadorModalOpen(false);
-      setPortraitModalOpen(false);
     }
   }
 
@@ -740,15 +739,6 @@ APP_HEAD = """
   function setAmbassadorModalOpen(isOpen) {
     const modal = document.getElementById("ambassador-modal");
     document.body.classList.toggle("is-ambassador-open", Boolean(isOpen));
-    if (modal) {
-      modal.classList.toggle("is-open", Boolean(isOpen));
-      modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
-    }
-  }
-
-  function setPortraitModalOpen(isOpen) {
-    const modal = document.getElementById("portrait-modal");
-    document.body.classList.toggle("is-portrait-open", Boolean(isOpen));
     if (modal) {
       modal.classList.toggle("is-open", Boolean(isOpen));
       modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
@@ -808,7 +798,6 @@ APP_HEAD = """
       const roomId = hallButton.getAttribute("data-hall-target");
       if (roomId !== "visitor") {
         setAmbassadorModalOpen(false);
-        setPortraitModalOpen(false);
       }
       const pseudoRoom = document.querySelector(`.museum-room[data-room-id="${roomId}"]`);
       if (pseudoRoom) {
@@ -869,20 +858,6 @@ APP_HEAD = """
       return;
     }
 
-    const portraitOpen = event.target.closest("[data-portrait-open]");
-    if (portraitOpen) {
-      event.preventDefault();
-      setPortraitModalOpen(true);
-      return;
-    }
-
-    const portraitClose = event.target.closest("[data-portrait-close]");
-    if (portraitClose) {
-      event.preventDefault();
-      setPortraitModalOpen(false);
-      return;
-    }
-
     const ambassadorClose = event.target.closest("[data-ambassador-close]");
     if (ambassadorClose) {
       event.preventDefault();
@@ -920,7 +895,6 @@ APP_HEAD = """
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       setAmbassadorModalOpen(false);
-      setPortraitModalOpen(false);
     }
     const room = event.target.closest(".museum-room[data-room-id]");
     if (!room) return;
@@ -932,7 +906,6 @@ APP_HEAD = """
   function bootMuseumUi() {
     applyTheme(window.localStorage.getItem("museum-theme") || "retro");
     setAmbassadorModalOpen(false);
-    setPortraitModalOpen(false);
     const conceptVoice = document.getElementById("concept-voice-btn");
     if (conceptVoice) {
       conceptVoice.setAttribute("data-voice-target", "#concept-input");
@@ -4479,65 +4452,10 @@ body.is-ambassador-open .ambassador-modal-card {
     background: linear-gradient(180deg, rgba(243, 226, 193, 0.44), rgba(81, 57, 30, 0.86));
 }
 
-.portrait-modal-shell {
-    position: fixed !important;
-    inset: 0;
-    z-index: 60;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    padding: 18px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.22s ease;
-}
-
-.portrait-modal-shell.is-open,
-body.is-portrait-open .portrait-modal-shell {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.portrait-modal-shell > .gradio-container {
-    width: 100%;
-    max-width: 1220px;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-}
-
-.portrait-modal-shell .gr-group,
-.portrait-modal-shell .gr-box,
-.portrait-modal-shell .gr-panel,
-.portrait-modal-shell .gr-form,
-.portrait-modal-shell .gr-column,
-.portrait-modal-shell .gr-row {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-}
-
-.portrait-modal-backdrop {
-    position: absolute;
-    inset: 0;
-    border: 0;
-    background: rgba(5, 4, 4, 0.7);
-    backdrop-filter: blur(9px);
-    cursor: pointer;
-}
-
-.portrait-modal-card {
-    position: relative;
-    width: min(1120px, calc(100vw - 34px));
-    max-height: 90vh;
-    overflow: auto;
-    border: 1px solid rgba(255, 236, 206, 0.12);
-    border-radius: 28px;
-    padding: 24px;
-    background:
-        radial-gradient(circle at top, rgba(200, 169, 110, 0.12), transparent 22%),
-        linear-gradient(180deg, rgba(22, 16, 13, 0.98), rgba(10, 8, 7, 0.96));
-    box-shadow: 0 38px 90px rgba(0, 0, 0, 0.46);
+.portrait-studio-shell {
+    display: grid;
+    gap: 18px;
+    margin-top: 18px;
 }
 
 .portrait-layout {
@@ -4845,12 +4763,6 @@ body.is-portrait-open .portrait-modal-shell {
     .ambassador-trigger-top {
         flex-direction: column;
         align-items: flex-start;
-    }
-
-    .portrait-modal-card {
-        padding: 16px;
-        border-radius: 24px;
-        max-height: 88vh;
     }
 
     .journey-rail-grid,
@@ -5303,7 +5215,6 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
         hidden_attr = "" if share_ready else " hidden"
         button_html = (
             f"<div class='museum-header-actions'>"
-            f"<button class='museum-secondary-btn museum-ticket-btn' type='button' data-portrait-open='true'{hidden_attr}>See Yourself In This World</button>"
             f"<button class='museum-secondary-btn museum-ticket-btn' type='button' data-share-ticket='true' data-ticket-payload='{esc_attr(payload)}'{hidden_attr}>Share My Ticket</button>"
             f"<button class='museum-action-btn museum-ticket-btn' type='button' data-download-ticket='true' data-ticket-payload='{esc_attr(payload)}'{hidden_attr}>Download Ticket</button>"
             f"<button class='museum-action-btn museum-header-share' type='button' data-share-world='true' "
@@ -6299,7 +6210,6 @@ def generate_visitor_portrait_action(state: dict, visitor_photo: str | None, por
         return (
             build_status_panel("Open a museum first", "Generate a world before creating a visitor portrait.", curator_mode),
             gr.update(value=portrait_html),
-            gr.update(value=portrait_html),
             state,
         )
 
@@ -6307,7 +6217,6 @@ def generate_visitor_portrait_action(state: dict, visitor_photo: str | None, por
         portrait_html = build_visitor_portrait_html(state.get("portrait_result"))
         return (
             build_status_panel("Upload a photo first", "Add one visitor photo so the museum has a personal reference.", curator_mode),
-            gr.update(value=portrait_html),
             gr.update(value=portrait_html),
             state,
         )
@@ -6342,7 +6251,6 @@ def generate_visitor_portrait_action(state: dict, visitor_photo: str | None, por
     return (
         build_status_panel(title, subtitle, curator_mode),
         gr.update(value=portrait_html),
-        gr.update(value=portrait_html),
         state,
     )
 
@@ -6364,7 +6272,6 @@ def regenerate_hall(state: dict, hall: str):
             gr.update(value=build_timeline_html(state.get("timeline") or {})),
             gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
             gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
-            gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
             gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
             gr.update(value=build_ambassador_chat_state(state)),
             state,
@@ -6411,7 +6318,6 @@ def regenerate_hall(state: dict, hall: str):
         gr.update(value=build_newspaper_html(state.get("newspaper") or {})),
         gr.update(value=build_visitor_book_html(state.get("visitor_book") or {})),
         gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
-        gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
         gr.update(value=build_ambassador_chat_state(state)),
         state,
     )
@@ -6438,7 +6344,6 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
             empty_gallery("The newspaper is not ready yet."),
             empty_gallery("No one has written in the visitor's book yet."),
             build_visitor_portrait_html(),
-            build_visitor_portrait_html(),
             [],
             default_state(),
         )
@@ -6459,7 +6364,6 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         empty_gallery(waiting),
         empty_gallery(waiting),
         empty_gallery(waiting),
-        build_visitor_portrait_html(),
         build_visitor_portrait_html(),
         [],
         default_state(),
@@ -6483,7 +6387,6 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         empty_gallery("The newspaper is being prepared."),
         empty_gallery("The visitor's book is being prepared."),
         build_visitor_portrait_html(state.get("portrait_result")),
-        build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
     )
@@ -6506,7 +6409,6 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         empty_gallery("The newspaper is being prepared."),
         empty_gallery("The visitor's book is being prepared."),
         build_visitor_portrait_html(state.get("portrait_result")),
-        build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
     )
@@ -6527,7 +6429,6 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_loading_html("Printing the newspaper", "The museum is preparing a front page from inside the world.", 4, 5, "Visitor's Book")),
         empty_gallery("The visitor's book is being prepared."),
-        build_visitor_portrait_html(state.get("portrait_result")),
         build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
@@ -6550,7 +6451,6 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_loading_html("Opening the last page", "The museum is finding one personal voice from inside this world.", 5, 5, "Final display")),
         build_visitor_portrait_html(state.get("portrait_result")),
-        build_visitor_portrait_html(state.get("portrait_result")),
         [],
         state,
     )
@@ -6572,7 +6472,6 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_timeline_html(timeline)),
         gr.update(value=build_newspaper_html(newspaper)),
         gr.update(value=build_visitor_book_html(visitor_book)),
-        gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
         gr.update(value=build_visitor_portrait_html(state.get("portrait_result"))),
         gr.update(value=build_ambassador_chat_state(state)),
         state,
@@ -6721,14 +6620,11 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         <div>
             <div class="ambassador-trigger-kicker">Visitor portrait studio</div>
             <div class="ambassador-trigger-title">See Yourself In This World</div>
-            <div class="portrait-trigger-copy">Upload one visitor photo, let the museum assign you a role, and create a world portrait that matches the active hall and its visual motifs.</div>
+            <div class="portrait-trigger-copy">Upload one visitor photo right here in the Visitor Hall. The museum will assign you a role and create a portrait that matches this world.</div>
             <div class="ambassador-pill-row">
                 <div class="ambassador-pill">Upload one photo</div>
                 <div class="ambassador-pill">Museum role assigned</div>
                 <div class="ambassador-pill">Download after render</div>
-            </div>
-            <div style="margin-top:14px">
-                <button class="museum-action-btn" type="button" data-portrait-open="true">Open Portrait Studio</button>
             </div>
         </div>
         <div class="portrait-trigger-art" aria-hidden="true">
@@ -6738,7 +6634,24 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 </div>
 """
                         )
-                        portrait_hall_html = gr.HTML(build_visitor_portrait_html())
+                        with gr.Group(elem_classes=["portrait-studio-shell"]):
+                            with gr.Row(elem_classes=["portrait-layout"]):
+                                with gr.Column(elem_classes=["portrait-panel"]):
+                                    portrait_upload = gr.Image(
+                                        label="Visitor photo",
+                                        type="filepath",
+                                        sources=["upload"],
+                                        elem_classes=["admission-input"],
+                                    )
+                                    portrait_style = gr.Radio(
+                                        choices=["Citizen Portrait", "Official Archive ID", "Ceremonial Portrait"],
+                                        value="Citizen Portrait",
+                                        label="Portrait style",
+                                        elem_classes=["mode-radio"],
+                                    )
+                                    portrait_generate_btn = gr.Button("Create World Portrait", elem_classes=["museum-action-btn"])
+                                with gr.Column():
+                                    portrait_hall_html = gr.HTML(build_visitor_portrait_html())
                     gr.HTML("</div>")
 
                 with gr.Group(elem_id="ambassador-modal", elem_classes=["ambassador-modal-shell"]):
@@ -6772,43 +6685,6 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                             ambassador_voice_btn = gr.Button("Speak Question", elem_classes=["museum-secondary-btn"], elem_id="ambassador-voice-btn")
                             ambassador_send_btn = gr.Button("Ask Ambassador", elem_classes=["museum-action-btn"])
 
-                with gr.Group(elem_id="portrait-modal", elem_classes=["portrait-modal-shell"]):
-                    gr.HTML(
-                        """
-<button class="portrait-modal-backdrop" type="button" data-portrait-close="true" aria-label="Close portrait studio"></button>
-"""
-                    )
-                    with gr.Group(elem_classes=["portrait-modal-card"]):
-                        gr.HTML(
-                            """
-<div class="ambassador-modal-head">
-    <div>
-        <div class="ambassador-modal-kicker">Visitor portrait studio</div>
-        <div class="ambassador-modal-title">See Yourself In This World</div>
-        <div class="ambassador-modal-copy">Upload a visitor photo, choose a portrait style, and let the museum create a keepsake from the active world.</div>
-    </div>
-    <button class="museum-secondary-btn ambassador-close-btn" type="button" data-portrait-close="true">Close</button>
-</div>
-"""
-                        )
-                        with gr.Row(elem_classes=["portrait-layout"]):
-                            with gr.Column(elem_classes=["portrait-panel"]):
-                                portrait_upload = gr.Image(
-                                    label="Visitor photo",
-                                    type="filepath",
-                                    sources=["upload"],
-                                    elem_classes=["admission-input"],
-                                )
-                                portrait_style = gr.Radio(
-                                    choices=["Citizen Portrait", "Official Archive ID", "Ceremonial Portrait"],
-                                    value="Citizen Portrait",
-                                    label="Portrait style",
-                                    elem_classes=["mode-radio"],
-                                )
-                                portrait_generate_btn = gr.Button("Create World Portrait", elem_classes=["museum-action-btn"])
-                            with gr.Column():
-                                portrait_modal_html = gr.HTML(build_visitor_portrait_html())
-
         gr.HTML(
             """
 <div class="museum-footer">
@@ -6831,7 +6707,6 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         newspaper_html,
         visitor_html,
         portrait_hall_html,
-        portrait_modal_html,
         ambassador_chatbot,
         museum_state,
     ]
@@ -6867,7 +6742,6 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         newspaper_html,
         visitor_html,
         portrait_hall_html,
-        portrait_modal_html,
         ambassador_chatbot,
         museum_state,
     ]
@@ -6880,7 +6754,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
     artifact_image_btn_1.click(lambda state: generate_artifact_image_action(state, 0), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
     artifact_image_btn_2.click(lambda state: generate_artifact_image_action(state, 1), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
     artifact_image_btn_3.click(lambda state: generate_artifact_image_action(state, 2), inputs=[museum_state], outputs=artifact_image_outputs, show_progress="hidden")
-    portrait_outputs = [status_html, portrait_hall_html, portrait_modal_html, museum_state]
+    portrait_outputs = [status_html, portrait_hall_html, museum_state]
     portrait_generate_btn.click(
         generate_visitor_portrait_action,
         inputs=[museum_state, portrait_upload, portrait_style],
