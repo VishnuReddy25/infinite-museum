@@ -3755,6 +3755,81 @@ body[data-museum-theme="light"] .museum-room {
     border-color: rgba(88, 111, 122, 0.3) !important;
 }
 
+body[data-museum-theme="light"] .museum-ticket-preview,
+body[data-museum-theme="light"] .journey-rail {
+    background:
+        radial-gradient(circle at top right, rgba(95, 141, 156, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(255, 255, 252, 0.96), rgba(244, 238, 230, 0.98)) !important;
+    border-color: rgba(88, 111, 122, 0.2) !important;
+}
+
+body[data-museum-theme="light"] .museum-ticket-stat,
+body[data-museum-theme="light"] .museum-ticket-modeband,
+body[data-museum-theme="light"] .journey-stop,
+body[data-museum-theme="light"] .hall-panel-seal {
+    background: rgba(255, 255, 255, 0.72) !important;
+    border-color: rgba(88, 111, 122, 0.18) !important;
+}
+
+body[data-museum-theme="light"] .museum-ticket-kicker,
+body[data-museum-theme="light"] .museum-ticket-stat-label,
+body[data-museum-theme="light"] .museum-ticket-mode-label,
+body[data-museum-theme="light"] .journey-stop-index {
+    color: #5c7380 !important;
+}
+
+body[data-museum-theme="light"] .museum-ticket-title,
+body[data-museum-theme="light"] .museum-ticket-subtitle,
+body[data-museum-theme="light"] .museum-ticket-stat-value,
+body[data-museum-theme="light"] .museum-ticket-mode-value,
+body[data-museum-theme="light"] .journey-stop-title {
+    color: #1f3138 !important;
+}
+
+body[data-museum-theme="light"] .museum-ticket-copy,
+body[data-museum-theme="light"] .journey-stop-copy {
+    color: #556971 !important;
+}
+
+body[data-museum-theme="light"] .museum-ticket-ribbon {
+    color: #18323b !important;
+    border-top-color: rgba(88, 111, 122, 0.14) !important;
+}
+
+body[data-museum-theme="light"] .museum-ticket-preview::before,
+body[data-museum-theme="light"] .museum-ticket-preview::after,
+body[data-museum-theme="light"] .journey-rail::before,
+body[data-museum-theme="light"] .control-card::before,
+body[data-museum-theme="light"] .museum-header-band::before,
+body[data-museum-theme="light"] .museum-installation-shell::before {
+    border-color: rgba(88, 111, 122, 0.12) !important;
+}
+
+body[data-museum-theme="light"] .museum-room-frame,
+body[data-museum-theme="light"] .museum-installation-frame {
+    background:
+        linear-gradient(135deg, rgba(176, 148, 112, 0.92), rgba(118, 93, 61, 0.96)) !important;
+}
+
+body[data-museum-theme="light"] .museum-room-canvas {
+    background:
+        radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.34), transparent 16%),
+        linear-gradient(135deg, rgba(214, 197, 169, 0.94), rgba(158, 133, 98, 0.94)) !important;
+    border-color: rgba(118, 93, 61, 0.26) !important;
+}
+
+body[data-museum-theme="light"] .museum-room-plinth,
+body[data-museum-theme="light"] .museum-installation-pedestal {
+    background:
+        linear-gradient(180deg, rgba(224, 210, 183, 0.68), rgba(132, 104, 72, 0.96)) !important;
+    border-color: rgba(118, 93, 61, 0.18) !important;
+}
+
+body[data-museum-theme="light"] .museum-installation-bust::after {
+    background:
+        linear-gradient(180deg, rgba(255, 252, 243, 0.92), rgba(202, 181, 143, 0.56) 26%, rgba(128, 100, 69, 0.94) 100%) !important;
+}
+
 body[data-museum-theme="light"] .museum-room-title,
 body[data-museum-theme="light"] .museum-legend-title,
 body[data-museum-theme="light"] .museum-hall-nav-title,
