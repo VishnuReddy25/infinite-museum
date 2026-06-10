@@ -989,37 +989,40 @@ body, .gradio-container {
 
 .landing-wrap {
     width: min(100%, 1540px);
-    margin: 24px auto 0;
+    margin: 22px auto 0;
     min-height: auto;
     display: block;
+    position: relative;
+    z-index: 1;
 }
 
 .landing-shell {
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: 30px;
+    border: 1px solid rgba(210, 184, 139, 0.14);
+    border-radius: 34px;
     background:
-        radial-gradient(circle at 12% 16%, rgba(200, 169, 110, 0.14), transparent 22%),
-        radial-gradient(circle at 86% 12%, rgba(200, 169, 110, 0.08), transparent 20%),
-        linear-gradient(135deg, color-mix(in srgb, var(--panel-strong) 92%, black), var(--panel));
-    box-shadow: 0 24px 60px var(--shadow);
-    min-height: 560px;
+        radial-gradient(circle at 18% 18%, rgba(220, 190, 144, 0.1), transparent 22%),
+        radial-gradient(circle at 82% 16%, rgba(200, 169, 110, 0.08), transparent 18%),
+        linear-gradient(180deg, rgba(18, 13, 11, 0.96), rgba(9, 7, 6, 0.98));
+    box-shadow: 0 36px 90px rgba(0, 0, 0, 0.34);
+    min-height: 720px;
 }
 
 .admission-welcome {
     position: relative;
     overflow: hidden;
-    margin-bottom: 22px;
-    padding: 32px 32px 28px;
-    border-radius: 26px;
-    border: 1px solid rgba(200, 169, 110, 0.2);
+    margin-bottom: 0;
+    padding: 34px 34px 30px;
+    border-radius: 28px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
     background:
-        radial-gradient(circle at 18% 18%, rgba(200, 169, 110, 0.18), transparent 24%),
-        linear-gradient(135deg, rgba(19, 13, 11, 0.96), rgba(12, 8, 7, 0.94));
-    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.22);
+        radial-gradient(circle at 12% 16%, rgba(213, 184, 130, 0.2), transparent 24%),
+        linear-gradient(135deg, rgba(21, 15, 13, 0.96), rgba(10, 8, 7, 0.96));
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.24);
     backdrop-filter: blur(14px);
     animation: landingCardReveal 0.78s ease both;
+    z-index: 3;
 }
 
 .admission-welcome::after {
@@ -1075,9 +1078,9 @@ body, .gradio-container {
 .landing-shell::before {
     content: "";
     position: absolute;
-    inset: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 22px;
+    inset: 20px;
+    border: 1px solid rgba(255, 243, 214, 0.06);
+    border-radius: 24px;
     pointer-events: none;
 }
 
@@ -1086,9 +1089,9 @@ body, .gradio-container {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 20% 24%, rgba(255,255,255,0.08), transparent 12%),
-        radial-gradient(circle at 74% 18%, rgba(197, 143, 255, 0.14), transparent 14%),
-        radial-gradient(circle at 82% 54%, rgba(255, 220, 161, 0.14), transparent 15%);
+        radial-gradient(circle at 20% 24%, rgba(255,255,255,0.07), transparent 12%),
+        radial-gradient(circle at 74% 18%, rgba(196, 156, 95, 0.14), transparent 14%),
+        radial-gradient(circle at 82% 54%, rgba(255, 220, 161, 0.12), transparent 15%);
     animation: museumMotes 12s linear infinite;
     pointer-events: none;
 }
@@ -1097,14 +1100,33 @@ body, .gradio-container {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 26px;
-    padding: 34px;
+    grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+    gap: 36px;
+    padding: 52px 42px 44px;
     align-items: stretch;
 }
 
 .landing-copy {
-    padding: 10px 6px 10px 4px;
+    padding: 8px 6px 8px 2px;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-route {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0 0;
+}
+
+.landing-route-stop {
+    padding: 7px 12px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--paper);
+    font-size: 12px;
+    letter-spacing: 0.02em;
 }
 
 .landing-kicker {
@@ -1119,16 +1141,17 @@ body, .gradio-container {
 .landing-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: 58px;
-    line-height: 1.04;
-    max-width: 11ch;
+    font-size: clamp(50px, 5.8vw, 82px);
+    line-height: 0.98;
+    max-width: 10ch;
     text-wrap: balance;
+    letter-spacing: -0.015em;
 }
 
 .landing-subtitle {
     margin-top: 16px;
     color: var(--gold);
-    font-size: 22px;
+    font-size: 23px;
     line-height: 1.45;
     max-width: 28ch;
 }
@@ -1136,23 +1159,26 @@ body, .gradio-container {
 .landing-lead {
     margin-top: 20px;
     color: var(--muted);
-    font-size: 19px;
+    font-size: 18px;
     line-height: 1.8;
-    max-width: 34em;
+    max-width: 38em;
 }
 
 .landing-plaque-row {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    margin-top: 24px;
+    gap: 14px;
+    margin-top: 28px;
 }
 
 .landing-plaque {
-    border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 16px;
-    padding: 14px 14px 12px;
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    border-radius: 18px;
+    padding: 14px 16px 14px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01)),
+        rgba(255, 255, 255, 0.015);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .landing-plaque-label {
@@ -1171,11 +1197,40 @@ body, .gradio-container {
 }
 
 .landing-cta-copy {
-    margin-top: 24px;
+    margin-top: auto;
+    padding-top: 24px;
     color: var(--muted);
     font-size: 15px;
     line-height: 1.7;
     max-width: 38em;
+}
+
+.landing-curator-strip {
+    margin-top: 26px;
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 18px;
+    align-items: center;
+    padding: 16px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background:
+        linear-gradient(90deg, rgba(200, 169, 110, 0.08), transparent 28%),
+        rgba(255, 255, 255, 0.02);
+}
+
+.landing-curator-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.landing-curator-copy {
+    color: var(--paper);
+    font-size: 16px;
+    line-height: 1.65;
 }
 
 .landing-floating-fragments {
@@ -1220,15 +1275,15 @@ body, .gradio-container {
 
 .landing-art {
     position: relative;
-    min-height: 520px;
-    border-radius: 24px;
+    min-height: 660px;
+    border-radius: 28px;
     overflow: hidden;
     border: 1px solid rgba(200, 169, 110, 0.14);
     background:
-        radial-gradient(circle at 50% 24%, rgba(245, 228, 191, 0.32), transparent 16%),
-        radial-gradient(circle at 50% 16%, rgba(200, 169, 110, 0.22), transparent 28%),
-        linear-gradient(180deg, rgba(10, 8, 7, 0.22), rgba(10, 8, 7, 0.66)),
-        linear-gradient(180deg, color-mix(in srgb, var(--panel-light) 10%, transparent), color-mix(in srgb, var(--panel-strong) 92%, black));
+        radial-gradient(circle at 48% 18%, rgba(243, 228, 199, 0.34), transparent 14%),
+        radial-gradient(circle at 50% 12%, rgba(200, 169, 110, 0.2), transparent 24%),
+        linear-gradient(180deg, rgba(18, 13, 10, 0.1), rgba(10, 8, 7, 0.74)),
+        linear-gradient(180deg, rgba(25, 20, 17, 0.85), rgba(11, 9, 8, 0.98));
     animation: landingStageFloat 9s ease-in-out infinite;
 }
 
@@ -1237,8 +1292,19 @@ body, .gradio-container {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(90deg, transparent 0, transparent 44%, rgba(255, 255, 255, 0.05) 50%, transparent 56%, transparent 100%);
-    opacity: 0.4;
+        linear-gradient(90deg, transparent 0, transparent 44%, rgba(255, 255, 255, 0.04) 50%, transparent 56%, transparent 100%);
+    opacity: 0.35;
+}
+
+.landing-art::after {
+    content: "";
+    position: absolute;
+    inset: auto 8% 8% 8%;
+    height: 26%;
+    background:
+        linear-gradient(180deg, rgba(255, 241, 212, 0.04), rgba(9, 7, 6, 0.92)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 56px);
+    border-top: 1px solid rgba(200, 169, 110, 0.1);
 }
 
 .landing-skyline {
@@ -1252,9 +1318,9 @@ body, .gradio-container {
 
 .landing-dome {
     position: absolute;
-    left: 50%;
-    bottom: 17%;
-    width: 56%;
+    left: 54%;
+    bottom: 16%;
+    width: 54%;
     aspect-ratio: 1.18 / 1;
     transform: translateX(-50%);
     border-radius: 50% 50% 0 0;
@@ -1264,6 +1330,147 @@ body, .gradio-container {
     border: 1px solid rgba(223, 198, 150, 0.18);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
     animation: domePulse 7s ease-in-out infinite;
+}
+
+.landing-halo-ring {
+    position: absolute;
+    right: 12%;
+    top: 11%;
+    width: 44%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 236, 206, 0.12);
+    box-shadow:
+        0 0 0 18px rgba(255, 240, 212, 0.025),
+        0 0 0 52px rgba(255, 240, 212, 0.015);
+}
+
+.landing-statue {
+    position: absolute;
+    right: 8%;
+    bottom: 10%;
+    width: 44%;
+    height: 68%;
+    pointer-events: none;
+}
+
+.landing-statue::before {
+    content: "";
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    top: 0;
+    height: 28%;
+    border-radius: 50% 50% 42% 42%;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 244, 224, 0.8), rgba(191, 155, 97, 0.44) 42%, rgba(68, 47, 29, 0.2) 72%, transparent 74%);
+    filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.25));
+}
+
+.landing-statue::after {
+    content: "";
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: 0;
+    height: 76%;
+    border-radius: 42% 42% 14% 14% / 32% 32% 10% 10%;
+    background:
+        linear-gradient(180deg, rgba(255, 247, 229, 0.72), rgba(201, 170, 117, 0.34) 28%, rgba(72, 52, 32, 0.85) 100%);
+    clip-path: polygon(21% 0, 77% 0, 100% 34%, 86% 100%, 13% 100%, 0 34%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 239, 207, 0.08),
+        0 28px 40px rgba(0, 0, 0, 0.24);
+}
+
+.landing-art-label {
+    position: absolute;
+    left: 24px;
+    top: 26px;
+    width: 210px;
+    padding: 16px 16px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)),
+        rgba(13, 10, 9, 0.56);
+    backdrop-filter: blur(8px);
+}
+
+.landing-art-label-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    line-height: 1.2;
+}
+
+.landing-art-label-copy {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.landing-art-metrics {
+    position: absolute;
+    right: 24px;
+    top: 26px;
+    width: min(210px, calc(100% - 48px));
+    display: grid;
+    gap: 10px;
+}
+
+.landing-art-metric {
+    padding: 14px 16px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)),
+        rgba(12, 9, 8, 0.54);
+    backdrop-filter: blur(10px);
+}
+
+.landing-art-metric-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.landing-art-metric-value {
+    margin-top: 6px;
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    line-height: 1.25;
+}
+
+.landing-art-plaque {
+    position: absolute;
+    left: 24px;
+    bottom: 84px;
+    width: 180px;
+    padding: 14px 14px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background: rgba(17, 13, 12, 0.56);
+    backdrop-filter: blur(8px);
+}
+
+.landing-art-plaque-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.landing-art-plaque-value {
+    margin-top: 8px;
+    color: var(--paper);
+    font-size: 15px;
+    line-height: 1.45;
 }
 
 .landing-dome::before {
@@ -1324,6 +1531,20 @@ body, .gradio-container {
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
+}
+
+.landing-floor-label {
+    position: absolute;
+    right: 26px;
+    bottom: 84px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background: rgba(13, 10, 9, 0.62);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+    max-width: 20ch;
 }
 
 .museum-topbar {
@@ -1449,22 +1670,127 @@ body[data-world-aura="velvet"] .gradio-container {
         linear-gradient(180deg, #0b0811 0%, var(--bg) 38%, #171021 100%) !important;
 }
 
+body[data-world-aura="ember"] .museum-header-band,
+body[data-world-aura="ember"] .museum-installation-shell,
+body[data-world-aura="ember"] .museum-room-stage {
+    background:
+        radial-gradient(circle at top right, rgba(197, 103, 71, 0.16), transparent 24%),
+        radial-gradient(circle at 18% 18%, rgba(255, 220, 180, 0.05), transparent 16%),
+        linear-gradient(180deg, rgba(25, 12, 10, 0.95), rgba(11, 6, 6, 0.98)) !important;
+}
+
+body[data-world-aura="tide"] .museum-header-band,
+body[data-world-aura="tide"] .museum-installation-shell,
+body[data-world-aura="tide"] .museum-room-stage {
+    background:
+        radial-gradient(circle at top right, rgba(72, 143, 177, 0.18), transparent 24%),
+        radial-gradient(circle at 18% 18%, rgba(220, 246, 255, 0.05), transparent 16%),
+        linear-gradient(180deg, rgba(8, 22, 31, 0.95), rgba(4, 11, 18, 0.98)) !important;
+}
+
+body[data-world-aura="verdant"] .museum-header-band,
+body[data-world-aura="verdant"] .museum-installation-shell,
+body[data-world-aura="verdant"] .museum-room-stage {
+    background:
+        radial-gradient(circle at top right, rgba(106, 145, 88, 0.16), transparent 24%),
+        radial-gradient(circle at 18% 18%, rgba(229, 244, 214, 0.05), transparent 16%),
+        linear-gradient(180deg, rgba(11, 20, 13, 0.95), rgba(7, 11, 8, 0.98)) !important;
+}
+
+body[data-world-aura="velvet"] .museum-header-band,
+body[data-world-aura="velvet"] .museum-installation-shell,
+body[data-world-aura="velvet"] .museum-room-stage {
+    background:
+        radial-gradient(circle at top right, rgba(130, 86, 158, 0.18), transparent 24%),
+        radial-gradient(circle at 18% 18%, rgba(240, 229, 255, 0.05), transparent 16%),
+        linear-gradient(180deg, rgba(18, 10, 24, 0.95), rgba(10, 7, 14, 0.98)) !important;
+}
+
+body[data-world-aura="ember"] .museum-world-emblem,
+body[data-world-aura="ember"] .status-seal,
+body[data-world-aura="ember"] .museum-installation-orb {
+    box-shadow: 0 0 0 1px rgba(211, 138, 90, 0.16), 0 0 28px rgba(211, 138, 90, 0.14);
+}
+
+body[data-world-aura="tide"] .museum-world-emblem,
+body[data-world-aura="tide"] .status-seal,
+body[data-world-aura="tide"] .museum-installation-orb {
+    box-shadow: 0 0 0 1px rgba(94, 160, 182, 0.16), 0 0 28px rgba(94, 160, 182, 0.14);
+}
+
+body[data-world-aura="verdant"] .museum-world-emblem,
+body[data-world-aura="verdant"] .status-seal,
+body[data-world-aura="verdant"] .museum-installation-orb {
+    box-shadow: 0 0 0 1px rgba(112, 156, 102, 0.16), 0 0 28px rgba(112, 156, 102, 0.14);
+}
+
+body[data-world-aura="velvet"] .museum-world-emblem,
+body[data-world-aura="velvet"] .status-seal,
+body[data-world-aura="velvet"] .museum-installation-orb {
+    box-shadow: 0 0 0 1px rgba(126, 96, 155, 0.16), 0 0 28px rgba(126, 96, 155, 0.14);
+}
+
+body[data-world-aura="ember"] .status-panel,
+body[data-world-aura="ember"] .museum-map,
+body[data-world-aura="ember"] .museum-hall-panel {
+    background:
+        radial-gradient(circle at top right, rgba(193, 102, 70, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(25, 13, 10, 0.94), rgba(10, 6, 6, 0.97)) !important;
+}
+
+body[data-world-aura="tide"] .status-panel,
+body[data-world-aura="tide"] .museum-map,
+body[data-world-aura="tide"] .museum-hall-panel {
+    background:
+        radial-gradient(circle at top right, rgba(72, 143, 177, 0.14), transparent 24%),
+        linear-gradient(180deg, rgba(7, 20, 30, 0.95), rgba(4, 10, 17, 0.98)) !important;
+}
+
+body[data-world-aura="verdant"] .status-panel,
+body[data-world-aura="verdant"] .museum-map,
+body[data-world-aura="verdant"] .museum-hall-panel {
+    background:
+        radial-gradient(circle at top right, rgba(106, 145, 88, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(11, 19, 13, 0.95), rgba(7, 10, 8, 0.98)) !important;
+}
+
+body[data-world-aura="velvet"] .status-panel,
+body[data-world-aura="velvet"] .museum-map,
+body[data-world-aura="velvet"] .museum-hall-panel {
+    background:
+        radial-gradient(circle at top right, rgba(130, 86, 158, 0.14), transparent 24%),
+        linear-gradient(180deg, rgba(18, 10, 24, 0.95), rgba(9, 6, 13, 0.98)) !important;
+}
+
 .museum-shell {
-    border: 1px solid var(--line);
-    margin: 20px auto;
-    background: var(--panel-strong);
-    box-shadow: 0 10px 40px var(--shadow);
+    position: relative;
+    border: 1px solid rgba(210, 184, 139, 0.14);
+    margin: 16px auto 22px;
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 24%),
+        linear-gradient(180deg, rgba(13, 10, 9, 0.96), rgba(8, 6, 6, 0.98));
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
     overflow: hidden;
     width: min(100%, 1540px);
+}
+
+.museum-shell::before {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(255, 238, 207, 0.05);
+    border-radius: 20px;
+    pointer-events: none;
 }
 
 .museum-workspace {
     width: min(100%, 1540px);
     margin: 0 auto;
-    padding: 0 24px 18px;
+    padding: 0 28px 24px;
     display: grid;
-    grid-template-columns: 250px minmax(0, 1fr);
-    gap: 26px;
+    grid-template-columns: 278px minmax(0, 1fr);
+    gap: 28px;
     align-items: start;
 }
 
@@ -1473,7 +1799,8 @@ body[data-world-aura="velvet"] .gradio-container {
     top: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 18px;
+    padding-top: 6px;
 }
 
 .museum-canvas {
@@ -1484,9 +1811,9 @@ body[data-world-aura="velvet"] .gradio-container {
     display: flex;
     justify-content: space-between;
     gap: 14px;
-    border-bottom: 1px solid rgba(200, 169, 110, 0.14);
-    padding: 0 0 12px;
-    margin-bottom: 28px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.1);
+    padding: 0 0 14px;
+    margin-bottom: 32px;
     color: var(--muted);
     font-family: 'Cinzel', serif;
     font-size: 10px;
@@ -1496,23 +1823,40 @@ body[data-world-aura="velvet"] .gradio-container {
 
 .hero-grid {
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 22px;
+    grid-template-columns: minmax(0, 1.42fr) minmax(320px, 0.9fr);
+    gap: 24px;
     align-items: stretch;
-    padding-bottom: 26px;
+    padding-bottom: 28px;
 }
 
 .hero-main {
-    padding: 22px 10px 16px 8px;
+    position: relative;
+    padding: 26px 20px 20px 12px;
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 10% 16%, rgba(200, 169, 110, 0.12), transparent 18%),
+        linear-gradient(135deg, rgba(18, 13, 11, 0.9), rgba(11, 9, 8, 0.9));
+    border: 1px solid rgba(200, 169, 110, 0.08);
+}
+
+.hero-main::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(118deg, transparent 0 54%, rgba(255, 240, 210, 0.04) 54% 55%, transparent 55% 100%);
+    pointer-events: none;
 }
 
 .hero-side {
-    border: 1px solid var(--line);
-    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    border-radius: 24px;
     background:
-        linear-gradient(180deg, rgba(200, 169, 110, 0.08), transparent 18%),
-        var(--panel);
-    padding: 18px 18px 16px;
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(19, 15, 13, 0.96), rgba(9, 7, 6, 0.94));
+    padding: 22px 22px 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .museum-kicker,
@@ -1536,8 +1880,8 @@ body[data-world-aura="velvet"] .gradio-container {
 
 .museum-title {
     font-family: 'Cinzel', serif;
-    font-size: 42px;
-    line-height: 1.2;
+    font-size: clamp(34px, 4.5vw, 54px);
+    line-height: 1.06;
     color: var(--paper);
     margin-bottom: 10px;
 }
@@ -1567,17 +1911,49 @@ body[data-world-aura="velvet"] .gradio-container {
 }
 
 .museum-header-band {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    padding: 6px 0 16px;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 18px;
+    padding: 16px 18px 18px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    border-radius: 24px;
+    margin-bottom: 20px;
+    background:
+        linear-gradient(90deg, rgba(200, 169, 110, 0.08), transparent 24%),
+        rgba(255, 255, 255, 0.015);
     animation: museumHeaderDrift 6.5s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.museum-header-band::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.museum-header-band::after {
+    content: "";
+    position: absolute;
+    right: 28px;
+    top: -42px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow:
+        0 0 0 18px rgba(255,255,255,0.015),
+        0 0 0 48px rgba(255,255,255,0.01);
+    pointer-events: none;
 }
 
 .museum-header-identity {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -1625,10 +2001,10 @@ body[data-world-aura="velvet"] .gradio-container {
 }
 
 .hero-plaque {
-    padding: 12px 14px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: rgba(10, 8, 7, 0.55);
+    padding: 14px 16px;
+    border: 1px solid rgba(200, 169, 110, 0.08);
+    border-radius: 16px;
+    background: rgba(7, 6, 5, 0.36);
 }
 
 .hero-plaque-label {
@@ -1703,6 +2079,7 @@ body[data-world-aura="velvet"] .gradio-container {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    align-items: center;
 }
 
 .concept-chip-btn {
@@ -1714,6 +2091,7 @@ body[data-world-aura="velvet"] .gradio-container {
     color: var(--paper) !important;
     font-size: 13px !important;
     line-height: 1.2 !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease !important;
 }
 
@@ -1726,9 +2104,9 @@ body[data-world-aura="velvet"] .gradio-container {
 
 .control-shell {
     padding: 0 24px 24px;
-    margin-top: 8px;
+    margin-top: -72px;
     position: relative;
-    z-index: 3;
+    z-index: 4;
 }
 
 .theme-wrap {
@@ -1736,32 +2114,42 @@ body[data-world-aura="velvet"] .gradio-container {
 }
 
 .theme-bar {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
     gap: 18px;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 14px 18px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    border-radius: 22px;
+    padding: 18px 20px;
     background:
-        linear-gradient(180deg, rgba(200, 169, 110, 0.08), transparent 18%),
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%),
         var(--panel);
-}
-
-.theme-bar-copy {
-    display: none;
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
 }
 
 .theme-bar-copy {
     color: var(--muted);
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 44ch;
+}
+
+.theme-bar-copy strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
 }
 
 .theme-chip-row {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .theme-chip {
@@ -1789,17 +2177,42 @@ body[data-world-aura="velvet"] .gradio-container {
 
 .control-card {
     position: relative;
-    max-width: 1180px;
+    max-width: 1260px;
     margin: 0 auto;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 28px;
-    padding: 28px;
+    padding: 30px;
     background:
         radial-gradient(circle at top right, rgba(200, 169, 110, 0.12), transparent 24%),
         linear-gradient(135deg, rgba(17, 13, 11, 0.62), rgba(11, 9, 8, 0.78));
     backdrop-filter: blur(18px);
     box-shadow: 0 26px 66px rgba(0, 0, 0, 0.28);
     animation: landingCardReveal 0.82s ease both;
+    overflow: hidden;
+}
+
+.control-card::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+.control-card::after {
+    content: "";
+    position: absolute;
+    left: -48px;
+    bottom: -56px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow:
+        0 0 0 18px rgba(255,255,255,0.015),
+        0 0 0 44px rgba(255,255,255,0.01);
+    pointer-events: none;
 }
 
 .admission-card-grid {
@@ -1934,6 +2347,30 @@ body[data-world-aura="velvet"] .gradio-container {
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
+.museum-ticket-preview[data-curator-mode="Anthropology"] {
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.14), transparent 26%),
+        linear-gradient(135deg, rgba(21, 15, 12, 0.96), rgba(10, 8, 7, 0.94));
+}
+
+.museum-ticket-preview[data-curator-mode="Mythic"] {
+    background:
+        radial-gradient(circle at top right, rgba(126, 96, 155, 0.18), transparent 26%),
+        linear-gradient(135deg, rgba(22, 14, 26, 0.96), rgba(10, 7, 15, 0.94));
+}
+
+.museum-ticket-preview[data-curator-mode="Imperial Archive"] {
+    background:
+        radial-gradient(circle at top right, rgba(94, 160, 182, 0.16), transparent 26%),
+        linear-gradient(135deg, rgba(10, 19, 27, 0.96), rgba(6, 10, 16, 0.94));
+}
+
+.museum-ticket-preview[data-curator-mode="Melancholy"] {
+    background:
+        radial-gradient(circle at top right, rgba(138, 148, 172, 0.14), transparent 26%),
+        linear-gradient(135deg, rgba(20, 17, 20, 0.96), rgba(10, 9, 12, 0.94));
+}
+
 .museum-ticket-preview::before {
     content: "";
     position: absolute;
@@ -1943,8 +2380,31 @@ body[data-world-aura="velvet"] .gradio-container {
     pointer-events: none;
 }
 
+.museum-ticket-preview::after {
+    content: "";
+    position: absolute;
+    right: -34px;
+    top: -28px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow:
+        0 0 0 20px rgba(255,255,255,0.014),
+        0 0 0 52px rgba(255,255,255,0.01);
+    pointer-events: none;
+}
+
 .museum-ticket-body {
     padding: 28px 28px 22px;
+}
+
+.museum-ticket-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
 }
 
 .museum-ticket-kicker {
@@ -1954,6 +2414,37 @@ body[data-world-aura="velvet"] .gradio-container {
     letter-spacing: 0.24em;
     text-transform: uppercase;
     margin-bottom: 14px;
+}
+
+.museum-ticket-seal {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: 1px solid rgba(200,169,110,0.2);
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    background:
+        radial-gradient(circle at 35% 32%, rgba(255,255,255,0.08), transparent 28%),
+        rgba(255,255,255,0.03);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.museum-ticket-preview[data-curator-mode="Mythic"] .museum-ticket-seal {
+    color: #d4bcff;
+    border-color: rgba(180, 144, 230, 0.28);
+}
+
+.museum-ticket-preview[data-curator-mode="Imperial Archive"] .museum-ticket-seal {
+    color: #9fe8ef;
+    border-color: rgba(94, 160, 182, 0.28);
+}
+
+.museum-ticket-preview[data-curator-mode="Melancholy"] .museum-ticket-seal {
+    color: #c7cfdb;
+    border-color: rgba(160, 169, 187, 0.24);
 }
 
 .museum-ticket-title {
@@ -2039,12 +2530,63 @@ body[data-world-aura="velvet"] .gradio-container {
     text-transform: uppercase;
 }
 
+.museum-ticket-preview[data-curator-mode="Anthropology"] .museum-ticket-ribbon {
+    background: linear-gradient(90deg, rgba(200,169,110,0.2), rgba(132,95,58,0.14));
+}
+
+.museum-ticket-preview[data-curator-mode="Mythic"] .museum-ticket-ribbon {
+    background: linear-gradient(90deg, rgba(126,96,155,0.22), rgba(196,162,255,0.12));
+}
+
+.museum-ticket-preview[data-curator-mode="Imperial Archive"] .museum-ticket-ribbon {
+    background: linear-gradient(90deg, rgba(72,143,177,0.22), rgba(130,204,223,0.12));
+}
+
+.museum-ticket-preview[data-curator-mode="Melancholy"] .museum-ticket-ribbon {
+    background: linear-gradient(90deg, rgba(116,124,144,0.2), rgba(175,182,201,0.1));
+}
+
 .journey-rail {
+    position: relative;
     margin-top: 22px;
     border-radius: 22px;
     border: 1px solid rgba(200,169,110,0.14);
     background: rgba(255,255,255,0.03);
     padding: 18px;
+    overflow: hidden;
+}
+
+.journey-rail[data-curator-mode="Anthropology"] {
+    background:
+        radial-gradient(circle at top right, rgba(200,169,110,0.12), transparent 24%),
+        rgba(255,255,255,0.03);
+}
+
+.journey-rail[data-curator-mode="Mythic"] {
+    background:
+        radial-gradient(circle at top right, rgba(126,96,155,0.16), transparent 24%),
+        rgba(255,255,255,0.03);
+}
+
+.journey-rail[data-curator-mode="Imperial Archive"] {
+    background:
+        radial-gradient(circle at top right, rgba(72,143,177,0.16), transparent 24%),
+        rgba(255,255,255,0.03);
+}
+
+.journey-rail[data-curator-mode="Melancholy"] {
+    background:
+        radial-gradient(circle at top right, rgba(116,124,144,0.14), transparent 24%),
+        rgba(255,255,255,0.03);
+}
+
+.journey-rail::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 16px;
+    pointer-events: none;
 }
 
 .journey-rail-kicker {
@@ -2069,6 +2611,7 @@ body[data-world-aura="velvet"] .gradio-container {
     background: rgba(12,9,7,0.58);
     padding: 16px 14px 14px;
     min-height: 128px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .journey-stop::before {
@@ -2089,9 +2632,42 @@ body[data-world-aura="velvet"] .gradio-container {
     box-shadow: inset 0 1px 0 rgba(200,169,110,0.08), 0 0 28px rgba(200,169,110,0.08);
 }
 
+.journey-rail[data-curator-mode="Mythic"] .journey-stop.is-active,
+.journey-rail[data-curator-mode="Mythic"] .journey-stop.is-complete {
+    border-color: rgba(180,144,230,0.4);
+    box-shadow: inset 0 1px 0 rgba(180,144,230,0.08), 0 0 28px rgba(180,144,230,0.08);
+}
+
+.journey-rail[data-curator-mode="Imperial Archive"] .journey-stop.is-active,
+.journey-rail[data-curator-mode="Imperial Archive"] .journey-stop.is-complete {
+    border-color: rgba(94,160,182,0.4);
+    box-shadow: inset 0 1px 0 rgba(94,160,182,0.08), 0 0 28px rgba(94,160,182,0.08);
+}
+
+.journey-rail[data-curator-mode="Melancholy"] .journey-stop.is-active,
+.journey-rail[data-curator-mode="Melancholy"] .journey-stop.is-complete {
+    border-color: rgba(160,169,187,0.34);
+    box-shadow: inset 0 1px 0 rgba(160,169,187,0.08), 0 0 28px rgba(160,169,187,0.06);
+}
+
 .journey-stop.is-active::before,
 .journey-stop.is-complete::before {
     background: var(--gold);
+}
+
+.journey-rail[data-curator-mode="Mythic"] .journey-stop.is-active::before,
+.journey-rail[data-curator-mode="Mythic"] .journey-stop.is-complete::before {
+    background: #d4bcff;
+}
+
+.journey-rail[data-curator-mode="Imperial Archive"] .journey-stop.is-active::before,
+.journey-rail[data-curator-mode="Imperial Archive"] .journey-stop.is-complete::before {
+    background: #9fe8ef;
+}
+
+.journey-rail[data-curator-mode="Melancholy"] .journey-stop.is-active::before,
+.journey-rail[data-curator-mode="Melancholy"] .journey-stop.is-complete::before {
+    background: #c7cfdb;
 }
 
 .journey-stop-index {
@@ -2203,19 +2779,31 @@ body.is-beginning-journey .control-card::after {
 
 .museum-audio-guide,
 .museum-installation-shell {
-    border: 1px solid var(--line);
-    border-radius: 20px;
+    position: relative;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    border-radius: 24px;
     background:
         radial-gradient(circle at top right, rgba(200, 169, 110, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%),
         var(--panel);
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.museum-installation-shell::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+    pointer-events: none;
 }
 
 .museum-audio-guide {
     display: grid;
     grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.9fr);
     gap: 18px;
-    padding: 18px 20px;
+    padding: 20px 22px;
     align-items: center;
 }
 
@@ -2253,7 +2841,7 @@ body.is-beginning-journey .control-card::after {
 
 .museum-audio-controls {
     border-left: 1px solid rgba(200, 169, 110, 0.12);
-    padding-left: 18px;
+    padding-left: 20px;
     display: grid;
     gap: 12px;
     align-content: center;
@@ -2263,6 +2851,13 @@ body.is-beginning-journey .control-card::after {
 .museum-audio-status {
     color: var(--paper);
     font-size: 14px;
+}
+
+.museum-audio-hall {
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    background: rgba(255,255,255,0.025);
 }
 
 .museum-audio-button-row {
@@ -2362,6 +2957,17 @@ body.is-guide-speaking .museum-audio-meter span,
     box-shadow: 0 28px 48px rgba(0,0,0,0.22);
 }
 
+.museum-installation-frame--offset {
+    left: auto;
+    right: 32px;
+    top: 52px;
+    width: 112px;
+    height: 148px;
+    transform: rotate(7deg);
+    border-radius: 14px;
+    opacity: 0.8;
+}
+
 .museum-installation-orb {
     position: absolute;
     left: 50%;
@@ -2374,6 +2980,78 @@ body.is-guide-speaking .museum-audio-meter span,
         radial-gradient(circle at 35% 32%, rgba(255, 242, 214, 0.88), rgba(181, 136, 74, 0.72) 44%, rgba(74, 45, 22, 0.98) 100%);
     box-shadow: 0 0 38px rgba(217, 176, 106, 0.18);
     animation: artifactFloat 5.4s ease-in-out infinite;
+}
+
+.museum-installation-bust {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    width: 132px;
+    height: 168px;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.26));
+}
+
+.museum-installation-bust::before {
+    content: "";
+    position: absolute;
+    left: 24%;
+    right: 24%;
+    top: 0;
+    height: 30%;
+    border-radius: 50% 50% 44% 44%;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 247, 228, 0.92), rgba(198, 164, 107, 0.52) 48%, rgba(74, 45, 22, 0.2) 74%, transparent 76%);
+}
+
+.museum-installation-bust::after {
+    content: "";
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: 0;
+    height: 74%;
+    border-radius: 42% 42% 16% 16% / 28% 28% 8% 8%;
+    background:
+        linear-gradient(180deg, rgba(255, 246, 225, 0.84), rgba(193, 157, 99, 0.42) 26%, rgba(67, 44, 26, 0.9) 100%);
+    clip-path: polygon(22% 0, 78% 0, 100% 34%, 87% 100%, 13% 100%, 0 34%);
+    box-shadow: inset 0 0 0 1px rgba(255, 239, 207, 0.08);
+}
+
+.museum-installation-pedestal {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 168px;
+    height: 72px;
+    transform: translateX(-50%);
+    border-radius: 12px 12px 0 0;
+    background:
+        linear-gradient(180deg, rgba(223, 198, 151, 0.14), rgba(37, 24, 15, 0.96));
+    border: 1px solid rgba(223, 198, 151, 0.1);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24);
+}
+
+.museum-installation-stage-copy {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    max-width: 30ch;
+    z-index: 2;
+}
+
+.museum-installation-stage-title {
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    line-height: 1.16;
+}
+
+.museum-installation-stage-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
 }
 
 .museum-installation-plaque {
@@ -2455,17 +3133,42 @@ body.is-guide-speaking .museum-audio-meter span,
 }
 
 .status-panel {
-    border: 1px solid rgba(200, 169, 110, 0.18);
-    border-radius: 18px;
-    padding: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    border-radius: 24px;
+    padding: 18px;
     background:
-        radial-gradient(circle at top left, rgba(200, 169, 110, 0.08), transparent 34%),
+        radial-gradient(circle at top left, rgba(200, 169, 110, 0.1), transparent 32%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%),
         var(--panel);
     display: grid;
     grid-template-columns: 1fr;
+    gap: 16px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+.status-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 14px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    align-items: start;
+}
+
+.status-seal {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.2);
+    background:
+        radial-gradient(circle at 35% 32%, rgba(255,255,255,0.1), transparent 26%),
+        rgba(255,255,255,0.02);
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .status-kicker {
@@ -2496,7 +3199,9 @@ body.is-guide-speaking .museum-audio-meter span,
 
 .status-side {
     border-top: 1px solid rgba(200, 169, 110, 0.12);
-    padding-top: 12px;
+    padding-top: 14px;
+    display: grid;
+    gap: 10px;
 }
 
 .mode-chip {
@@ -2539,16 +3244,16 @@ body.is-guide-speaking .museum-audio-meter span,
 
 .museum-map {
     position: relative;
-    min-height: 280px;
-    border: 1px solid var(--line);
-    border-radius: 24px;
+    min-height: 252px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    border-radius: 26px;
     background:
         radial-gradient(circle at top left, rgba(200, 169, 110, 0.08), transparent 20%),
         linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, transparent), color-mix(in srgb, var(--panel-strong) 96%, black));
     overflow: hidden;
     box-shadow:
         inset 0 1px 0 rgba(200, 169, 110, 0.04),
-        0 18px 44px rgba(0, 0, 0, 0.22);
+        0 12px 30px rgba(0, 0, 0, 0.14);
 }
 
 .museum-map-help,
@@ -2557,16 +3262,59 @@ body.is-guide-speaking .museum-audio-meter span,
 }
 
 .museum-nav-rail {
-    padding: 14px 12px 12px;
+    padding: 16px 14px 14px;
 }
 
 .museum-nav-header {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 4px 4px 14px;
-    margin-bottom: 10px;
+    gap: 8px;
+    padding: 6px 6px 16px;
+    margin-bottom: 12px;
     border-bottom: 1px solid var(--line);
+}
+
+.museum-nav-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.museum-nav-copy {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+    max-width: 24ch;
+}
+
+.museum-nav-route-line {
+    position: relative;
+    height: 32px;
+    margin: 0 6px 6px;
+}
+
+.museum-nav-route-line::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 15px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(200, 169, 110, 0.08), rgba(200, 169, 110, 0.42), rgba(200, 169, 110, 0.08));
+}
+
+.museum-nav-route-line::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 11px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 234, 196, 0.88);
+    box-shadow: 0 0 0 6px rgba(255, 234, 196, 0.06);
 }
 
 .museum-nav-stack {
@@ -2582,7 +3330,7 @@ body.is-guide-speaking .museum-audio-meter span,
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)),
         color-mix(in srgb, var(--panel-strong) 76%, transparent);
-    padding: 12px 12px 11px;
+    padding: 13px 13px 12px;
     cursor: pointer;
     transition: transform 0.22s ease, border-color 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease;
     z-index: 2;
@@ -2666,6 +3414,14 @@ body.is-guide-speaking .museum-audio-meter span,
     padding-right: 42px;
 }
 
+.museum-room-accent {
+    position: absolute;
+    inset: 14px auto 14px 0;
+    width: 2px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 239, 208, 0.04), rgba(200, 169, 110, 0.62), rgba(255, 239, 208, 0.04));
+}
+
 .museum-room-kicker {
     color: var(--gold-soft);
     font-family: 'Cinzel', serif;
@@ -2692,6 +3448,22 @@ body.is-guide-speaking .museum-audio-meter span,
     background: rgba(255,255,255,0.02);
 }
 
+.museum-room-sigil svg {
+    width: 14px;
+    height: 14px;
+}
+
+.museum-room-sigil path,
+.museum-room-sigil rect,
+.museum-room-sigil circle,
+.museum-room-sigil line {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .museum-room-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
@@ -2708,6 +3480,17 @@ body.is-guide-speaking .museum-audio-meter span,
     font-size: 12px;
     line-height: 1.38;
     max-width: 18ch;
+}
+
+.museum-room-meta {
+    margin-top: auto;
+    padding-top: 7px;
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.82;
 }
 
 .museum-visitor-label {
@@ -2797,7 +3580,8 @@ body[data-museum-theme="light"] .museum-map-help,
 body[data-museum-theme="light"] .museum-legend-copy,
 body[data-museum-theme="light"] .museum-audio-copy,
 body[data-museum-theme="light"] .museum-installation-text,
-body[data-museum-theme="light"] .museum-installation-note {
+body[data-museum-theme="light"] .museum-installation-note,
+body[data-museum-theme="light"] .museum-nav-copy {
     color: #556971 !important;
 }
 
@@ -2846,12 +3630,16 @@ body[data-museum-theme="light"] .museum-room-title,
 body[data-museum-theme="light"] .museum-legend-title,
 body[data-museum-theme="light"] .museum-hall-nav-title,
 body[data-museum-theme="light"] .timeline-title,
-body[data-museum-theme="light"] .artifact-name {
+body[data-museum-theme="light"] .artifact-name,
+body[data-museum-theme="light"] .museum-room-stage-band-value {
     color: #1f3138 !important;
 }
 
 body[data-museum-theme="light"] .museum-foyer-label,
-body[data-museum-theme="light"] .museum-visitor-label {
+body[data-museum-theme="light"] .museum-visitor-label,
+body[data-museum-theme="light"] .museum-nav-kicker,
+body[data-museum-theme="light"] .museum-room-meta,
+body[data-museum-theme="light"] .museum-room-stage-band-label {
     color: #4e6570 !important;
 }
 
@@ -2882,8 +3670,9 @@ body[data-museum-theme="dark"] .museum-header {
 
 .museum-section-intro {
     width: min(100%, 1540px);
-    margin: 6px auto 10px;
+    margin: 8px auto 14px;
     text-align: center;
+    padding: 0 18px;
 }
 
 .museum-section-kicker {
@@ -2907,24 +3696,33 @@ body[data-museum-theme="dark"] .museum-header {
     color: var(--muted);
     font-size: 18px;
     line-height: 1.65;
-    max-width: 840px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .museum-room-stage {
     position: relative;
     width: min(100%, 1540px);
-    min-height: 470px;
-    margin: 0 auto 18px;
-    border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 24px;
+    min-height: 500px;
+    margin: 0 auto 22px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    border-radius: 30px;
     overflow: hidden;
     background:
-        radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 26%),
-        linear-gradient(180deg, rgba(17, 12, 10, 0.82), rgba(10, 8, 7, 0.9));
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.1), transparent 24%),
+        linear-gradient(180deg, rgba(18, 13, 11, 0.88), rgba(9, 7, 6, 0.96));
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.03),
-        0 20px 50px rgba(0, 0, 0, 0.24);
+        0 28px 64px rgba(0, 0, 0, 0.28);
+}
+
+.museum-room-stage::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(255, 241, 212, 0.05);
+    border-radius: 22px;
+    pointer-events: none;
 }
 
 .museum-room-stage::before {
@@ -3063,7 +3861,7 @@ body[data-museum-theme="dark"] .museum-header {
     position: absolute;
     left: clamp(320px, 34%, 520px);
     right: 5%;
-    top: 76px;
+    top: 96px;
     bottom: 34px;
     display: grid;
     grid-template-columns: 1.35fr 0.9fr;
@@ -3196,13 +3994,49 @@ body[data-museum-theme="dark"] .museum-header {
     position: absolute;
     left: 6%;
     bottom: 24px;
-    padding: 10px 12px 9px;
+    padding: 12px 14px 11px;
     border: 1px solid rgba(255, 235, 203, 0.1);
-    background: rgba(14, 10, 8, 0.66);
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 38%),
+        rgba(14, 10, 8, 0.7);
     color: var(--muted);
     font-size: 12px;
     line-height: 1.45;
     max-width: 22ch;
+}
+
+.museum-room-stage-band {
+    position: absolute;
+    top: 22px;
+    right: 28px;
+    z-index: 2;
+    min-width: 220px;
+    max-width: 320px;
+    padding: 14px 16px 12px;
+    border-radius: 18px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 38%),
+        rgba(13, 10, 9, 0.58);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 20px 34px rgba(0, 0, 0, 0.18);
+}
+
+.museum-room-stage-band-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.museum-room-stage-band-value {
+    margin-top: 7px;
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 19px;
+    line-height: 1.3;
 }
 
 .museum-room-label-title {
@@ -3217,7 +4051,7 @@ body[data-museum-theme="dark"] .museum-header {
 .museum-room-scene-copy {
     position: absolute;
     left: 32px;
-    top: 34px;
+    top: 92px;
     width: clamp(220px, 27vw, 360px);
     max-width: calc(100% - 140px);
     z-index: 2;
@@ -3251,19 +4085,36 @@ body[data-museum-theme="dark"] .museum-header {
     overflow: hidden;
 }
 
+.museum-room-object-label {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    padding: 6px 10px 5px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 235, 203, 0.08);
+    background: rgba(12, 9, 8, 0.62);
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
 .museum-hall-shell {
-    margin-top: 14px;
-    border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 22px 22px 0 0;
+    margin-top: 18px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    border-radius: 28px 28px 0 0;
     background:
-        radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 26%),
-        linear-gradient(180deg, rgba(17, 12, 10, 0.82), rgba(10, 8, 7, 0.86));
-    padding: 20px 24px 22px;
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.1), transparent 22%),
+        linear-gradient(180deg, rgba(19, 13, 11, 0.9), rgba(10, 8, 7, 0.92));
+    padding: 24px 24px 22px;
     box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.05);
 }
 
 .museum-hall-shell::before {
-    content: "Current Hall";
+    content: "Exhibition Sequence";
     display: block;
     margin-bottom: 14px;
     color: var(--gold-soft);
@@ -3277,22 +4128,24 @@ body[data-museum-theme="dark"] .museum-header {
 .museum-hall-nav {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
     padding: 0 0 18px;
     margin-top: 0;
     border-bottom: 1px solid var(--line);
-    opacity: 0.76;
+    opacity: 0.9;
 }
 
 .museum-hall-nav-btn {
     appearance: none;
-    border: 1px solid rgba(200, 169, 110, 0.18);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(200, 169, 110, 0.16);
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
         rgba(16, 12, 10, 0.42);
     color: var(--muted);
-    border-radius: 18px;
-    padding: 14px;
+    border-radius: 20px;
+    padding: 16px 16px 15px;
     cursor: pointer;
     transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
     text-align: left;
@@ -3300,6 +4153,16 @@ body[data-museum-theme="dark"] .museum-header {
     flex-direction: column;
     gap: 6px;
     min-height: 102px;
+}
+
+.museum-hall-nav-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, rgba(255, 232, 188, 0.9), rgba(121, 88, 45, 0.4));
+    opacity: 0;
+    transition: opacity 0.18s ease;
 }
 
 .museum-hall-nav-btn:hover,
@@ -3311,6 +4174,11 @@ body[data-museum-theme="dark"] .museum-header {
         rgba(200, 169, 110, 0.08);
     transform: translateY(-1px);
     box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.09);
+}
+
+.museum-hall-nav-btn:hover::before,
+.museum-hall-nav-btn.is-active::before {
+    opacity: 1;
 }
 
 .museum-hall-nav-index {
@@ -3336,14 +4204,16 @@ body[data-museum-theme="dark"] .museum-header {
 
 .museum-hall-panel {
     display: none;
-    border: 1px solid var(--line);
-    border-top: none;
-    border-radius: 0 0 22px 22px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    border-radius: 28px;
     background:
         radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 18%),
-        rgba(10, 8, 7, 0.84);
-    padding: 18px 18px 20px;
+        linear-gradient(180deg, rgba(15, 11, 10, 0.95), rgba(8, 6, 5, 0.97));
+    padding: 26px 28px 30px;
     transform-origin: top center;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 18px 38px rgba(0, 0, 0, 0.18);
 }
 
 .museum-hall-panel.is-active {
@@ -3369,9 +4239,46 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .hall-panel-header {
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(200, 169, 110, 0.08);
+}
+
+.hall-panel-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.hall-panel-seal {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(200, 169, 110, 0.18);
+    background:
+        radial-gradient(circle at 35% 32%, rgba(255,255,255,0.08), transparent 28%),
+        rgba(255,255,255,0.03);
+    display: grid;
+    place-items: center;
+    color: var(--gold-soft);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.hall-panel-seal svg {
+    width: 18px;
+    height: 18px;
+}
+
+.hall-panel-seal path,
+.hall-panel-seal rect,
+.hall-panel-seal circle,
+.hall-panel-seal line {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .hall-panel-kicker {
@@ -3386,26 +4293,29 @@ body[data-museum-theme="dark"] .museum-header {
 .hall-panel-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: 28px;
-    line-height: 1.2;
+    font-size: 30px;
+    line-height: 1.16;
 }
 
 .hall-panel-copy {
     color: var(--muted);
     font-size: 16px;
     line-height: 1.65;
-    max-width: 820px;
-    margin-top: 8px;
+    max-width: 740px;
+    margin-top: 10px;
 }
 
 .museum-hall-panel.hall-panel--lobby {
-    background: linear-gradient(160deg, #2a1f14, #1a1208);
+    background:
+        radial-gradient(circle at 70% 16%, rgba(200, 169, 110, 0.12), transparent 18%),
+        linear-gradient(160deg, #251a12, #120d09);
 }
 
 .museum-hall-panel.hall-panel--artifacts {
     background:
+        radial-gradient(circle at 20% 16%, rgba(224, 192, 146, 0.08), transparent 16%),
         linear-gradient(180deg, rgba(255,255,255,0.02), transparent 16%),
-        #0f0d0b;
+        #0d0b09;
 }
 
 .museum-hall-panel.hall-panel--timeline {
@@ -3441,7 +4351,9 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .museum-hall-panel.hall-panel--visitor {
-    background: #080605;
+    background:
+        radial-gradient(circle at 78% 18%, rgba(200, 169, 110, 0.08), transparent 18%),
+        #080605;
 }
 
 .hall-action-row {
@@ -3451,10 +4363,10 @@ body[data-museum-theme="dark"] .museum-header {
 
 .hall-content {
     min-height: 220px;
-    padding: 20px 4px 4px !important;
+    padding: 16px 2px 2px !important;
     background: transparent !important;
-    max-width: 1240px;
-    margin: 0 auto;
+    max-width: 1180px;
+    margin: 0;
 }
 
 .empty-state {
@@ -4229,7 +5141,7 @@ body[data-museum-theme="dark"] .museum-header {
         radial-gradient(circle at top right, rgba(125, 151, 255, 0.1), transparent 24%),
         radial-gradient(circle at 18% 18%, rgba(255,255,255,0.06), transparent 18%),
         rgba(14, 10, 9, 0.82);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
 }
 
 .ambassador-trigger-top {
@@ -4392,6 +5304,7 @@ body.is-ambassador-open .ambassador-modal-card {
     background:
         radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 28%),
         rgba(11, 8, 7, 0.76);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
 }
 
 .portrait-trigger-grid {
@@ -4629,6 +5542,31 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: 520px;
     }
 
+    .museum-room-stage {
+        min-height: 760px;
+    }
+
+    .museum-room-stage-band {
+        left: 24px;
+        right: 24px;
+        top: 22px;
+        max-width: none;
+    }
+
+    .museum-room-scene-copy {
+        top: 110px;
+        width: auto;
+        max-width: calc(100% - 48px);
+    }
+
+    .museum-room-gallery {
+        left: 28px;
+        right: 28px;
+        top: 330px;
+        bottom: 28px;
+        grid-template-columns: 1fr;
+    }
+
     .hero-plaques {
         grid-template-columns: 1fr;
     }
@@ -4644,6 +5582,10 @@ body.is-ambassador-open .ambassador-modal-card {
 
     .museum-hall-nav-btn {
         min-height: 92px;
+    }
+
+    .museum-nav-copy {
+        max-width: none;
     }
 
     .museum-header-band {
@@ -4669,6 +5611,18 @@ body.is-ambassador-open .ambassador-modal-card {
         font-size: 28px;
     }
 
+    .theme-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .theme-chip-row {
+        justify-content: flex-start;
+    }
+
+    .status-head {
+        grid-template-columns: 1fr;
+    }
+
     .landing-title {
         font-size: 40px;
         max-width: 14ch;
@@ -4678,8 +5632,24 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: 480px;
     }
 
+    .control-shell {
+        margin-top: -36px;
+    }
+
     .landing-plaque-row {
         grid-template-columns: 1fr;
+    }
+
+    .landing-curator-strip {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .landing-art-label,
+    .landing-art-plaque,
+    .landing-art-metrics {
+        width: auto;
+        max-width: 240px;
     }
 
 }
@@ -4716,6 +5686,10 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: auto;
     }
 
+    .admission-welcome {
+        margin-bottom: 14px;
+    }
+
     .landing-title {
         font-size: 32px;
     }
@@ -4732,6 +5706,53 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: 360px;
     }
 
+    .control-shell {
+        margin-top: 14px;
+    }
+
+    .landing-curator-strip {
+        padding: 14px;
+    }
+
+    .landing-art-label {
+        left: 16px;
+        top: 16px;
+        right: 16px;
+        width: auto;
+    }
+
+    .landing-art-metrics {
+        position: static;
+        width: auto;
+        max-width: none;
+        margin: 16px;
+        margin-top: auto;
+        padding-bottom: 74px;
+    }
+
+    .landing-art-plaque {
+        left: 16px;
+        bottom: 68px;
+        width: calc(100% - 32px);
+        max-width: none;
+    }
+
+    .landing-floor-label {
+        display: none;
+    }
+
+    .landing-halo-ring {
+        right: 10%;
+        top: 14%;
+        width: 48%;
+    }
+
+    .landing-statue {
+        right: 3%;
+        width: 54%;
+        height: 60%;
+    }
+
     .landing-caption {
         flex-direction: column;
         align-items: flex-start;
@@ -4744,6 +5765,16 @@ body.is-ambassador-open .ambassador-modal-card {
     .control-card {
         padding: 18px;
         border-radius: 22px;
+    }
+
+    .theme-bar {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .status-panel,
+    .museum-audio-guide {
+        border-radius: 20px;
     }
 
     .ambassador-modal-shell {
@@ -4783,6 +5814,66 @@ body.is-ambassador-open .ambassador-modal-card {
     .museum-map {
         min-height: 460px;
         border-radius: 18px;
+    }
+
+    .museum-room-stage {
+        min-height: 700px;
+        border-radius: 22px;
+    }
+
+    .museum-room-stage-band {
+        left: 16px;
+        right: 16px;
+        top: 16px;
+        padding: 12px 14px 11px;
+    }
+
+    .museum-room-stage-band-value {
+        font-size: 16px;
+    }
+
+    .museum-room-scene-copy {
+        left: 18px;
+        right: 18px;
+        top: 96px;
+        max-width: none;
+        padding-right: 0;
+    }
+
+    .museum-room-scene-title {
+        font-size: 28px;
+    }
+
+    .museum-room-scene-text {
+        font-size: 15px;
+        line-height: 1.58;
+    }
+
+    .museum-room-gallery {
+        left: 16px;
+        right: 16px;
+        top: 276px;
+        bottom: 18px;
+        gap: 14px;
+    }
+
+    .museum-room-artwall {
+        gap: 12px;
+    }
+
+    .museum-room-plinth-zone {
+        min-height: 220px;
+    }
+
+    .museum-room-wall-label {
+        left: 16px;
+        bottom: 16px;
+        max-width: calc(100% - 32px);
+    }
+
+    .museum-room-object-label {
+        bottom: 16px;
+        font-size: 7px;
     }
 
     .share-card-grid,
@@ -4885,7 +5976,7 @@ def world_aura(world_bible: dict) -> str:
     return ("ember", "tide", "verdant", "velvet")[simple_seed(source) % 4]
 
 
-def hall_sigil(room_id: str) -> str:
+def hall_sigil_legacy(room_id: str) -> str:
     return {
         "lobby": "◈",
         "artifacts": "⬢",
@@ -4893,6 +5984,46 @@ def hall_sigil(room_id: str) -> str:
         "newspaper": "✶",
         "visitor": "☽",
     }.get(room_id, "◌")
+
+
+def hall_sigil(room_id: str) -> str:
+    sigils = {
+        "lobby": """
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M12 4 L19 12 L12 20 L5 12 Z"></path>
+</svg>
+""",
+        "artifacts": """
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+</svg>
+""",
+        "timeline": """
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M7 5 L17 12 L7 19"></path>
+</svg>
+""",
+        "newspaper": """
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M6 7 H18 V17 H6 Z"></path>
+  <line x1="9" y1="10" x2="15" y2="10"></line>
+  <line x1="9" y1="13" x2="15" y2="13"></line>
+</svg>
+""",
+        "visitor": """
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M12 4 C15.8 4 19 7.2 19 11 C19 15.4 15.4 19 11 19 C8.4 19 6 17.8 4.5 15.8"></path>
+</svg>
+""",
+    }
+    return sigils.get(
+        room_id,
+        """
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <circle cx="12" cy="12" r="7"></circle>
+</svg>
+""",
+    )
 
 
 def emblem_svg(world_bible: dict) -> str:
@@ -4964,12 +6095,21 @@ def build_status_html(title: str, subtitle: str) -> str:
 
 def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
     mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
+    seal = {
+        "Anthropology": "A",
+        "Mythic": "M",
+        "Imperial Archive": "IA",
+        "Melancholy": "L",
+    }.get(curator_mode, "I")
     return f"""
 <div class="status-panel">
-    <div>
-        <div class="status-kicker">Museum guide</div>
-        <div class="status-line">{esc(title)}</div>
-        <div class="status-subline">{esc(subtitle)}</div>
+    <div class="status-head">
+        <div>
+        <div class="status-kicker">Curator note</div>
+            <div class="status-line">{esc(title)}</div>
+            <div class="status-subline">{esc(subtitle)}</div>
+        </div>
+        <div class="status-seal" aria-hidden="true">{esc(seal)}</div>
     </div>
     <div class="status-side">
         <div class="mode-chip">Current mode</div>
@@ -5018,9 +6158,12 @@ def build_entry_ticket_preview(visitor_name: str = "", visitor_year: str = "", c
     ticket_title = visitor_title_from_payload(safe_name, safe_year, curator_mode)
     ticket_number = issue_ticket_number(safe_name, safe_year, museum_name)
     return f"""
-<div class="museum-ticket-preview">
+<div class="museum-ticket-preview" data-curator-mode="{esc_attr(curator_mode)}">
     <div class="museum-ticket-body">
-        <div class="museum-ticket-kicker">Museum Admission Pass</div>
+        <div class="museum-ticket-topline">
+            <div class="museum-ticket-kicker">Museum Admission Pass</div>
+            <div class="museum-ticket-seal" aria-hidden="true">IM</div>
+        </div>
         <div class="museum-ticket-title">Admit One: <span id="landing-visitor-name">{esc(safe_name)}</span></div>
         <div class="museum-ticket-subtitle">Traveller from the Year <span id="landing-visitor-year">{esc(safe_year)}</span></div>
         <div class="museum-ticket-meta">
@@ -5055,7 +6198,7 @@ def build_entry_ticket_preview(visitor_name: str = "", visitor_year: str = "", c
 """
 
 
-def build_journey_path_html(active_step: int = 0) -> str:
+def build_journey_path_html(active_step: int = 0, curator_mode: str = "Anthropology") -> str:
     steps = [
         ("Identity recorded", "The museum records who is entering today."),
         ("Ticket created", "Your pass is prepared and stamped."),
@@ -5081,7 +6224,7 @@ def build_journey_path_html(active_step: int = 0) -> str:
 """
         )
     return f"""
-<div class="journey-rail">
+<div class="journey-rail" data-curator-mode="{esc_attr(curator_mode)}">
     <div class="journey-rail-kicker">Visitor Path</div>
     <div class="journey-rail-grid">{''.join(cards)}</div>
 </div>
@@ -5105,7 +6248,7 @@ def build_share_card(state: dict) -> str:
 
     return f"""
 <div class="share-card">
-    <div class="share-card-kicker">Share Plaque</div>
+    <div class="share-card-kicker">World share plaque</div>
     <div class="share-card-title">{esc(museum_name)}</div>
     <div class="share-card-summary">{esc(summary)}</div>
     <div class="share-card-grid">
@@ -5171,7 +6314,7 @@ def build_audio_guide(state: dict | None = None) -> str:
     state = state or {}
     world_bible = state.get("world_bible") or {}
     museum_name = world_bible.get("museum_name", "Infinite Museum of Impossible Worlds")
-    title = f"Audio Guide: {museum_name}" if world_bible else "Audio guide"
+    title = f"Curator Guide: {museum_name}" if world_bible else "Curator guide"
     copy = (
         "Press play to hear a short guide for the hall you are viewing. It changes as you move through the museum."
         if world_bible
@@ -5181,7 +6324,7 @@ def build_audio_guide(state: dict | None = None) -> str:
     return f"""
 <div class="museum-audio-guide">
     <div class="museum-audio-copyblock">
-        <div class="museum-audio-kicker">Audio guide</div>
+        <div class="museum-audio-kicker">Curator audio guide</div>
         <div class="museum-audio-title" id="museum-audio-title">{esc(title)}</div>
         <div class="museum-audio-copy" id="museum-audio-copy">{esc(copy)}</div>
     </div>
@@ -5557,7 +6700,7 @@ def build_landing_html(curator_mode: str) -> str:
 <div class="admission-welcome">
     <div class="admission-kicker">Welcome Chamber</div>
     <div class="admission-title">Welcome To The World Of Imagination</div>
-    <div class="admission-copy">Before you enter, the museum asks for one small record. Tell us your name and the year you come from. We will stamp your visit into the world you create.</div>
+    <div class="admission-copy">Before you enter, the museum asks for one small record. Tell us your name and the year you come from. Then give us one impossible idea and we will open it like an exhibition.</div>
     <div class="admission-rail">
         <div class="admission-chip">One visitor identity</div>
         <div class="admission-chip">One impossible world</div>
@@ -5567,11 +6710,18 @@ def build_landing_html(curator_mode: str) -> str:
 <div class="landing-shell">
     <div class="landing-floating-fragments" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="landing-grid">
-            <div class="landing-copy">
-                <div class="landing-kicker">Infinite Museum</div>
-                <div class="landing-title">Build An Impossible World</div>
-            <div class="landing-subtitle">Type one idea. We will turn it into a museum world.</div>
-                <div class="landing-lead">{esc(mode["tagline"])}</div>
+        <div class="landing-copy">
+            <div class="landing-kicker">Infinite Museum</div>
+            <div class="landing-title">Enter One Idea. Watch It Become A Museum.</div>
+            <div class="landing-subtitle">This should feel like stepping into a special exhibition, not filling a normal form.</div>
+            <div class="landing-lead">{esc(mode["tagline"])} The museum keeps the structure simple: one idea, one route, five halls, one clear world to explore.</div>
+            <div class="landing-route">
+                <div class="landing-route-stop">Lobby</div>
+                <div class="landing-route-stop">Artifacts</div>
+                <div class="landing-route-stop">Timeline</div>
+                <div class="landing-route-stop">Newspaper</div>
+                <div class="landing-route-stop">Visitor's Book</div>
+            </div>
             <div class="landing-plaque-row">
                 <div class="landing-plaque">
                     <div class="landing-plaque-label">Mode</div>
@@ -5586,16 +6736,41 @@ def build_landing_html(curator_mode: str) -> str:
                     <div class="landing-plaque-value">{esc(mode["plaque"])}</div>
                 </div>
             </div>
+            <div class="landing-curator-strip">
+                <div class="landing-curator-label">Curator note</div>
+                <div class="landing-curator-copy">Give one impossible condition. The museum will turn it into rules, public records, objects, history, and one human voice from inside that world.</div>
+            </div>
             <div class="landing-cta-copy">Keep the idea simple. After your ticket is stamped, the museum opens from the lobby and starts calling you by name.</div>
         </div>
         <div class="landing-art" aria-hidden="true">
+            <div class="landing-art-label">
+                <div class="landing-art-label-title">Entrance Installation</div>
+                <div class="landing-art-label-copy">A museum facade waiting for its first impossible civilization. The architecture is calm. The world behind it is not.</div>
+            </div>
+            <div class="landing-art-metrics">
+                <div class="landing-art-metric">
+                    <div class="landing-art-metric-label">Route</div>
+                    <div class="landing-art-metric-value">Five linked halls</div>
+                </div>
+                <div class="landing-art-metric">
+                    <div class="landing-art-metric-label">Voice</div>
+                    <div class="landing-art-metric-value">One visitor, one world</div>
+                </div>
+            </div>
+            <div class="landing-halo-ring"></div>
             <div class="landing-skyline"></div>
             <div class="landing-dome"></div>
             <div class="landing-steps"></div>
             <div class="landing-pillars"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="landing-statue"></div>
+            <div class="landing-floor-label">Every generated world changes the mood of the museum once the doors open.</div>
+            <div class="landing-art-plaque">
+                <div class="landing-art-plaque-label">Opening piece</div>
+                <div class="landing-art-plaque-value">A ceremonial figure waiting under warm light before the first hall begins.</div>
+            </div>
             <div class="landing-caption">
                 <span>Atmospheric entrance rendering</span>
-                <span>Impossible Civilizations Archive</span>
+                <span>Curated arrival sequence</span>
             </div>
         </div>
     </div>
@@ -5616,10 +6791,12 @@ def build_map_html(active_room: str, completed_rooms: list[str]) -> str:
         cards.append(
             f"""
 <div class="museum-room museum-room--rail {state}" data-hall="{esc(title)}" data-room-id="{esc(room_id)}" role="button" tabindex="0" aria-label="Open {esc(title)} hall" onclick="window.museumNavigate && window.museumNavigate(this)" onkeydown="if(event.key==='Enter'||event.key===' '){{event.preventDefault(); window.museumNavigate && window.museumNavigate(this);}}">
+    <div class="museum-room-accent"></div>
     <div class="museum-room-kicker">Hall {index:02d}</div>
     <div class="museum-room-sigil">{hall_sigil(room_id)}</div>
     <div class="museum-room-title">{esc(title)}</div>
     <div class="museum-room-copy">{esc(copy)}</div>
+    <div class="museum-room-meta">{esc(kicker)}</div>
 </div>
 """
         )
@@ -5628,9 +6805,12 @@ def build_map_html(active_room: str, completed_rooms: list[str]) -> str:
     return f"""
 <div class='museum-map museum-nav-rail' data-active-room='{esc(active)}'>
     <div class='museum-nav-header'>
+        <div class='museum-nav-kicker'>Exhibition route</div>
         <div class='museum-visitor-caption' id='museum-visitor-caption'>Currently in {esc(active_title)}</div>
         <div class='museum-visitor-label'>Curator rail</div>
+        <div class='museum-nav-copy'>Move room by room. Each chamber opens a different way of seeing the same world.</div>
     </div>
+    <div class='museum-nav-route-line' aria-hidden='true'></div>
     <div class='museum-nav-stack'>
         {''.join(cards)}
     </div>
@@ -5663,6 +6843,7 @@ def build_theme_bar() -> str:
     return """
 <div class="theme-bar">
     <div class="theme-bar-copy">
+        <strong>Choose The Gallery Light</strong>
         Switch the museum atmosphere while you explore. Choose a warm retro gallery, a cooler night mode, or a bright archival reading room.
     </div>
     <div class="theme-chip-row">
@@ -5674,10 +6855,13 @@ def build_theme_bar() -> str:
 """
 
 
-def build_panel_header(kicker: str, title: str, copy: str) -> str:
+def build_panel_header(kicker: str, title: str, copy: str, room_id: str = "lobby") -> str:
     return f"""
 <div class="hall-panel-header">
-    <div class="hall-panel-kicker">{esc(kicker)}</div>
+    <div class="hall-panel-topline">
+        <div class="hall-panel-kicker">{esc(kicker)}</div>
+        <div class="hall-panel-seal">{hall_sigil(room_id)}</div>
+    </div>
     <div class="hall-panel-title">{esc(title)}</div>
     <div class="hall-panel-copy">{esc(copy)}</div>
 </div>
@@ -5715,6 +6899,10 @@ def build_room_stage(state: dict | None = None) -> str:
     return f"""
 <div class="museum-room-stage" data-active-room="lobby">
     <div class="museum-room-scene museum-room-scene--lobby" data-guide-room="Lobby" data-guide-title="{esc_attr(museum_name)}" data-guide-copy="{esc_attr(lobby_guide)}">
+        <div class="museum-room-stage-band">
+            <div class="museum-room-stage-band-label">Open chamber</div>
+            <div class="museum-room-stage-band-value">{esc(museum_name)}</div>
+        </div>
         <div class="museum-room-spotlight museum-room-spotlight--center"></div>
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
@@ -5730,6 +6918,7 @@ def build_room_stage(state: dict | None = None) -> str:
             <div class="museum-room-plinth-zone">
                 <div class="museum-room-plinth"></div>
                 <div class="museum-room-object museum-room-object--orb"></div>
+                <div class="museum-room-object-label">Central foyer object</div>
             </div>
         </div>
         <div class="museum-room-wall-label">
@@ -5738,6 +6927,10 @@ def build_room_stage(state: dict | None = None) -> str:
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--artifacts" data-guide-room="Artifacts" data-guide-title="{esc_attr(artifact_name)}" data-guide-copy="{esc_attr(artifact_guide)}">
+        <div class="museum-room-stage-band">
+            <div class="museum-room-stage-band-label">Featured object</div>
+            <div class="museum-room-stage-band-value">{esc(artifact_name)}</div>
+        </div>
         <div class="museum-room-spotlight museum-room-spotlight--left"></div>
         <div class="museum-room-spotlight museum-room-spotlight--right"></div>
         <div class="museum-room-glow"></div>
@@ -5754,6 +6947,7 @@ def build_room_stage(state: dict | None = None) -> str:
             <div class="museum-room-plinth-zone">
                 <div class="museum-room-plinth"></div>
                 <div class="museum-room-object museum-room-object--column"></div>
+                <div class="museum-room-object-label">Collection centrepiece</div>
             </div>
         </div>
         <div class="museum-room-wall-label">
@@ -5762,6 +6956,10 @@ def build_room_stage(state: dict | None = None) -> str:
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--timeline" data-guide-room="Timeline" data-guide-title="{esc_attr(timeline_title)}" data-guide-copy="{esc_attr(timeline_guide)}">
+        <div class="museum-room-stage-band">
+            <div class="museum-room-stage-band-label">Historical anchor</div>
+            <div class="museum-room-stage-band-value">{esc(timeline_title)}</div>
+        </div>
         <div class="museum-room-spotlight museum-room-spotlight--center"></div>
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
@@ -5777,6 +6975,7 @@ def build_room_stage(state: dict | None = None) -> str:
             <div class="museum-room-plinth-zone">
                 <div class="museum-room-plinth"></div>
                 <div class="museum-room-object museum-room-object--book"></div>
+                <div class="museum-room-object-label">Chronicle fragment</div>
             </div>
         </div>
         <div class="museum-room-wall-label">
@@ -5785,6 +6984,10 @@ def build_room_stage(state: dict | None = None) -> str:
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--newspaper" data-guide-room="Newspaper" data-guide-title="{esc_attr(paper_name)}" data-guide-copy="{esc_attr(newspaper_guide)}">
+        <div class="museum-room-stage-band">
+            <div class="museum-room-stage-band-label">Public edition</div>
+            <div class="museum-room-stage-band-value">{esc(paper_name)}</div>
+        </div>
         <div class="museum-room-spotlight museum-room-spotlight--right"></div>
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
@@ -5800,6 +7003,7 @@ def build_room_stage(state: dict | None = None) -> str:
             <div class="museum-room-plinth-zone">
                 <div class="museum-room-plinth"></div>
                 <div class="museum-room-object museum-room-object--desk"></div>
+                <div class="museum-room-object-label">Press desk</div>
             </div>
         </div>
         <div class="museum-room-wall-label">
@@ -5808,6 +7012,10 @@ def build_room_stage(state: dict | None = None) -> str:
         </div>
     </div>
     <div class="museum-room-scene museum-room-scene--visitor" data-guide-room="Visitor's Book" data-guide-title="Visitor's Book" data-guide-copy="{esc_attr(visitor_guide)}">
+        <div class="museum-room-stage-band">
+            <div class="museum-room-stage-band-label">Last voice</div>
+            <div class="museum-room-stage-band-value">Visitor's Book</div>
+        </div>
         <div class="museum-room-spotlight museum-room-spotlight--center"></div>
         <div class="museum-room-glow"></div>
         <div class="museum-room-scene-copy">
@@ -5823,6 +7031,7 @@ def build_room_stage(state: dict | None = None) -> str:
             <div class="museum-room-plinth-zone">
                 <div class="museum-room-plinth"></div>
                 <div class="museum-room-object museum-room-object--book"></div>
+                <div class="museum-room-object-label">Closing ledger</div>
             </div>
         </div>
         <div class="museum-room-wall-label">
@@ -5834,12 +7043,49 @@ def build_room_stage(state: dict | None = None) -> str:
 """
 
 
-def build_shell_intro() -> str:
-    return """
-<div class="museum-section-intro">
-    <div class="museum-section-kicker">Hall Navigation</div>
-    <div class="museum-section-title">Move Through The Museum</div>
-    <div class="museum-section-copy">Start in the lobby, then move hall by hall. Use the audio guide if you want, and download the share card only when you need it.</div>
+def build_shell_intro(state: dict | None = None) -> str:
+    state = state or {}
+    world_bible = state.get("world_bible") or {}
+    artifacts = (state.get("artifacts") or {}).get("artifacts") or []
+    curator_mode = state.get("curator_mode") or "Anthropology"
+    museum_name = world_bible.get("museum_name", "Infinite Museum of Impossible Worlds")
+    tagline = world_bible.get("tagline", "One idea becomes a full museum route.")
+    premise = state.get("concept") or world_bible.get("core_premise") or "Describe one impossible condition and the museum will build the halls around it."
+    motif = first_item(world_bible.get("visual_motifs"), "No visual motif recorded yet.")
+    artifact_name = artifacts[0].get("name", "The first object will appear here.") if artifacts else "The first object will appear here."
+    artifact_note = artifacts[0].get("significance", premise) if artifacts else premise
+    aura = world_aura(world_bible) if world_bible else "default"
+
+    return f"""
+<div class="museum-installation-shell" data-world-aura-source="{esc_attr(aura)}">
+    <div>
+        <div class="museum-installation-kicker">Main installation</div>
+        <div class="museum-installation-title">{esc(museum_name)}</div>
+        <div class="museum-installation-text">{esc(tagline)}</div>
+        <div class="museum-installation-note">{esc(premise)}</div>
+        <div class="museum-installation-tags">
+            <span>{esc(curator_mode)}</span>
+            <span>Five linked halls</span>
+            <span>{esc(motif)}</span>
+        </div>
+    </div>
+    <div class="museum-installation-stage">
+        <div class="museum-installation-aura"></div>
+        <div class="museum-installation-stage-copy">
+            <div class="museum-installation-kicker">Featured presence</div>
+            <div class="museum-installation-stage-title">{esc(artifact_name)}</div>
+            <div class="museum-installation-stage-note">{esc(artifact_note)}</div>
+        </div>
+        <div class="museum-installation-frame"></div>
+        <div class="museum-installation-frame museum-installation-frame--offset"></div>
+        <div class="museum-installation-orb"></div>
+        <div class="museum-installation-bust"></div>
+        <div class="museum-installation-pedestal"></div>
+        <div class="museum-installation-plaque">
+            <div class="museum-installation-plaque-label">Exhibition note</div>
+            <div class="museum-installation-plaque-value">{esc(motif)}</div>
+        </div>
+    </div>
 </div>
 """
 
@@ -6267,6 +7513,7 @@ def regenerate_hall(state: dict, hall: str):
             gr.update(value=build_map_html("lobby", [])),
             gr.update(value=build_room_stage(state)),
             gr.update(value=build_audio_guide(state)),
+            gr.update(value=build_shell_intro(state)),
             gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
             gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
             gr.update(value=build_timeline_html(state.get("timeline") or {})),
@@ -6312,6 +7559,7 @@ def regenerate_hall(state: dict, hall: str):
         gr.update(value=build_map_html(hall if hall in {"artifacts", "timeline", "newspaper", "visitor"} else "lobby", ["lobby", "artifacts", "timeline", "newspaper", "visitor"])),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
+        gr.update(value=build_shell_intro(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**(state.get("artifacts") or {}), "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(state.get("timeline") or {})),
@@ -6338,6 +7586,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
             gr.update(value=build_museum_header()),
             gr.update(value=build_room_stage()),
             gr.update(value=build_audio_guide()),
+            gr.update(value=build_shell_intro()),
             empty_gallery("The museum is waiting for its first world."),
             empty_gallery("The artifact hall is closed for now."),
             empty_gallery("The timeline is not ready yet."),
@@ -6359,6 +7608,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header({"world_bible": {"museum_name": "Infinite Museum of Impossible Worlds", "tagline": "Preparing a new impossible world."}}, share_ready=False)),
         gr.update(value=build_room_stage()),
         gr.update(value=build_audio_guide()),
+        gr.update(value=build_shell_intro({"concept": concept, "curator_mode": curator_mode})),
         gr.update(value=build_loading_html("Building the world", "The museum is defining the main rule, social order, and daily life of this world.", 1, 5, "Artifacts")),
         empty_gallery(waiting),
         empty_gallery(waiting),
@@ -6381,6 +7631,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
+        gr.update(value=build_shell_intro(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_loading_html("Preparing the collection", "The museum is selecting the first objects from this world.", 2, 5, "Timeline")),
         empty_gallery("The timeline is being prepared."),
@@ -6403,6 +7654,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
+        gr.update(value=build_shell_intro(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": None})),
         gr.update(value=build_loading_html("Building the timeline", "The museum is arranging the main events that shaped this world.", 3, 5, "Newspaper")),
@@ -6424,6 +7676,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
+        gr.update(value=build_shell_intro(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
@@ -6445,6 +7698,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=False)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
+        gr.update(value=build_shell_intro(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
@@ -6467,6 +7721,7 @@ def generate_museum(concept: str, curator_mode: str, visitor_name: str, visitor_
         gr.update(value=build_museum_header(state, share_ready=True)),
         gr.update(value=build_room_stage(state)),
         gr.update(value=build_audio_guide(state)),
+        gr.update(value=build_shell_intro(state)),
         gr.update(value=build_lobby_html(world_bible, state.get("complexity"), state.get("curator_notes"))),
         gr.update(value=build_artifacts_html({**state["artifacts"], "featured_image": state.get("featured_image")})),
         gr.update(value=build_timeline_html(timeline)),
@@ -6524,7 +7779,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                         with gr.Row(elem_classes=["hall-action-row"]):
                             concept_voice_btn = gr.Button("Speak World Idea", elem_classes=["museum-secondary-btn"], elem_id="concept-voice-btn")
                             generate_btn = gr.Button("Begin My Journey →", elem_classes=["enter-btn"], elem_id="begin-journey-btn")
-                        journey_preview_html = gr.HTML(build_journey_path_html(0))
+                        journey_preview_html = gr.HTML(build_journey_path_html(0, "Anthropology"))
                     with gr.Column(scale=5):
                         admission_ticket_html = gr.HTML(build_entry_ticket_preview())
 
@@ -6551,19 +7806,19 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
             with gr.Column(elem_classes=["museum-canvas"]):
                 museum_header = gr.HTML(build_museum_header())
                 gr.HTML(build_theme_bar(), elem_classes=["theme-wrap"])
-                audio_guide_html = gr.HTML(build_audio_guide(), elem_classes=["audio-guide-wrap"])
                 shell_intro_html = gr.HTML(build_shell_intro())
                 room_stage_html = gr.HTML(build_room_stage())
+                audio_guide_html = gr.HTML(build_audio_guide(), elem_classes=["audio-guide-wrap"])
 
                 with gr.Column(elem_classes=["museum-hall-stack"]):
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--lobby", "is-active"], elem_id="hall-panel-lobby"):
-                        gr.HTML(build_panel_header("Hall 01", "Lobby", "Start here. Read the main rule of the world, then move hall by hall."))
+                        gr.HTML(build_panel_header("Hall 01", "Lobby", "Start here. Read the main rule of the world, then move hall by hall.", "lobby"))
                         lobby_html = gr.HTML(
                             value="<div class='empty-state'>The museum is waiting for its first world.</div>",
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--artifacts"], elem_id="hall-panel-artifacts"):
-                        gr.HTML(build_panel_header("Hall 02", "Artifacts", "This hall shows the main objects from the world."))
+                        gr.HTML(build_panel_header("Hall 02", "Artifacts", "This hall shows the main objects from the world.", "artifacts"))
                         with gr.Row(elem_classes=["hall-action-row"]):
                             artifact_image_btn_1 = gr.Button("Render Artifact 1", size="sm", elem_classes=["museum-secondary-btn"])
                             artifact_image_btn_2 = gr.Button("Render Artifact 2", size="sm", elem_classes=["museum-secondary-btn"])
@@ -6574,21 +7829,21 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--timeline"], elem_id="hall-panel-timeline"):
-                        gr.HTML(build_panel_header("Hall 03", "Timeline", "This hall shows the history of the world step by step."))
+                        gr.HTML(build_panel_header("Hall 03", "Timeline", "This hall shows the history of the world step by step.", "timeline"))
                         regen_timeline_btn = gr.Button("Regenerate Timeline", size="sm", elem_classes=["museum-action-btn"])
                         timeline_html = gr.HTML(
                             value="<div class='empty-state'>The timeline is not ready yet.</div>",
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--newspaper"], elem_id="hall-panel-newspaper"):
-                        gr.HTML(build_panel_header("Hall 04", "Newspaper", "This hall shows how the world sounds in public."))
+                        gr.HTML(build_panel_header("Hall 04", "Newspaper", "This hall shows how the world sounds in public.", "newspaper"))
                         regen_newspaper_btn = gr.Button("Regenerate Newspaper", size="sm", elem_classes=["museum-action-btn"])
                         newspaper_html = gr.HTML(
                             value="<div class='empty-state'>The newspaper is not ready yet.</div>",
                             elem_classes=["hall-content"],
                         )
                     with gr.Group(elem_classes=["museum-hall-panel", "hall-panel--visitor"], elem_id="hall-panel-visitor"):
-                        gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "This last hall gives one personal voice from inside the world."))
+                        gr.HTML(build_panel_header("Hall 05", "Visitor's Book", "This last hall gives one personal voice from inside the world.", "visitor"))
                         regen_visitor_btn = gr.Button("Regenerate Visitor's Book", size="sm", elem_classes=["museum-action-btn"])
                         visitor_html = gr.HTML(
                             value="<div class='empty-state'>No one has written in the visitor's book yet.</div>",
@@ -6701,6 +7956,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         museum_header,
         room_stage_html,
         audio_guide_html,
+        shell_intro_html,
         lobby_html,
         artifacts_html,
         timeline_html,
@@ -6721,6 +7977,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
     visitor_name_input.input(fn=preview_updater, inputs=preview_inputs, outputs=[admission_ticket_html])
     visitor_year_input.input(fn=preview_updater, inputs=preview_inputs, outputs=[admission_ticket_html])
     curator_mode.change(fn=preview_updater, inputs=preview_inputs, outputs=[admission_ticket_html])
+    curator_mode.change(fn=lambda mode: build_journey_path_html(0, mode), inputs=[curator_mode], outputs=[journey_preview_html])
 
     exit_btn.click(show_landing_page, outputs=[landing_view, museum_view])
 
@@ -6736,6 +7993,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
         map_html,
         room_stage_html,
         audio_guide_html,
+        shell_intro_html,
         lobby_html,
         artifacts_html,
         timeline_html,
