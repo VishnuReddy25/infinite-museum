@@ -741,11 +741,28 @@ APP_HEAD = """
   }
 
   function setAmbassadorModalOpen(isOpen) {
-    const modal = document.getElementById("ambassador-modal");
-    document.body.classList.toggle("is-ambassador-open", Boolean(isOpen));
-    if (modal) {
-      modal.classList.toggle("is-open", Boolean(isOpen));
-      modal.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    const panel = document.getElementById("ambassador-inline");
+    if (panel) {
+      panel.classList.toggle("is-open", Boolean(isOpen));
+      panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      if (isOpen) {
+        window.setTimeout(() => {
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 40);
+      }
+    }
+  }
+
+  function setPortraitStudioOpen(isOpen) {
+    const panel = document.getElementById("portrait-inline");
+    if (panel) {
+      panel.classList.toggle("is-open", Boolean(isOpen));
+      panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      if (isOpen) {
+        window.setTimeout(() => {
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 40);
+      }
     }
   }
 
@@ -854,6 +871,7 @@ APP_HEAD = """
     const ambassadorOpen = event.target.closest("[data-ambassador-open]");
     if (ambassadorOpen) {
       event.preventDefault();
+      setPortraitStudioOpen(false);
       setAmbassadorModalOpen(true);
       window.setTimeout(() => {
         const field = resolveVoiceField("#ambassador-input");
@@ -866,6 +884,21 @@ APP_HEAD = """
     if (ambassadorClose) {
       event.preventDefault();
       setAmbassadorModalOpen(false);
+      return;
+    }
+
+    const portraitOpen = event.target.closest("[data-portrait-open]");
+    if (portraitOpen) {
+      event.preventDefault();
+      setAmbassadorModalOpen(false);
+      setPortraitStudioOpen(true);
+      return;
+    }
+
+    const portraitClose = event.target.closest("[data-portrait-close]");
+    if (portraitClose) {
+      event.preventDefault();
+      setPortraitStudioOpen(false);
       return;
     }
 
@@ -910,6 +943,7 @@ APP_HEAD = """
   function bootMuseumUi() {
     applyTheme(window.localStorage.getItem("museum-theme") || "retro");
     setAmbassadorModalOpen(false);
+    setPortraitStudioOpen(false);
     const conceptVoice = document.getElementById("concept-voice-btn");
     if (conceptVoice) {
       conceptVoice.setAttribute("data-voice-target", "#concept-input");
@@ -6038,77 +6072,48 @@ body[data-museum-theme="dark"] .museum-header {
     font-size: 12px;
 }
 
-.ambassador-modal-shell {
-    position: fixed !important;
-    inset: 0;
-    z-index: 120;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.28s ease;
-}
-
-.ambassador-modal-shell.is-open,
-body.is-ambassador-open .ambassador-modal-shell {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.ambassador-modal-shell > .gradio-container {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    width: 100%;
-    max-width: 780px;
-}
-
-.ambassador-modal-shell .gr-group,
-.ambassador-modal-shell .gr-box,
-.ambassador-modal-shell .gr-panel,
-.ambassador-modal-shell .gr-form,
-.ambassador-modal-shell .gr-column,
-.ambassador-modal-shell .gr-row {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-}
-
-.ambassador-modal-backdrop {
-    position: fixed;
-    inset: 0;
-    border: 0;
-    background: rgba(8, 6, 10, 0.64);
-    backdrop-filter: blur(12px);
-    cursor: pointer;
-}
-
-.ambassador-modal-card {
-    position: relative;
-    z-index: 1;
-    width: min(100%, 780px);
-    max-height: min(84vh, 900px);
-    overflow: hidden;
-    border-radius: 30px;
+.ambassador-inline-shell {
+    display: none;
+    margin-top: 18px;
     border: 1px solid rgba(200, 169, 110, 0.18);
+    border-radius: 28px;
     background:
-        radial-gradient(circle at top right, rgba(126, 145, 255, 0.16), transparent 24%),
+        radial-gradient(circle at top right, rgba(126, 145, 255, 0.14), transparent 24%),
         radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 18%),
         linear-gradient(180deg, rgba(24, 18, 16, 0.96), rgba(13, 9, 8, 0.98));
-    box-shadow: 0 36px 90px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 24px 54px rgba(0, 0, 0, 0.24);
     padding: 22px;
-    transform: translateY(18px) scale(0.97);
-    transition: transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.ambassador-modal-shell.is-open .ambassador-modal-card,
-body.is-ambassador-open .ambassador-modal-card {
-    transform: translateY(0) scale(1);
+.ambassador-inline-shell.is-open {
+    display: block;
+    animation: hallPanelReveal 0.36s cubic-bezier(.2,.8,.2,1) both;
 }
 
-.ambassador-modal-head {
+.ambassador-inline-shell::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+.ambassador-inline-shell > .gradio-container,
+.ambassador-inline-shell .gr-group,
+.ambassador-inline-shell .gr-box,
+.ambassador-inline-shell .gr-panel,
+.ambassador-inline-shell .gr-form,
+.ambassador-inline-shell .gr-column,
+.ambassador-inline-shell .gr-row {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.ambassador-inline-head {
     display: flex;
     justify-content: space-between;
     gap: 18px;
@@ -6116,7 +6121,7 @@ body.is-ambassador-open .ambassador-modal-card {
     margin-bottom: 16px;
 }
 
-.ambassador-modal-kicker {
+.ambassador-inline-kicker {
     color: #b9c6ff;
     font-family: 'Cinzel', serif;
     font-size: 10px;
@@ -6124,7 +6129,7 @@ body.is-ambassador-open .ambassador-modal-card {
     text-transform: uppercase;
 }
 
-.ambassador-modal-title {
+.ambassador-inline-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
     font-size: clamp(28px, 4vw, 36px);
@@ -6132,12 +6137,22 @@ body.is-ambassador-open .ambassador-modal-card {
     margin-top: 8px;
 }
 
-.ambassador-modal-copy {
+.ambassador-inline-copy {
     color: var(--muted);
     font-size: 16px;
     line-height: 1.68;
     max-width: 44ch;
     margin-top: 10px;
+}
+
+.portrait-inline-shell {
+    display: none;
+    margin-top: 18px;
+}
+
+.portrait-inline-shell.is-open {
+    display: block;
+    animation: hallPanelReveal 0.36s cubic-bezier(.2,.8,.2,1) both;
 }
 
 .ambassador-close-btn {
@@ -6744,17 +6759,12 @@ body.is-ambassador-open .ambassador-modal-card {
         border-radius: 20px;
     }
 
-    .ambassador-modal-shell {
-        padding: 12px;
-    }
-
-    .ambassador-modal-card {
+    .ambassador-inline-shell {
         padding: 16px;
         border-radius: 24px;
-        max-height: 88vh;
     }
 
-    .ambassador-modal-head {
+    .ambassador-inline-head {
         flex-direction: column;
     }
 
@@ -8833,6 +8843,30 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 </div>
 """
                         )
+                        with gr.Group(elem_id="ambassador-inline", elem_classes=["ambassador-inline-shell"]):
+                            gr.HTML(
+                                """
+<div class="ambassador-inline-head">
+    <div>
+        <div class="ambassador-inline-kicker">Visitor encounter</div>
+        <div class="ambassador-inline-title">Speak To A Local Voice</div>
+        <div class="ambassador-inline-copy">Stay in the Visitor Hall and talk directly to one resident of the world. Ask about daily life, fear, ritual, power, or survival.</div>
+    </div>
+    <button class="museum-secondary-btn ambassador-close-btn" type="button" data-ambassador-close="true">Close</button>
+</div>
+"""
+                            )
+                            ambassador_chatbot = create_ambassador_chatbot()
+                            with gr.Row(elem_classes=["hall-action-row"]):
+                                ambassador_input = gr.Textbox(
+                                    placeholder="Ask about daily life, taboo, fear, ritual, or power...",
+                                    lines=2,
+                                    show_label=False,
+                                    elem_id="ambassador-input",
+                                    elem_classes=["admission-input", "ambassador-input"],
+                                )
+                                ambassador_voice_btn = gr.Button("Speak Question", elem_classes=["museum-secondary-btn"], elem_id="ambassador-voice-btn")
+                                ambassador_send_btn = gr.Button("Ask Ambassador", elem_classes=["museum-action-btn"])
                         gr.HTML(
                             """
 <div class="visitor-side-exhibit portrait-trigger-card">
@@ -8846,6 +8880,9 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                 <div class="visitor-side-exhibit-pill ambassador-pill">Museum role assigned</div>
                 <div class="visitor-side-exhibit-pill ambassador-pill">Download after render</div>
             </div>
+            <div class="visitor-side-exhibit-rail ambassador-pill-row">
+                <button class="museum-action-btn" type="button" data-portrait-open="true">Open Portrait Studio</button>
+            </div>
         </div>
         <div class="portrait-trigger-art" aria-hidden="true">
             <div class="portrait-trigger-silhouette"></div>
@@ -8854,7 +8891,19 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 </div>
 """
                         )
-                        with gr.Group(elem_classes=["portrait-studio-shell"]):
+                        with gr.Group(elem_classes=["portrait-studio-shell", "portrait-inline-shell"], elem_id="portrait-inline"):
+                            gr.HTML(
+                                """
+<div class="ambassador-inline-head">
+    <div>
+        <div class="ambassador-inline-kicker">Portrait encounter</div>
+        <div class="ambassador-inline-title">Visitor Portrait Studio</div>
+        <div class="ambassador-inline-copy">Upload a visitor photo only when you want to generate a role portrait. Keeping this folded makes the Visitor Hall much cleaner.</div>
+    </div>
+    <button class="museum-secondary-btn ambassador-close-btn" type="button" data-portrait-close="true">Close</button>
+</div>
+"""
+                            )
                             with gr.Row(elem_classes=["portrait-layout"]):
                                 with gr.Column(elem_classes=["portrait-panel"]):
                                     portrait_upload = gr.Image(
@@ -8873,37 +8922,6 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                                 with gr.Column():
                                     portrait_hall_html = gr.HTML(build_visitor_portrait_html())
                     gr.HTML("</div>")
-
-                with gr.Group(elem_id="ambassador-modal", elem_classes=["ambassador-modal-shell"]):
-                    gr.HTML(
-                        """
-<button class="ambassador-modal-backdrop" type="button" data-ambassador-close="true" aria-label="Close ambassador dialog"></button>
-"""
-                    )
-                    with gr.Group(elem_classes=["ambassador-modal-card"]):
-                        gr.HTML(
-                            """
-<div class="ambassador-modal-head">
-    <div>
-        <div class="ambassador-modal-kicker">Visitor encounter</div>
-        <div class="ambassador-modal-title">Speak To A Local Voice</div>
-        <div class="ambassador-modal-copy">This is a private chat with one person from the world. Ask about daily life, fear, ritual, power, or survival.</div>
-    </div>
-    <button class="museum-secondary-btn ambassador-close-btn" type="button" data-ambassador-close="true">Close</button>
-</div>
-"""
-                        )
-                        ambassador_chatbot = create_ambassador_chatbot()
-                        with gr.Row(elem_classes=["hall-action-row"]):
-                            ambassador_input = gr.Textbox(
-                                placeholder="Ask about daily life, taboo, fear, ritual, or power...",
-                                lines=2,
-                                show_label=False,
-                                elem_id="ambassador-input",
-                                elem_classes=["admission-input", "ambassador-input"],
-                            )
-                            ambassador_voice_btn = gr.Button("Speak Question", elem_classes=["museum-secondary-btn"], elem_id="ambassador-voice-btn")
-                            ambassador_send_btn = gr.Button("Ask Ambassador", elem_classes=["museum-action-btn"])
 
         gr.HTML(
             """
