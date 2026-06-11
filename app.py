@@ -1279,6 +1279,7 @@ body, .gradio-container {
         linear-gradient(180deg, rgba(255, 241, 212, 0.04), rgba(9, 7, 6, 0.92)),
         repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 58px);
     border-top: 1px solid rgba(200, 169, 110, 0.1);
+    z-index: 1;
 }
 
 .landing-art-glow {
@@ -1289,6 +1290,7 @@ body, .gradio-container {
     background:
         radial-gradient(circle at 56% 20%, rgba(255, 244, 218, 0.11), transparent 18%),
         linear-gradient(180deg, rgba(255,255,255,0.02), transparent 24%);
+    z-index: 0;
 }
 
 .landing-art-curve {
@@ -1301,6 +1303,7 @@ body, .gradio-container {
     border-radius: 999px;
     opacity: 0.55;
     transform: rotate(-6deg);
+    z-index: 2;
 }
 
 .landing-arch-group {
@@ -1310,6 +1313,7 @@ body, .gradio-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 16px;
+    z-index: 2;
 }
 
 .landing-arch {
@@ -1344,20 +1348,22 @@ body, .gradio-container {
         inset 0 0 0 1px rgba(255, 244, 218, 0.08),
         0 34px 44px rgba(0, 0, 0, 0.24);
     filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.26));
+    z-index: 3;
 }
 
 .landing-pedestal {
     position: absolute;
     left: 50%;
-    bottom: 9%;
+    bottom: 14%;
     width: 290px;
-    height: 102px;
+    height: 86px;
     transform: translateX(-50%);
     border-radius: 18px 18px 0 0;
     background:
         linear-gradient(180deg, rgba(235, 211, 169, 0.16), rgba(35, 24, 15, 0.96));
     border: 1px solid rgba(223, 198, 151, 0.12);
     box-shadow: 0 22px 36px rgba(0, 0, 0, 0.26);
+    z-index: 3;
 }
 
 .landing-art-card {
@@ -1371,6 +1377,7 @@ body, .gradio-container {
         rgba(12, 9, 8, 0.54);
     backdrop-filter: blur(10px);
     box-shadow: 0 18px 32px rgba(0,0,0,0.16);
+    z-index: 4;
 }
 
 .landing-art-card--left {
@@ -1432,13 +1439,14 @@ body, .gradio-container {
     position: absolute;
     left: 24px;
     right: 24px;
-    bottom: 22px;
+    bottom: 18px;
     width: auto;
     padding: 16px 16px 14px;
     border-radius: 18px;
     border: 1px solid rgba(200, 169, 110, 0.12);
     background: rgba(17, 13, 12, 0.56);
     backdrop-filter: blur(8px);
+    z-index: 5;
 }
 
 .landing-art-plaque-value {
@@ -1452,7 +1460,7 @@ body, .gradio-container {
     position: absolute;
     left: 24px;
     right: 24px;
-    bottom: 112px;
+    bottom: 102px;
     display: flex;
     justify-content: space-between;
     gap: 16px;
@@ -1461,12 +1469,13 @@ body, .gradio-container {
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
+    z-index: 5;
 }
 
 .landing-floor-label {
     position: absolute;
     right: 28px;
-    bottom: 126px;
+    bottom: 148px;
     padding: 10px 12px;
     border-radius: 14px;
     border: 1px solid rgba(200, 169, 110, 0.12);
@@ -1475,6 +1484,7 @@ body, .gradio-container {
     font-size: 12px;
     line-height: 1.45;
     max-width: 20ch;
+    z-index: 5;
 }
 
 @media (max-width: 1480px) {
