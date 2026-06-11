@@ -1039,13 +1039,6 @@ APP_HEAD = """
         } else {
           runTypewriters(node);
         }
-        if (
-          node.matches?.(".museum-room-stage, .museum-map") ||
-          node.querySelector?.(".museum-room-stage, .museum-map")
-        ) {
-          window.setTimeout(positionFromActiveRoom, 40);
-          window.setTimeout(syncMapToSelectedTab, 80);
-        }
         syncWorldAura();
         syncAudioGuide();
       });
@@ -4300,6 +4293,20 @@ body[data-museum-theme="dark"] .museum-header {
     padding: 6px 24px 30px;
 }
 
+.museum-hall-stack,
+.museum-hall-stack > .gradio-container,
+.museum-hall-stack .gr-block,
+.museum-hall-stack .gr-column,
+.museum-hall-stack .gr-row,
+.museum-hall-stack .gr-group,
+.museum-hall-stack .gr-panel,
+.museum-hall-stack .gr-box {
+    min-height: auto !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
+    align-self: auto !important;
+}
+
 .museum-section-intro {
     width: min(100%, 1540px);
     margin: 8px auto 14px;
@@ -5120,6 +5127,9 @@ body.is-room-walking .museum-room-visitor-shadow {
 .museum-hall-panel .gr-column,
 .museum-hall-panel .gr-row {
     background: transparent !important;
+    min-height: auto !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
 }
 
 .hall-panel-header {
