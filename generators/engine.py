@@ -94,6 +94,8 @@ def _resolve_llamacpp_model(role: str) -> str:
 
 
 def _adapter_for_role(role: str) -> str | None:
+    if role != "world":
+        return None
     return ADAPTER_ID or None
 
 
@@ -178,15 +180,21 @@ def _generate_with_hub(messages: list[dict], max_new_tokens: int, role: str = "w
     adapter_id = _adapter_for_role(role)
     if adapter_id:
         prompt = _messages_to_prompt(messages)
-        return client.text_generation(
-            prompt,
-            model=_resolve_model_id(role),
-            adapter_id=adapter_id,
-            max_new_tokens=max_new_tokens,
-            temperature=0.8,
-            do_sample=True,
-            return_full_text=False,
-        ).strip()
+        try:
+            return client.text_generation(
+                prompt,
+                model=_resolve_model_id(role),
+                adapter_id=adapter_id,
+                max_new_tokens=max_new_tokens,
+                temperature=0.8,
+                do_sample=True,
+                return_full_text=False,
+            ).strip()
+        except Exception as exc:
+            detail = str(exc).lower()
+            if "text-generation" not in detail and "supported task: conversational" not in detail:
+                raise
+            print("[LLM WARN] Falling back to chat completion because the hub provider rejected text-generation for this model.")
 
     completion = client.chat_completion(
         model=_resolve_model_id(role),
