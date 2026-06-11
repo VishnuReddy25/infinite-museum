@@ -1662,6 +1662,7 @@ body, .gradio-container {
     justify-content: flex-start;
     position: relative;
     z-index: 3;
+    flex: 0 0 auto;
 }
 
 .museum-topbar .museum-secondary-btn {
@@ -1978,6 +1979,10 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
     overflow: hidden;
     width: min(100%, 1540px);
+    height: calc(100vh - 38px);
+    max-height: calc(100vh - 38px);
+    display: flex;
+    flex-direction: column;
 }
 
 .museum-shell::before {
@@ -2006,18 +2011,21 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     display: grid;
     grid-template-columns: 248px minmax(0, 1fr);
     gap: 24px;
-    align-items: start;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .museum-sidebar {
-    position: sticky;
-    top: 16px;
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 16px;
     padding: 18px 16px 16px;
     border-right: 1px solid rgba(200, 169, 110, 0.08);
-    min-height: calc(100vh - 120px);
+    min-height: 0;
+    overflow: auto;
 }
 
 .museum-sidebar::before {
@@ -2040,6 +2048,10 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
         linear-gradient(180deg, rgba(255,255,255,0.025), transparent 18%),
         rgba(9, 7, 6, 0.48);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .museum-canvas::before {
@@ -2374,6 +2386,7 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     align-items: center;
     position: relative;
     z-index: 3;
+    flex: 0 0 auto;
 }
 
 .concept-chip-label {
@@ -4290,7 +4303,12 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .museum-hall-stack {
-    padding: 6px 24px 30px;
+    padding: 6px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    overflow: hidden;
 }
 
 .museum-hall-stack,
@@ -4341,9 +4359,11 @@ body[data-museum-theme="dark"] .museum-header {
 
 .museum-room-stage {
     position: relative;
-    width: min(100%, 1540px);
-    min-height: 500px;
-    margin: 0 auto 22px;
+    width: 100%;
+    min-height: clamp(300px, 38vh, 420px);
+    height: clamp(300px, 38vh, 420px);
+    margin: 0 auto 16px;
+    flex: 0 0 clamp(300px, 38vh, 420px);
     border: 1px solid rgba(200, 169, 110, 0.14);
     border-radius: 30px;
     overflow: hidden;
@@ -5104,11 +5124,16 @@ body.is-room-walking .museum-room-visitor-shadow {
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.03),
         0 20px 44px rgba(0, 0, 0, 0.2);
-    margin-top: 18px;
+    margin-top: 0;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .museum-hall-panel.is-active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
     animation: hallPanelReveal 0.56s cubic-bezier(.2,.8,.2,1) both;
 }
 
@@ -5329,11 +5354,14 @@ body.is-room-walking .museum-room-visitor-shadow {
 }
 
 .hall-content {
-    min-height: 220px;
+    min-height: 0;
+    flex: 1 1 auto;
     padding: 16px 2px 2px !important;
     background: transparent !important;
     max-width: 1180px;
     margin: 0;
+    overflow: auto;
+    padding-right: 8px !important;
 }
 
 .empty-state {
@@ -6766,6 +6794,7 @@ body.is-ambassador-open .ambassador-modal-card {
         linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)),
         rgba(10, 8, 7, 0.18);
     overflow: hidden;
+    flex: 0 0 auto;
 }
 
 .museum-footer::before {
@@ -6778,8 +6807,14 @@ body.is-ambassador-open .ambassador-modal-card {
 }
 
 @media (max-width: 900px) {
+    .museum-shell {
+        height: auto;
+        max-height: none;
+    }
+
     .museum-workspace {
         grid-template-columns: 1fr;
+        overflow: visible;
     }
 
     .museum-sidebar {
@@ -6787,6 +6822,7 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: auto;
         padding: 0;
         border-right: 0;
+        overflow: visible;
     }
 
     .museum-sidebar::before {
@@ -6797,6 +6833,7 @@ body.is-ambassador-open .ambassador-modal-card {
         padding: 18px 0 0;
         background: transparent;
         box-shadow: none;
+        overflow: visible;
     }
 
     .museum-canvas::before {
@@ -6826,6 +6863,8 @@ body.is-ambassador-open .ambassador-modal-card {
 
     .museum-room-stage {
         min-height: 760px;
+        height: auto;
+        flex: 0 0 auto;
     }
 
     .museum-room-stage-band {
