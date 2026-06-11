@@ -1038,7 +1038,7 @@ body, .gradio-container {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    grid-template-columns: minmax(0, 0.98fr) minmax(420px, 1.02fr);
     gap: 32px;
     padding: 34px 42px 42px;
     align-items: start;
@@ -1108,8 +1108,8 @@ body, .gradio-container {
 .landing-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: clamp(52px, 6vw, 88px);
-    line-height: 0.91;
+    font-size: clamp(48px, 5.2vw, 82px);
+    line-height: 0.94;
     max-width: 9.4ch;
     text-wrap: balance;
     letter-spacing: -0.02em;
@@ -1246,7 +1246,7 @@ body, .gradio-container {
 
 .landing-art {
     position: relative;
-    min-height: 720px;
+    min-height: clamp(620px, 54vw, 720px);
     border-radius: 28px;
     overflow: hidden;
     border: 1px solid rgba(200, 169, 110, 0.14);
@@ -1362,7 +1362,7 @@ body, .gradio-container {
 
 .landing-art-card {
     position: absolute;
-    width: min(236px, calc(100% - 48px));
+    width: min(220px, calc(100% - 48px));
     padding: 20px 20px 18px;
     border-radius: 18px;
     border: 1px solid rgba(200, 169, 110, 0.12);
@@ -1396,15 +1396,15 @@ body, .gradio-container {
     margin-top: 10px;
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: 26px;
-    line-height: 1.16;
+    font-size: clamp(22px, 1.8vw, 26px);
+    line-height: 1.22;
 }
 
 .landing-art-card-copy {
     margin-top: 10px;
     color: var(--muted);
-    font-size: 14px;
-    line-height: 1.58;
+    font-size: 13px;
+    line-height: 1.62;
 }
 
 .landing-art-card-row {
@@ -1424,8 +1424,8 @@ body, .gradio-container {
 .landing-art-card-metric-value {
     margin-top: 6px;
     color: var(--paper);
-    font-size: 15px;
-    line-height: 1.4;
+    font-size: 14px;
+    line-height: 1.45;
 }
 
 .landing-art-plaque {
@@ -1475,6 +1475,49 @@ body, .gradio-container {
     font-size: 12px;
     line-height: 1.45;
     max-width: 20ch;
+}
+
+@media (max-width: 1480px) {
+    .landing-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 30px 32px 34px;
+    }
+
+    .landing-copy {
+        max-width: none;
+        padding-right: 0;
+    }
+
+    .landing-title {
+        font-size: clamp(42px, 5.8vw, 70px);
+        max-width: 10.5ch;
+    }
+
+    .landing-lead,
+    .landing-cta-copy {
+        max-width: none;
+    }
+
+    .landing-plaque-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .landing-art {
+        min-height: 620px;
+    }
+
+    .landing-art-card {
+        width: min(236px, calc(100% - 48px));
+    }
+
+    .landing-art-card--right {
+        top: 28px;
+    }
+
+    .landing-floor-label {
+        display: none;
+    }
 }
 
 .museum-topbar {
