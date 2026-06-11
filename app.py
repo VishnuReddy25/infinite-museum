@@ -1252,9 +1252,9 @@ body, .gradio-container {
     border: 1px solid rgba(200, 169, 110, 0.14);
     background:
         radial-gradient(circle at 58% 16%, rgba(243, 228, 199, 0.32), transparent 14%),
-        radial-gradient(circle at 78% 24%, rgba(200, 169, 110, 0.14), transparent 18%),
+        radial-gradient(circle at 82% 18%, rgba(200, 169, 110, 0.16), transparent 18%),
         radial-gradient(circle at 50% 72%, rgba(200, 169, 110, 0.08), transparent 22%),
-        linear-gradient(180deg, rgba(44, 31, 20, 0.24), rgba(10, 8, 7, 0.84)),
+        linear-gradient(180deg, rgba(44, 31, 20, 0.2), rgba(10, 8, 7, 0.88)),
         linear-gradient(180deg, rgba(24, 18, 15, 0.94), rgba(9, 7, 6, 0.99));
     animation: landingStageFloat 9s ease-in-out infinite;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 26px 54px rgba(0,0,0,0.16);
@@ -1293,26 +1293,43 @@ body, .gradio-container {
     z-index: 0;
 }
 
+.landing-art-header {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 22px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 4px;
+    color: rgba(248, 240, 223, 0.8);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    z-index: 5;
+}
+
 .landing-art-curve {
     position: absolute;
     left: 10%;
     right: 8%;
-    top: 44%;
-    height: 180px;
-    border-top: 1px solid rgba(229, 199, 150, 0.38);
+    top: 48%;
+    height: 150px;
+    border-top: 1px solid rgba(229, 199, 150, 0.22);
     border-radius: 999px;
-    opacity: 0.55;
-    transform: rotate(-6deg);
+    opacity: 0.42;
+    transform: rotate(-4deg);
     z-index: 2;
 }
 
 .landing-arch-group {
     position: absolute;
-    inset: auto 15% 15%;
-    height: 42%;
+    inset: auto 18% 16%;
+    height: 38%;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+    gap: 14px;
     z-index: 2;
 }
 
@@ -1338,9 +1355,9 @@ body, .gradio-container {
         radial-gradient(circle at 50% 18%, rgba(255, 248, 230, 0.92), rgba(201, 170, 117, 0.68) 28%, rgba(71, 50, 29, 0.2) 58%, transparent 62%),
         linear-gradient(180deg, rgba(248, 234, 206, 0.88), rgba(180, 143, 88, 0.38) 28%, rgba(56, 38, 24, 0.96) 100%);
     left: 50%;
-    bottom: 16%;
-    width: 214px;
-    height: 334px;
+    bottom: 18%;
+    width: 188px;
+    height: 300px;
     transform: translateX(-50%);
     clip-path: polygon(30% 0, 70% 0, 88% 12%, 92% 30%, 78% 36%, 72% 54%, 82% 100%, 18% 100%, 28% 56%, 22% 36%, 8% 30%, 12% 12%);
     border-radius: 42% 42% 16% 16% / 26% 26% 12% 12%;
@@ -1354,9 +1371,9 @@ body, .gradio-container {
 .landing-pedestal {
     position: absolute;
     left: 50%;
-    bottom: 14%;
-    width: 290px;
-    height: 86px;
+    bottom: 16%;
+    width: 248px;
+    height: 74px;
     transform: translateX(-50%);
     border-radius: 18px 18px 0 0;
     background:
@@ -1368,26 +1385,26 @@ body, .gradio-container {
 
 .landing-art-card {
     position: absolute;
-    width: min(220px, calc(100% - 48px));
-    padding: 20px 20px 18px;
-    border-radius: 18px;
-    border: 1px solid rgba(200, 169, 110, 0.12);
+    width: min(232px, calc(100% - 48px));
+    padding: 18px 18px 16px;
+    border-radius: 22px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)),
-        rgba(12, 9, 8, 0.54);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 18px 32px rgba(0,0,0,0.16);
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008)),
+        rgba(13, 10, 9, 0.42);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 18px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.03);
     z-index: 4;
 }
 
 .landing-art-card--left {
     left: 24px;
-    top: 24px;
+    top: 48px;
 }
 
 .landing-art-card--right {
     right: 24px;
-    top: 56px;
+    top: 64px;
 }
 
 .landing-art-card-label,
@@ -1403,15 +1420,15 @@ body, .gradio-container {
     margin-top: 10px;
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: clamp(22px, 1.8vw, 26px);
-    line-height: 1.22;
+    font-size: clamp(20px, 1.7vw, 24px);
+    line-height: 1.16;
 }
 
 .landing-art-card-copy {
     margin-top: 10px;
     color: var(--muted);
     font-size: 13px;
-    line-height: 1.62;
+    line-height: 1.72;
 }
 
 .landing-art-card-row {
@@ -1422,9 +1439,9 @@ body, .gradio-container {
 }
 
 .landing-art-card-metric {
-    border-radius: 14px;
-    border: 1px solid rgba(200, 169, 110, 0.12);
-    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    background: rgba(255,255,255,0.02);
     padding: 10px 12px;
 }
 
@@ -1437,15 +1454,17 @@ body, .gradio-container {
 
 .landing-art-plaque {
     position: absolute;
-    left: 24px;
-    right: 24px;
+    left: 18px;
+    right: 18px;
     bottom: 18px;
     width: auto;
-    padding: 16px 16px 14px;
-    border-radius: 18px;
-    border: 1px solid rgba(200, 169, 110, 0.12);
-    background: rgba(17, 13, 12, 0.56);
-    backdrop-filter: blur(8px);
+    padding: 18px 20px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008)),
+        rgba(12, 9, 8, 0.72);
+    backdrop-filter: blur(12px);
     z-index: 5;
 }
 
@@ -1458,9 +1477,9 @@ body, .gradio-container {
 
 .landing-caption {
     position: absolute;
-    left: 24px;
-    right: 24px;
-    bottom: 102px;
+    left: 20px;
+    right: 20px;
+    bottom: 116px;
     display: flex;
     justify-content: space-between;
     gap: 16px;
@@ -1475,15 +1494,15 @@ body, .gradio-container {
 .landing-floor-label {
     position: absolute;
     right: 28px;
-    bottom: 148px;
-    padding: 10px 12px;
+    bottom: 172px;
+    padding: 12px 14px;
     border-radius: 14px;
-    border: 1px solid rgba(200, 169, 110, 0.12);
-    background: rgba(13, 10, 9, 0.62);
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    background: rgba(13, 10, 9, 0.46);
     color: var(--muted);
     font-size: 12px;
-    line-height: 1.45;
-    max-width: 20ch;
+    line-height: 1.6;
+    max-width: 18ch;
     z-index: 5;
 }
 
@@ -1522,7 +1541,7 @@ body, .gradio-container {
     }
 
     .landing-art-card--right {
-        top: 28px;
+        top: 56px;
     }
 
     .landing-floor-label {
@@ -7589,6 +7608,10 @@ def build_landing_html(curator_mode: str) -> str:
         </div>
         <div class="landing-art" aria-hidden="true">
             <div class="landing-art-glow"></div>
+            <div class="landing-art-header">
+                <span>Foyer study</span>
+                <span>Preview chamber</span>
+            </div>
             <div class="landing-art-card landing-art-card--left">
                 <div class="landing-art-card-label">Admission desk</div>
                 <div class="landing-art-card-title">A quiet foyer waiting for your first impossible world</div>
