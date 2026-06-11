@@ -989,7 +989,7 @@ body, .gradio-container {
 
 .landing-wrap {
     width: min(100%, 1540px);
-    margin: 22px auto 0;
+    margin: 18px auto 0;
     min-height: auto;
     display: block;
     position: relative;
@@ -1002,77 +1002,15 @@ body, .gradio-container {
     border: 1px solid rgba(210, 184, 139, 0.14);
     border-radius: 34px;
     background:
-        radial-gradient(circle at 18% 18%, rgba(220, 190, 144, 0.1), transparent 22%),
-        radial-gradient(circle at 82% 16%, rgba(200, 169, 110, 0.08), transparent 18%),
-        linear-gradient(180deg, rgba(18, 13, 11, 0.96), rgba(9, 7, 6, 0.98));
+        radial-gradient(circle at 14% 14%, rgba(220, 190, 144, 0.14), transparent 20%),
+        radial-gradient(circle at 80% 18%, rgba(200, 169, 110, 0.1), transparent 18%),
+        linear-gradient(135deg, rgba(21, 15, 13, 0.98), rgba(8, 7, 6, 0.98));
     box-shadow: 0 36px 90px rgba(0, 0, 0, 0.34);
-    min-height: 720px;
+    min-height: auto;
 }
 
-.admission-welcome {
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 0;
-    padding: 34px 34px 30px;
-    border-radius: 28px;
-    border: 1px solid rgba(200, 169, 110, 0.16);
-    background:
-        radial-gradient(circle at 12% 16%, rgba(213, 184, 130, 0.2), transparent 24%),
-        linear-gradient(135deg, rgba(21, 15, 13, 0.96), rgba(10, 8, 7, 0.96));
-    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.24);
-    backdrop-filter: blur(14px);
-    animation: landingCardReveal 0.78s ease both;
-    z-index: 3;
-}
-
-.admission-welcome::after {
-    content: "";
-    position: absolute;
-    inset: 14px;
-    border: 1px solid rgba(255, 234, 198, 0.08);
-    border-radius: 18px;
-    pointer-events: none;
-}
-
-.admission-kicker {
-    color: var(--gold-soft);
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-}
-
-.admission-title {
-    color: var(--paper);
-    font-family: 'Cinzel', serif;
-    font-size: clamp(28px, 4vw, 44px);
-    line-height: 1.04;
-    max-width: 12ch;
-    margin-bottom: 12px;
-}
-
-.admission-copy {
-    color: var(--muted);
-    font-size: 18px;
-    line-height: 1.72;
-    max-width: 56ch;
-}
-
-.admission-rail {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 18px;
-}
-
-.admission-chip {
-    padding: 9px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(200, 169, 110, 0.18);
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--paper);
-    font-size: 13px;
+.landing-shell--hero {
+    margin-bottom: 18px;
 }
 
 .landing-shell::before {
@@ -1100,33 +1038,62 @@ body, .gradio-container {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
-    gap: 36px;
-    padding: 52px 42px 44px;
-    align-items: stretch;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 32px;
+    padding: 34px 42px 42px;
+    align-items: start;
 }
 
 .landing-copy {
-    padding: 8px 6px 8px 2px;
+    padding: 4px 6px 8px 2px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+}
+
+.landing-shell-topline {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    padding: 24px 42px 0;
+    color: rgba(247, 234, 209, 0.72);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.landing-shell-topline span:nth-child(2) {
+    text-align: center;
+}
+
+.landing-shell-topline span:nth-child(3) {
+    text-align: right;
 }
 
 .landing-route {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 18px 0 0;
+    margin: 22px 0 0;
+}
+
+.landing-route--hero {
+    margin-top: 24px;
+    margin-bottom: 4px;
 }
 
 .landing-route-stop {
-    padding: 7px 12px 6px;
+    padding: 9px 14px 8px;
     border-radius: 999px;
     border: 1px solid rgba(200, 169, 110, 0.16);
-    background: rgba(255, 255, 255, 0.03);
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
     color: var(--paper);
     font-size: 12px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .landing-kicker {
@@ -1135,33 +1102,35 @@ body, .gradio-container {
     font-size: 11px;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 .landing-title {
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: clamp(50px, 5.8vw, 82px);
-    line-height: 0.98;
-    max-width: 10ch;
+    font-size: clamp(52px, 6vw, 88px);
+    line-height: 0.91;
+    max-width: 9.4ch;
     text-wrap: balance;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
+    text-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
 }
 
 .landing-subtitle {
-    margin-top: 16px;
+    margin-top: 20px;
     color: var(--gold);
-    font-size: 23px;
-    line-height: 1.45;
-    max-width: 28ch;
+    font-size: 22px;
+    line-height: 1.5;
+    max-width: 30ch;
+    font-style: italic;
 }
 
 .landing-lead {
     margin-top: 20px;
     color: var(--muted);
     font-size: 18px;
-    line-height: 1.8;
-    max-width: 38em;
+    line-height: 1.78;
+    max-width: 35em;
 }
 
 .landing-plaque-row {
@@ -1197,26 +1166,28 @@ body, .gradio-container {
 }
 
 .landing-cta-copy {
-    margin-top: auto;
-    padding-top: 24px;
-    color: var(--muted);
-    font-size: 15px;
-    line-height: 1.7;
-    max-width: 38em;
+    margin-top: 22px;
+    padding-top: 20px;
+    color: var(--paper);
+    font-size: 16px;
+    line-height: 1.68;
+    max-width: 34em;
+    border-top: 1px solid rgba(200, 169, 110, 0.1);
 }
 
 .landing-curator-strip {
     margin-top: 26px;
     display: grid;
-    grid-template-columns: 130px 1fr;
+    grid-template-columns: 140px 1fr;
     gap: 18px;
     align-items: center;
-    padding: 16px 18px;
+    padding: 18px 20px;
     border-radius: 20px;
     border: 1px solid rgba(200, 169, 110, 0.12);
     background:
-        linear-gradient(90deg, rgba(200, 169, 110, 0.08), transparent 28%),
-        rgba(255, 255, 255, 0.02);
+        linear-gradient(90deg, rgba(200, 169, 110, 0.12), transparent 34%),
+        rgba(255, 255, 255, 0.018);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 14px 32px rgba(0,0,0,0.12);
 }
 
 .landing-curator-label {
@@ -1275,16 +1246,18 @@ body, .gradio-container {
 
 .landing-art {
     position: relative;
-    min-height: 660px;
+    min-height: 720px;
     border-radius: 28px;
     overflow: hidden;
     border: 1px solid rgba(200, 169, 110, 0.14);
     background:
-        radial-gradient(circle at 48% 18%, rgba(243, 228, 199, 0.34), transparent 14%),
-        radial-gradient(circle at 50% 12%, rgba(200, 169, 110, 0.2), transparent 24%),
-        linear-gradient(180deg, rgba(18, 13, 10, 0.1), rgba(10, 8, 7, 0.74)),
-        linear-gradient(180deg, rgba(25, 20, 17, 0.85), rgba(11, 9, 8, 0.98));
+        radial-gradient(circle at 58% 16%, rgba(243, 228, 199, 0.32), transparent 14%),
+        radial-gradient(circle at 78% 24%, rgba(200, 169, 110, 0.14), transparent 18%),
+        radial-gradient(circle at 50% 72%, rgba(200, 169, 110, 0.08), transparent 22%),
+        linear-gradient(180deg, rgba(44, 31, 20, 0.24), rgba(10, 8, 7, 0.84)),
+        linear-gradient(180deg, rgba(24, 18, 15, 0.94), rgba(9, 7, 6, 0.99));
     animation: landingStageFloat 9s ease-in-out infinite;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 26px 54px rgba(0,0,0,0.16);
 }
 
 .landing-art::before {
@@ -1292,178 +1265,180 @@ body, .gradio-container {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(90deg, transparent 0, transparent 44%, rgba(255, 255, 255, 0.04) 50%, transparent 56%, transparent 100%);
-    opacity: 0.35;
+        radial-gradient(circle at 18% 24%, rgba(255,255,255,0.06), transparent 14%),
+        linear-gradient(90deg, transparent 0, transparent 46%, rgba(255, 255, 255, 0.04) 50%, transparent 54%, transparent 100%);
+    opacity: 0.4;
 }
 
 .landing-art::after {
     content: "";
     position: absolute;
-    inset: auto 8% 8% 8%;
-    height: 26%;
+    inset: auto 6% 8% 6%;
+    height: 32%;
     background:
         linear-gradient(180deg, rgba(255, 241, 212, 0.04), rgba(9, 7, 6, 0.92)),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 56px);
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 58px);
     border-top: 1px solid rgba(200, 169, 110, 0.1);
 }
 
-.landing-skyline {
+.landing-art-glow {
     position: absolute;
-    inset: auto 0 0;
-    height: 64%;
+    inset: 18px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.05);
     background:
-        linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.08) 18%, rgba(0, 0, 0, 0.34) 100%);
-    animation: skylineDrift 18s ease-in-out infinite;
+        radial-gradient(circle at 56% 20%, rgba(255, 244, 218, 0.11), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), transparent 24%);
 }
 
-.landing-dome {
+.landing-art-curve {
     position: absolute;
-    left: 54%;
-    bottom: 16%;
-    width: 54%;
-    aspect-ratio: 1.18 / 1;
-    transform: translateX(-50%);
-    border-radius: 50% 50% 0 0;
-    background:
-        radial-gradient(circle at 50% 20%, rgba(249, 236, 203, 0.42), transparent 24%),
-        linear-gradient(180deg, rgba(232, 211, 165, 0.24), rgba(61, 45, 27, 0.76));
-    border: 1px solid rgba(223, 198, 150, 0.18);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
-    animation: domePulse 7s ease-in-out infinite;
-}
-
-.landing-halo-ring {
-    position: absolute;
-    right: 12%;
-    top: 11%;
-    width: 44%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 236, 206, 0.12);
-    box-shadow:
-        0 0 0 18px rgba(255, 240, 212, 0.025),
-        0 0 0 52px rgba(255, 240, 212, 0.015);
-}
-
-.landing-statue {
-    position: absolute;
+    left: 10%;
     right: 8%;
-    bottom: 10%;
-    width: 44%;
-    height: 68%;
-    pointer-events: none;
+    top: 44%;
+    height: 180px;
+    border-top: 1px solid rgba(229, 199, 150, 0.38);
+    border-radius: 999px;
+    opacity: 0.55;
+    transform: rotate(-6deg);
 }
 
-.landing-statue::before {
-    content: "";
+.landing-arch-group {
     position: absolute;
-    left: 18%;
-    right: 18%;
-    top: 0;
-    height: 28%;
-    border-radius: 50% 50% 42% 42%;
-    background:
-        radial-gradient(circle at 50% 30%, rgba(255, 244, 224, 0.8), rgba(191, 155, 97, 0.44) 42%, rgba(68, 47, 29, 0.2) 72%, transparent 74%);
-    filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.25));
-}
-
-.landing-statue::after {
-    content: "";
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    bottom: 0;
-    height: 76%;
-    border-radius: 42% 42% 14% 14% / 32% 32% 10% 10%;
-    background:
-        linear-gradient(180deg, rgba(255, 247, 229, 0.72), rgba(201, 170, 117, 0.34) 28%, rgba(72, 52, 32, 0.85) 100%);
-    clip-path: polygon(21% 0, 77% 0, 100% 34%, 86% 100%, 13% 100%, 0 34%);
-    box-shadow:
-        inset 0 0 0 1px rgba(255, 239, 207, 0.08),
-        0 28px 40px rgba(0, 0, 0, 0.24);
-}
-
-.landing-art-label {
-    position: absolute;
-    left: 24px;
-    top: 26px;
-    width: 210px;
-    padding: 16px 16px 14px;
-    border-radius: 18px;
-    border: 1px solid rgba(200, 169, 110, 0.12);
-    background:
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)),
-        rgba(13, 10, 9, 0.56);
-    backdrop-filter: blur(8px);
-}
-
-.landing-art-label-title {
-    color: var(--paper);
-    font-family: 'Cinzel', serif;
-    font-size: 20px;
-    line-height: 1.2;
-}
-
-.landing-art-label-copy {
-    margin-top: 10px;
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.55;
-}
-
-.landing-art-metrics {
-    position: absolute;
-    right: 24px;
-    top: 26px;
-    width: min(210px, calc(100% - 48px));
+    inset: auto 15% 15%;
+    height: 42%;
     display: grid;
-    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
 }
 
-.landing-art-metric {
-    padding: 14px 16px 12px;
-    border-radius: 16px;
+.landing-arch {
+    border-radius: 999px 999px 8px 8px;
+    border: 1px solid rgba(239, 218, 182, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255, 244, 221, 0.18), rgba(58, 40, 24, 0.82));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.landing-arch:nth-child(odd) {
+    animation: pillarRise 8s ease-in-out infinite;
+}
+
+.landing-arch:nth-child(even) {
+    animation: pillarRise 8s ease-in-out infinite -2.4s;
+}
+
+.landing-sculpture {
+    position: absolute;
+    background:
+        radial-gradient(circle at 50% 18%, rgba(255, 248, 230, 0.92), rgba(201, 170, 117, 0.68) 28%, rgba(71, 50, 29, 0.2) 58%, transparent 62%),
+        linear-gradient(180deg, rgba(248, 234, 206, 0.88), rgba(180, 143, 88, 0.38) 28%, rgba(56, 38, 24, 0.96) 100%);
+    left: 50%;
+    bottom: 16%;
+    width: 214px;
+    height: 334px;
+    transform: translateX(-50%);
+    clip-path: polygon(30% 0, 70% 0, 88% 12%, 92% 30%, 78% 36%, 72% 54%, 82% 100%, 18% 100%, 28% 56%, 22% 36%, 8% 30%, 12% 12%);
+    border-radius: 42% 42% 16% 16% / 26% 26% 12% 12%;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 244, 218, 0.08),
+        0 34px 44px rgba(0, 0, 0, 0.24);
+    filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.26));
+}
+
+.landing-pedestal {
+    position: absolute;
+    left: 50%;
+    bottom: 9%;
+    width: 290px;
+    height: 102px;
+    transform: translateX(-50%);
+    border-radius: 18px 18px 0 0;
+    background:
+        linear-gradient(180deg, rgba(235, 211, 169, 0.16), rgba(35, 24, 15, 0.96));
+    border: 1px solid rgba(223, 198, 151, 0.12);
+    box-shadow: 0 22px 36px rgba(0, 0, 0, 0.26);
+}
+
+.landing-art-card {
+    position: absolute;
+    width: min(236px, calc(100% - 48px));
+    padding: 20px 20px 18px;
+    border-radius: 18px;
     border: 1px solid rgba(200, 169, 110, 0.12);
     background:
         linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)),
         rgba(12, 9, 8, 0.54);
     backdrop-filter: blur(10px);
+    box-shadow: 0 18px 32px rgba(0,0,0,0.16);
 }
 
-.landing-art-metric-label {
-    color: var(--gold-soft);
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-}
-
-.landing-art-metric-value {
-    margin-top: 6px;
-    color: var(--paper);
-    font-family: 'Cinzel', serif;
-    font-size: 18px;
-    line-height: 1.25;
-}
-
-.landing-art-plaque {
-    position: absolute;
+.landing-art-card--left {
     left: 24px;
-    bottom: 84px;
-    width: 180px;
-    padding: 14px 14px 12px;
-    border-radius: 16px;
-    border: 1px solid rgba(200, 169, 110, 0.12);
-    background: rgba(17, 13, 12, 0.56);
-    backdrop-filter: blur(8px);
+    top: 24px;
 }
 
+.landing-art-card--right {
+    right: 24px;
+    top: 56px;
+}
+
+.landing-art-card-label,
 .landing-art-plaque-label {
     color: var(--gold-soft);
     font-family: 'Cinzel', serif;
     font-size: 9px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
+}
+
+.landing-art-card-title {
+    margin-top: 10px;
+    color: var(--paper);
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    line-height: 1.16;
+}
+
+.landing-art-card-copy {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.58;
+}
+
+.landing-art-card-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.landing-art-card-metric {
+    border-radius: 14px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background: rgba(255,255,255,0.03);
+    padding: 10px 12px;
+}
+
+.landing-art-card-metric-value {
+    margin-top: 6px;
+    color: var(--paper);
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.landing-art-plaque {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+    width: auto;
+    padding: 16px 16px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background: rgba(17, 13, 12, 0.56);
+    backdrop-filter: blur(8px);
 }
 
 .landing-art-plaque-value {
@@ -1473,56 +1448,11 @@ body, .gradio-container {
     line-height: 1.45;
 }
 
-.landing-dome::before {
-    content: "";
-    position: absolute;
-    inset: 16% 14% auto;
-    height: 54%;
-    border-radius: 50% 50% 0 0;
-    border: 1px solid rgba(255, 244, 218, 0.16);
-}
-
-.landing-steps {
-    position: absolute;
-    left: 50%;
-    bottom: 8%;
-    width: 82%;
-    height: 26%;
-    transform: translateX(-50%);
-    background:
-        linear-gradient(180deg, rgba(243, 230, 200, 0.1), rgba(36, 26, 18, 0.82));
-    clip-path: polygon(12% 100%, 20% 74%, 31% 74%, 37% 50%, 63% 50%, 69% 74%, 80% 74%, 88% 100%);
-    animation: stepsGlow 6s ease-in-out infinite;
-}
-
-.landing-pillars {
-    position: absolute;
-    inset: auto 19% 13%;
-    height: 38%;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-}
-
-.landing-pillars span {
-    border-radius: 999px 999px 6px 6px;
-    background: linear-gradient(180deg, rgba(245, 229, 194, 0.24), rgba(45, 32, 18, 0.88));
-    border: 1px solid rgba(245, 229, 194, 0.12);
-}
-
-.landing-pillars span:nth-child(odd) {
-    animation: pillarRise 8s ease-in-out infinite;
-}
-
-.landing-pillars span:nth-child(even) {
-    animation: pillarRise 8s ease-in-out infinite -2.4s;
-}
-
 .landing-caption {
     position: absolute;
     left: 24px;
     right: 24px;
-    bottom: 22px;
+    bottom: 112px;
     display: flex;
     justify-content: space-between;
     gap: 16px;
@@ -1535,8 +1465,8 @@ body, .gradio-container {
 
 .landing-floor-label {
     position: absolute;
-    right: 26px;
-    bottom: 84px;
+    right: 28px;
+    bottom: 126px;
     padding: 10px 12px;
     border-radius: 14px;
     border: 1px solid rgba(200, 169, 110, 0.12);
@@ -1553,10 +1483,15 @@ body, .gradio-container {
     padding: 0 24px;
     display: flex;
     justify-content: flex-start;
+    position: relative;
+    z-index: 3;
 }
 
 .museum-topbar .museum-secondary-btn {
     min-width: 180px;
+    border-radius: 999px !important;
+    background: rgba(16, 12, 10, 0.72) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
 }
 
 body[data-museum-theme="retro"], body[data-museum-theme="retro"] .gradio-container {
@@ -1858,10 +1793,11 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     position: relative;
     border: 1px solid rgba(210, 184, 139, 0.14);
     margin: 16px auto 22px;
-    border-radius: 30px;
+    border-radius: 34px;
     background:
-        radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 24%),
-        linear-gradient(180deg, rgba(13, 10, 9, 0.96), rgba(8, 6, 6, 0.98));
+        radial-gradient(circle at 14% 12%, rgba(200, 169, 110, 0.08), transparent 18%),
+        radial-gradient(circle at 84% 10%, rgba(255, 244, 216, 0.04), transparent 14%),
+        linear-gradient(180deg, rgba(13, 10, 9, 0.98), rgba(8, 6, 6, 0.99));
     box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
     overflow: hidden;
     width: min(100%, 1540px);
@@ -1872,17 +1808,27 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     position: absolute;
     inset: 18px;
     border: 1px solid rgba(255, 238, 207, 0.05);
-    border-radius: 20px;
+    border-radius: 24px;
+    pointer-events: none;
+}
+
+.museum-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 22% 18%, rgba(255,255,255,0.03), transparent 10%),
+        radial-gradient(circle at 78% 14%, rgba(200,169,110,0.06), transparent 12%);
     pointer-events: none;
 }
 
 .museum-workspace {
     width: min(100%, 1540px);
     margin: 0 auto;
-    padding: 0 28px 24px;
+    padding: 0 28px 30px;
     display: grid;
-    grid-template-columns: 278px minmax(0, 1fr);
-    gap: 28px;
+    grid-template-columns: 248px minmax(0, 1fr);
+    gap: 24px;
     align-items: start;
 }
 
@@ -1891,12 +1837,41 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     top: 16px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    padding-top: 6px;
+    gap: 16px;
+    padding: 18px 16px 16px;
+    border-right: 1px solid rgba(200, 169, 110, 0.08);
+    min-height: calc(100vh - 120px);
+}
+
+.museum-sidebar::before {
+    content: "Curator Rail";
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.88;
 }
 
 .museum-canvas {
     min-width: 0;
+    position: relative;
+    padding: 18px 18px 22px;
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at 14% 14%, rgba(255,255,255,0.03), transparent 14%),
+        linear-gradient(180deg, rgba(255,255,255,0.025), transparent 18%),
+        rgba(9, 7, 6, 0.48);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.museum-canvas::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
+    border: 1px solid rgba(200, 169, 110, 0.08);
+    pointer-events: none;
 }
 
 .museum-marquee {
@@ -1976,6 +1951,8 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     line-height: 1.06;
     color: var(--paper);
     margin-bottom: 10px;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
 }
 
 .museum-tagline {
@@ -1985,6 +1962,7 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     font-style: italic;
     max-width: 720px;
     margin: 0 auto;
+    text-wrap: pretty;
 }
 
 .museum-visitor-pass {
@@ -1992,6 +1970,22 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     color: var(--muted);
     font-size: 14px;
     line-height: 1.5;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background: rgba(255,255,255,0.025);
+}
+
+.museum-visitor-pass::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 5px rgba(200, 169, 110, 0.07);
 }
 
 .museum-lead {
@@ -2007,13 +2001,14 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 18px;
-    padding: 16px 18px 18px;
+    gap: 20px;
+    padding: 18px 20px 20px;
     border: 1px solid rgba(200, 169, 110, 0.1);
-    border-radius: 24px;
+    border-radius: 26px;
     margin-bottom: 20px;
     background:
-        linear-gradient(90deg, rgba(200, 169, 110, 0.08), transparent 24%),
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,0.05), transparent 16%),
+        linear-gradient(90deg, rgba(200, 169, 110, 0.1), transparent 28%),
         rgba(255, 255, 255, 0.015);
     animation: museumHeaderDrift 6.5s ease-in-out infinite;
     overflow: hidden;
@@ -2051,10 +2046,14 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     gap: 16px;
 }
 
+.museum-header-copy {
+    min-width: 0;
+}
+
 .museum-world-emblem {
-    width: 58px;
-    height: 58px;
-    border-radius: 16px;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
     border: 1px solid rgba(200, 169, 110, 0.24);
     display: grid;
     place-items: center;
@@ -2066,8 +2065,8 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
 }
 
 .museum-world-emblem svg {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
 }
 
 .museum-world-emblem path,
@@ -2083,6 +2082,30 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
 
 .museum-header-share[hidden] {
     display: none !important;
+}
+
+.museum-header-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.museum-header-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+}
+
+.museum-ticket-btn {
+    min-width: 164px;
 }
 
 .hero-plaques {
@@ -2172,6 +2195,18 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     flex-wrap: wrap;
     gap: 10px;
     align-items: center;
+    position: relative;
+    z-index: 3;
+}
+
+.concept-chip-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-right: 6px;
+    opacity: 0.9;
 }
 
 .concept-chip-btn {
@@ -2194,9 +2229,24 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
 }
 
+.concept-chip-btn:focus-visible,
+.theme-chip:focus-visible,
+.museum-action-btn:focus-visible,
+.museum-secondary-btn:focus-visible,
+.museum-hall-nav-btn:focus-visible,
+.museum-room:focus-visible,
+.museum-topbar .museum-secondary-btn:focus-visible,
+.enter-btn:focus-visible,
+.mode-radio input:focus-visible + span {
+    outline: none !important;
+    border-color: rgba(200, 169, 110, 0.76) !important;
+    box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.12), 0 0 0 7px rgba(200, 169, 110, 0.05) !important;
+}
+
 .control-shell {
+    width: min(100%, 1540px);
     padding: 0 24px 24px;
-    margin-top: -72px;
+    margin: 0 auto 0;
     position: relative;
     z-index: 4;
 }
@@ -2218,6 +2268,17 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
         linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%),
         var(--panel);
     box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-bar::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 16px;
+    pointer-events: none;
 }
 
 .theme-bar-copy {
@@ -2255,6 +2316,7 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     letter-spacing: 0.14em;
     text-transform: uppercase;
     padding: 11px 16px;
+    min-width: 96px;
     cursor: pointer;
     transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
@@ -2269,7 +2331,8 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
 
 .control-card {
     position: relative;
-    max-width: 1260px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 28px;
@@ -2305,6 +2368,50 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
         0 0 0 18px rgba(255,255,255,0.015),
         0 0 0 44px rgba(255,255,255,0.01);
     pointer-events: none;
+}
+
+.admission-form-column,
+.admission-ticket-column {
+    min-width: 0;
+}
+
+.admission-form-column > .gradio-container,
+.admission-ticket-column > .gradio-container,
+.admission-form-column .gr-group,
+.admission-ticket-column .gr-group,
+.admission-form-column .gr-box,
+.admission-ticket-column .gr-box,
+.admission-form-column .gr-panel,
+.admission-ticket-column .gr-panel {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.admission-form-column {
+    position: relative;
+    padding: 24px 24px 20px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.1), transparent 20%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+        rgba(14, 11, 10, 0.52);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.admission-form-column::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.admission-ticket-column {
+    position: relative;
+    padding-left: 6px;
 }
 
 .admission-card-grid {
@@ -2678,11 +2785,12 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
 .journey-rail {
     position: relative;
     margin-top: 22px;
-    border-radius: 22px;
+    border-radius: 24px;
     border: 1px solid rgba(200,169,110,0.14);
     background: rgba(255,255,255,0.03);
-    padding: 18px;
+    padding: 20px;
     overflow: hidden;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.14);
 }
 
 .journey-rail[data-curator-mode="Anthropology"] {
@@ -2735,12 +2843,13 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
 
 .journey-stop {
     position: relative;
-    border-radius: 18px;
+    border-radius: 20px;
     border: 1px solid rgba(200,169,110,0.12);
     background: rgba(12,9,7,0.58);
     padding: 16px 14px 14px;
     min-height: 128px;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .journey-stop::before {
@@ -2759,6 +2868,12 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
 .journey-stop.is-complete {
     border-color: rgba(200,169,110,0.42);
     box-shadow: inset 0 1px 0 rgba(200,169,110,0.08), 0 0 28px rgba(200,169,110,0.08);
+}
+
+.journey-stop:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200,169,110,0.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 12px 22px rgba(0,0,0,0.12);
 }
 
 .journey-rail[data-curator-mode="Mythic"] .journey-stop.is-active,
@@ -2820,18 +2935,6 @@ body[data-world-aura="velvet"] .museum-installation-bust::after {
     color: var(--muted);
     font-size: 15px;
     line-height: 1.5;
-}
-
-.museum-header-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 10px;
-    width: 100%;
-}
-
-.museum-ticket-btn {
-    min-width: 180px;
 }
 
 body.is-beginning-journey .control-card {
@@ -2932,12 +3035,23 @@ body.is-beginning-journey .control-card::after {
     display: grid;
     grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.9fr);
     gap: 18px;
-    padding: 20px 22px;
+    padding: 22px 22px 20px;
     align-items: center;
 }
 
 .museum-audio-copyblock {
     min-width: 0;
+    position: relative;
+}
+
+.museum-audio-copyblock::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 88px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(200, 169, 110, 0.52), transparent);
 }
 
 .museum-audio-kicker,
@@ -2959,6 +3073,30 @@ body.is-beginning-journey .control-card::after {
     line-height: 1.15;
 }
 
+.museum-audio-note {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 9px 12px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    background: rgba(255,255,255,0.025);
+    color: var(--paper);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.museum-audio-note::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 6px rgba(200, 169, 110, 0.08);
+}
+
 .museum-audio-copy,
 .museum-installation-text,
 .museum-installation-note {
@@ -2974,6 +3112,17 @@ body.is-beginning-journey .control-card::after {
     display: grid;
     gap: 12px;
     align-content: center;
+    position: relative;
+}
+
+.museum-audio-controls::before {
+    content: "Docent console";
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.88;
 }
 
 .museum-audio-hall,
@@ -3031,7 +3180,7 @@ body.is-guide-speaking .museum-audio-meter span,
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.95fr);
     gap: 18px;
-    padding: 22px;
+    padding: 24px;
     align-items: center;
 }
 
@@ -3051,15 +3200,59 @@ body.is-guide-speaking .museum-audio-meter span,
     background: rgba(255,255,255,0.02);
 }
 
+.museum-installation-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.museum-installation-metric {
+    border-radius: 16px;
+    border: 1px solid rgba(200, 169, 110, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)),
+        rgba(12, 9, 8, 0.38);
+    padding: 12px 14px;
+}
+
+.museum-installation-metric-label {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.museum-installation-metric-value {
+    color: var(--paper);
+    font-size: 16px;
+    line-height: 1.45;
+}
+
 .museum-installation-stage {
     position: relative;
-    min-height: 280px;
-    border-radius: 18px;
+    min-height: 320px;
+    border-radius: 22px;
     overflow: hidden;
     background:
-        radial-gradient(circle at 50% 18%, rgba(255, 243, 214, 0.18), transparent 18%),
+        radial-gradient(circle at 50% 18%, rgba(255, 243, 214, 0.22), transparent 18%),
+        radial-gradient(circle at 80% 24%, rgba(200, 169, 110, 0.1), transparent 18%),
         linear-gradient(180deg, rgba(44, 29, 18, 0.32), rgba(11, 8, 7, 0.92));
     border: 1px solid rgba(200, 169, 110, 0.12);
+}
+
+.museum-installation-stage::after {
+    content: "";
+    position: absolute;
+    inset: auto 16px 16px 16px;
+    height: 26%;
+    border-top: 1px solid rgba(200, 169, 110, 0.12);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(10, 8, 7, 0.92)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 50px);
+    pointer-events: none;
 }
 
 .museum-installation-aura {
@@ -3074,9 +3267,9 @@ body.is-guide-speaking .museum-audio-meter span,
 .museum-installation-frame {
     position: absolute;
     left: 50%;
-    top: 34px;
-    width: 220px;
-    height: 220px;
+    top: 40px;
+    width: 236px;
+    height: 236px;
     transform: translateX(-50%);
     border-radius: 50%;
     background:
@@ -3088,25 +3281,25 @@ body.is-guide-speaking .museum-audio-meter span,
 
 .museum-installation-frame--offset {
     left: auto;
-    right: 32px;
-    top: 52px;
-    width: 112px;
-    height: 148px;
-    transform: rotate(7deg);
-    border-radius: 14px;
+    right: 28px;
+    top: 44px;
+    width: 124px;
+    height: 168px;
+    transform: rotate(8deg);
+    border-radius: 18px;
     opacity: 0.8;
 }
 
 .museum-installation-orb {
     position: absolute;
     left: 50%;
-    top: 50%;
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
+    top: 48%;
+    width: 88px;
+    height: 128px;
+    border-radius: 40% 40% 18% 18%;
+    transform: translate(-50%, -50%) rotate(2deg);
     background:
-        radial-gradient(circle at 35% 32%, rgba(255, 242, 214, 0.88), rgba(181, 136, 74, 0.72) 44%, rgba(74, 45, 22, 0.98) 100%);
+        radial-gradient(circle at 48% 18%, rgba(255, 242, 214, 0.88), rgba(181, 136, 74, 0.72) 32%, rgba(74, 45, 22, 0.98) 100%);
     box-shadow: 0 0 38px rgba(217, 176, 106, 0.18);
     animation: artifactFloat 5.4s ease-in-out infinite;
 }
@@ -3114,9 +3307,9 @@ body.is-guide-speaking .museum-audio-meter span,
 .museum-installation-bust {
     position: absolute;
     left: 50%;
-    bottom: 34px;
-    width: 132px;
-    height: 168px;
+    bottom: 40px;
+    width: 138px;
+    height: 174px;
     transform: translateX(-50%);
     filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.26));
 }
@@ -3151,8 +3344,8 @@ body.is-guide-speaking .museum-audio-meter span,
     position: absolute;
     left: 50%;
     bottom: 0;
-    width: 168px;
-    height: 72px;
+    width: 188px;
+    height: 78px;
     transform: translateX(-50%);
     border-radius: 12px 12px 0 0;
     background:
@@ -3165,8 +3358,14 @@ body.is-guide-speaking .museum-audio-meter span,
     position: absolute;
     left: 24px;
     top: 24px;
-    max-width: 30ch;
+    max-width: 28ch;
     z-index: 2;
+    padding: 14px 16px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    background: rgba(13, 10, 8, 0.4);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
 }
 
 .museum-installation-stage-title {
@@ -3200,71 +3399,11 @@ body.is-guide-speaking .museum-audio-meter span,
     line-height: 1.45;
 }
 
-.share-card {
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 20px 22px;
-    background:
-        radial-gradient(circle at top right, rgba(200, 169, 110, 0.12), transparent 24%),
-        var(--panel);
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
-}
-
-.share-card-kicker,
-.share-card-label {
-    color: var(--gold-soft);
-    font-family: 'Cinzel', serif;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-}
-
-.share-card-kicker {
-    font-size: 10px;
-    margin-bottom: 8px;
-}
-
-.share-card-title {
-    color: var(--gold);
-    font-family: 'Cinzel', serif;
-    font-size: 28px;
-    margin-bottom: 8px;
-}
-
-.share-card-summary {
-    color: var(--paper);
-    font-size: 18px;
-    line-height: 1.65;
-    margin-bottom: 16px;
-}
-
-.share-card-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.share-card-stat {
-    border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 14px;
-    padding: 12px 14px;
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.share-card-label {
-    font-size: 9px;
-    margin-bottom: 8px;
-}
-
-.share-card-value {
-    color: var(--paper);
-    font-size: 15px;
-    line-height: 1.55;
-}
-
 .status-panel {
+    position: relative;
     border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 24px;
-    padding: 18px;
+    border-radius: 26px;
+    padding: 20px 18px;
     background:
         radial-gradient(circle at top left, rgba(200, 169, 110, 0.1), transparent 32%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%),
@@ -3275,6 +3414,31 @@ body.is-guide-speaking .museum-audio-meter span,
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.03),
         0 12px 30px rgba(0, 0, 0, 0.14);
+    overflow: hidden;
+}
+
+.status-panel::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.status-panel::after {
+    content: "";
+    position: absolute;
+    right: -24px;
+    bottom: -32px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow:
+        0 0 0 14px rgba(255,255,255,0.014),
+        0 0 0 34px rgba(255,255,255,0.01);
+    pointer-events: none;
 }
 
 .status-head {
@@ -3365,6 +3529,13 @@ body.is-guide-speaking .museum-audio-meter span,
     font-size: 10px;
     letter-spacing: 0.04em;
     background: rgba(255, 255, 255, 0.02);
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.status-tag:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200, 169, 110, 0.3);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .map-wrap {
@@ -3373,7 +3544,7 @@ body.is-guide-speaking .museum-audio-meter span,
 
 .museum-map {
     position: relative;
-    min-height: 252px;
+    min-height: 248px;
     border: 1px solid rgba(200, 169, 110, 0.14);
     border-radius: 26px;
     background:
@@ -3385,21 +3556,30 @@ body.is-guide-speaking .museum-audio-meter span,
         0 12px 30px rgba(0, 0, 0, 0.14);
 }
 
+.museum-map::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
 .museum-map-help,
 .museum-legend {
     display: none;
 }
 
 .museum-nav-rail {
-    padding: 16px 14px 14px;
+    padding: 18px 14px 14px;
 }
 
 .museum-nav-header {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 6px 6px 16px;
-    margin-bottom: 12px;
+    gap: 6px;
+    padding: 8px 8px 14px;
+    margin-bottom: 10px;
     border-bottom: 1px solid var(--line);
 }
 
@@ -3414,14 +3594,14 @@ body.is-guide-speaking .museum-audio-meter span,
 .museum-nav-copy {
     color: var(--muted);
     font-size: 12px;
-    line-height: 1.45;
-    max-width: 24ch;
+    line-height: 1.52;
+    max-width: 22ch;
 }
 
 .museum-nav-route-line {
     position: relative;
     height: 32px;
-    margin: 0 6px 6px;
+    margin: 2px 8px 8px;
 }
 
 .museum-nav-route-line::before {
@@ -3446,10 +3626,14 @@ body.is-guide-speaking .museum-audio-meter span,
     box-shadow: 0 0 0 6px rgba(255, 234, 196, 0.06);
 }
 
+.museum-nav-route-line span {
+    display: none;
+}
+
 .museum-nav-stack {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .museum-room {
@@ -3459,14 +3643,14 @@ body.is-guide-speaking .museum-audio-meter span,
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)),
         color-mix(in srgb, var(--panel-strong) 76%, transparent);
-    padding: 13px 13px 12px;
+    padding: 13px 14px 12px;
     cursor: pointer;
     transition: transform 0.22s ease, border-color 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease;
     z-index: 2;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    backdrop-filter: blur(1px);
+    backdrop-filter: blur(2px);
 }
 
 .museum-room::before {
@@ -3539,8 +3723,8 @@ body.is-guide-speaking .museum-audio-meter span,
 }
 
 .museum-room--rail {
-    min-height: 82px;
-    padding-right: 42px;
+    min-height: 84px;
+    padding-right: 44px;
 }
 
 .museum-room-accent {
@@ -3598,8 +3782,8 @@ body.is-guide-speaking .museum-audio-meter span,
     font-family: 'Cinzel', serif;
     font-size: 17px;
     letter-spacing: 0.01em;
-    margin-bottom: 4px;
-    line-height: 1.1;
+    margin-bottom: 5px;
+    line-height: 1.16;
     text-wrap: balance;
 }
 
@@ -3607,8 +3791,8 @@ body.is-guide-speaking .museum-audio-meter span,
     color: var(--muted);
     display: block;
     font-size: 12px;
-    line-height: 1.38;
-    max-width: 18ch;
+    line-height: 1.46;
+    max-width: 19ch;
 }
 
 .museum-room-meta {
@@ -3691,7 +3875,14 @@ body[data-museum-theme="light"] .museum-audio-guide,
 body[data-museum-theme="light"] .museum-installation-shell,
 body[data-museum-theme="light"] .status-panel,
 body[data-museum-theme="light"] .loading-card,
-body[data-museum-theme="light"] .museum-room {
+body[data-museum-theme="light"] .museum-room,
+body[data-museum-theme="light"] .featured-artifact,
+body[data-museum-theme="light"] .lobby-card,
+body[data-museum-theme="light"] .world-detail,
+body[data-museum-theme="light"] .timeline-card,
+body[data-museum-theme="light"] .portrait-panel,
+body[data-museum-theme="light"] .portrait-result-shell,
+body[data-museum-theme="light"] .visitor-side-exhibit {
     background-color: rgba(255, 251, 244, 0.86) !important;
 }
 
@@ -3710,7 +3901,11 @@ body[data-museum-theme="light"] .museum-legend-copy,
 body[data-museum-theme="light"] .museum-audio-copy,
 body[data-museum-theme="light"] .museum-installation-text,
 body[data-museum-theme="light"] .museum-installation-note,
-body[data-museum-theme="light"] .museum-nav-copy {
+body[data-museum-theme="light"] .museum-nav-copy,
+body[data-museum-theme="light"] .visitor-side-exhibit-copy,
+body[data-museum-theme="light"] .portrait-result-copy,
+body[data-museum-theme="light"] .museum-visitor-pass,
+body[data-museum-theme="light"] .loading-copy {
     color: #556971 !important;
 }
 
@@ -3737,14 +3932,18 @@ body[data-museum-theme="light"] .lobby-summary,
 body[data-museum-theme="light"] .timeline-desc,
 body[data-museum-theme="light"] .visitor-entry,
 body[data-museum-theme="light"] .hall-panel-copy,
-body[data-museum-theme="light"] .status-subline {
+body[data-museum-theme="light"] .status-subline,
+body[data-museum-theme="light"] .loading-title,
+body[data-museum-theme="light"] .empty-state {
     color: #24333b !important;
 }
 
 body[data-museum-theme="light"] .museum-hall-nav-copy,
 body[data-museum-theme="light"] .mode-desc,
 body[data-museum-theme="light"] .artifact-meta,
-body[data-museum-theme="light"] .featured-prompt {
+body[data-museum-theme="light"] .featured-prompt,
+body[data-museum-theme="light"] .portrait-prompt,
+body[data-museum-theme="light"] .artifact-significance {
     color: #556971 !important;
 }
 
@@ -3774,7 +3973,15 @@ body[data-museum-theme="light"] .hall-panel-seal {
 body[data-museum-theme="light"] .museum-ticket-kicker,
 body[data-museum-theme="light"] .museum-ticket-stat-label,
 body[data-museum-theme="light"] .museum-ticket-mode-label,
-body[data-museum-theme="light"] .journey-stop-index {
+body[data-museum-theme="light"] .journey-stop-index,
+body[data-museum-theme="light"] .museum-header-kicker,
+body[data-museum-theme="light"] .museum-audio-kicker,
+body[data-museum-theme="light"] .museum-installation-kicker,
+body[data-museum-theme="light"] .museum-audio-controls::before,
+body[data-museum-theme="light"] .visitor-side-exhibit-pill,
+body[data-museum-theme="light"] .portrait-meta-label,
+body[data-museum-theme="light"] .empty-state::before,
+body[data-museum-theme="light"] .loading-kicker {
     color: #5c7380 !important;
 }
 
@@ -3782,7 +3989,10 @@ body[data-museum-theme="light"] .museum-ticket-title,
 body[data-museum-theme="light"] .museum-ticket-subtitle,
 body[data-museum-theme="light"] .museum-ticket-stat-value,
 body[data-museum-theme="light"] .museum-ticket-mode-value,
-body[data-museum-theme="light"] .journey-stop-title {
+body[data-museum-theme="light"] .journey-stop-title,
+body[data-museum-theme="light"] .museum-audio-title,
+body[data-museum-theme="light"] .museum-installation-stage-title,
+body[data-museum-theme="light"] .portrait-meta-value {
     color: #1f3138 !important;
 }
 
@@ -3801,8 +4011,42 @@ body[data-museum-theme="light"] .museum-ticket-preview::after,
 body[data-museum-theme="light"] .journey-rail::before,
 body[data-museum-theme="light"] .control-card::before,
 body[data-museum-theme="light"] .museum-header-band::before,
-body[data-museum-theme="light"] .museum-installation-shell::before {
+body[data-museum-theme="light"] .museum-installation-shell::before,
+body[data-museum-theme="light"] .museum-map::before,
+body[data-museum-theme="light"] .featured-artifact::before,
+body[data-museum-theme="light"] .timeline-card::after,
+body[data-museum-theme="light"] .lobby-card::before,
+body[data-museum-theme="light"] .world-detail::before,
+body[data-museum-theme="light"] .portrait-result-shell::before,
+body[data-museum-theme="light"] .visitor-side-exhibit::before {
     border-color: rgba(88, 111, 122, 0.12) !important;
+}
+
+body[data-museum-theme="light"] .museum-room-stage-band,
+body[data-museum-theme="light"] .museum-room-wall-label,
+body[data-museum-theme="light"] .museum-audio-note,
+body[data-museum-theme="light"] .portrait-meta-card,
+body[data-museum-theme="light"] .museum-audio-hall,
+body[data-museum-theme="light"] .museum-visitor-pass,
+body[data-museum-theme="light"] .empty-state {
+    background: rgba(255, 255, 255, 0.74) !important;
+    border-color: rgba(88, 111, 122, 0.16) !important;
+}
+
+body[data-museum-theme="light"] .museum-room-wall-label,
+body[data-museum-theme="light"] .museum-audio-status,
+body[data-museum-theme="light"] .featured-placeholder,
+body[data-museum-theme="light"] .museum-footer,
+body[data-museum-theme="light"] .ambassador-chat textarea,
+body[data-museum-theme="light"] .ambassador-chat input {
+    color: #556971 !important;
+}
+
+body[data-museum-theme="light"] .loading-card {
+    background:
+        radial-gradient(circle at top right, rgba(95, 141, 156, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,0.94), rgba(244, 238, 230, 0.98)) !important;
+    border-color: rgba(88, 111, 122, 0.18) !important;
 }
 
 body[data-museum-theme="light"] .museum-room-frame,
@@ -3869,7 +4113,7 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .museum-hall-stack {
-    padding: 0 24px 30px;
+    padding: 6px 24px 30px;
 }
 
 .museum-section-intro {
@@ -4198,16 +4442,17 @@ body[data-museum-theme="dark"] .museum-header {
     position: absolute;
     left: 6%;
     bottom: 24px;
-    padding: 12px 14px 11px;
-    border: 1px solid rgba(255, 235, 203, 0.1);
-    border-radius: 14px;
+    padding: 14px 16px 12px;
+    border: 1px solid rgba(255, 235, 203, 0.12);
+    border-radius: 16px;
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 38%),
-        rgba(14, 10, 8, 0.7);
+        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 38%),
+        rgba(14, 10, 8, 0.78);
     color: var(--muted);
-    font-size: 12px;
-    line-height: 1.45;
+    font-size: 13px;
+    line-height: 1.5;
     max-width: 22ch;
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.16);
 }
 
 .museum-room-stage-band {
@@ -4217,12 +4462,12 @@ body[data-museum-theme="dark"] .museum-header {
     z-index: 2;
     min-width: 220px;
     max-width: 320px;
-    padding: 14px 16px 12px;
-    border-radius: 18px;
-    border: 1px solid rgba(200, 169, 110, 0.12);
+    padding: 15px 16px 13px;
+    border-radius: 20px;
+    border: 1px solid rgba(200, 169, 110, 0.14);
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 38%),
-        rgba(13, 10, 9, 0.58);
+        linear-gradient(180deg, rgba(255,255,255,0.05), transparent 38%),
+        rgba(13, 10, 9, 0.64);
     backdrop-filter: blur(8px);
     box-shadow: 0 20px 34px rgba(0, 0, 0, 0.18);
 }
@@ -4239,8 +4484,9 @@ body[data-museum-theme="dark"] .museum-header {
     margin-top: 7px;
     color: var(--paper);
     font-family: 'Cinzel', serif;
-    font-size: 19px;
-    line-height: 1.3;
+    font-size: 20px;
+    line-height: 1.28;
+    text-wrap: balance;
 }
 
 .museum-room-label-title {
@@ -4294,48 +4540,50 @@ body[data-museum-theme="dark"] .museum-header {
     left: 50%;
     bottom: 22px;
     transform: translateX(-50%);
-    padding: 6px 10px 5px;
+    padding: 7px 12px 6px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 235, 203, 0.08);
-    background: rgba(12, 9, 8, 0.62);
+    border: 1px solid rgba(255, 235, 203, 0.12);
+    background: rgba(12, 9, 8, 0.72);
     color: var(--paper);
     font-family: 'Cinzel', serif;
     font-size: 8px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     white-space: nowrap;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
 }
 
 .museum-hall-shell {
     margin-top: 18px;
     border: 1px solid rgba(200, 169, 110, 0.14);
-    border-radius: 28px 28px 0 0;
+    border-radius: 28px;
     background:
-        radial-gradient(circle at top, rgba(200, 169, 110, 0.1), transparent 22%),
-        linear-gradient(180deg, rgba(19, 13, 11, 0.9), rgba(10, 8, 7, 0.92));
-    padding: 24px 24px 22px;
-    box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.05);
+        radial-gradient(circle at 14% 12%, rgba(200, 169, 110, 0.1), transparent 18%),
+        linear-gradient(180deg, rgba(19, 13, 11, 0.92), rgba(10, 8, 7, 0.95));
+    padding: 22px 22px 22px;
+    box-shadow:
+        inset 0 1px 0 rgba(200, 169, 110, 0.05),
+        0 18px 40px rgba(0, 0, 0, 0.16);
 }
 
 .museum-hall-shell::before {
     content: "Exhibition Sequence";
     display: block;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     color: var(--gold-soft);
     font-family: 'Cinzel', serif;
     font-size: 10px;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    text-align: center;
+    text-align: left;
 }
 
 .museum-hall-nav {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
-    padding: 0 0 18px;
+    padding: 0;
     margin-top: 0;
-    border-bottom: 1px solid var(--line);
     opacity: 0.9;
 }
 
@@ -4348,7 +4596,7 @@ body[data-museum-theme="dark"] .museum-header {
         linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
         rgba(16, 12, 10, 0.42);
     color: var(--muted);
-    border-radius: 20px;
+    border-radius: 22px;
     padding: 16px 16px 15px;
     cursor: pointer;
     transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
@@ -4377,7 +4625,7 @@ body[data-museum-theme="dark"] .museum-header {
         linear-gradient(180deg, rgba(200, 169, 110, 0.16), rgba(18, 13, 11, 0.82)),
         rgba(200, 169, 110, 0.08);
     transform: translateY(-1px);
-    box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.09);
+    box-shadow: inset 0 1px 0 rgba(200, 169, 110, 0.09), 0 14px 28px rgba(0, 0, 0, 0.14);
 }
 
 .museum-hall-nav-btn:hover::before,
@@ -4413,11 +4661,12 @@ body[data-museum-theme="dark"] .museum-header {
     background:
         radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 18%),
         linear-gradient(180deg, rgba(15, 11, 10, 0.95), rgba(8, 6, 5, 0.97));
-    padding: 26px 28px 30px;
+    padding: 28px 28px 32px;
     transform-origin: top center;
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.03),
-        0 18px 38px rgba(0, 0, 0, 0.18);
+        0 20px 44px rgba(0, 0, 0, 0.2);
+    margin-top: 18px;
 }
 
 .museum-hall-panel.is-active {
@@ -4443,8 +4692,8 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .hall-panel-header {
-    padding-bottom: 18px;
-    margin-bottom: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 22px;
     border-bottom: 1px solid rgba(200, 169, 110, 0.08);
 }
 
@@ -4505,7 +4754,7 @@ body[data-museum-theme="dark"] .museum-header {
     color: var(--muted);
     font-size: 16px;
     line-height: 1.65;
-    max-width: 740px;
+    max-width: 760px;
     margin-top: 10px;
 }
 
@@ -4554,6 +4803,20 @@ body[data-museum-theme="dark"] .museum-header {
     color: #4d3d2d !important;
 }
 
+.museum-hall-panel.hall-panel--newspaper .hall-action-row {
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.46), rgba(255,255,255,0.22)),
+        rgba(255,255,255,0.24);
+    border-color: rgba(54, 40, 24, 0.12);
+}
+
+.museum-hall-panel.hall-panel--newspaper .museum-action-btn,
+.museum-hall-panel.hall-panel--newspaper .museum-secondary-btn {
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(236,228,213,0.96)) !important;
+    border-color: rgba(79, 60, 36, 0.2) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.55) !important;
+}
+
 .museum-hall-panel.hall-panel--visitor {
     background:
         radial-gradient(circle at 78% 18%, rgba(200, 169, 110, 0.08), transparent 18%),
@@ -4562,7 +4825,14 @@ body[data-museum-theme="dark"] .museum-header {
 
 .hall-action-row {
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(200, 169, 110, 0.1);
+    border-radius: 18px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)),
+        rgba(12, 9, 8, 0.34);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .hall-content {
@@ -4588,20 +4858,47 @@ body[data-museum-theme="dark"] .museum-header {
         radial-gradient(circle at top, rgba(255, 255, 255, 0.03), transparent 28%),
         rgba(12, 9, 7, 0.28);
     padding: 26px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.empty-state::before {
+    content: "Awaiting Exhibit";
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.86;
 }
 
 .loading-card {
     min-height: 280px;
     border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 16px;
+    border-radius: 22px;
     background:
         radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 28%),
         rgba(12, 9, 7, 0.72);
-    padding: 24px;
+    padding: 26px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-card::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 16px;
+    pointer-events: none;
 }
 
 .loading-kicker {
@@ -4618,6 +4915,7 @@ body[data-museum-theme="dark"] .museum-header {
     font-size: 24px;
     line-height: 1.35;
     margin: 6px 0 10px;
+    text-wrap: balance;
 }
 
 .loading-copy {
@@ -4633,6 +4931,7 @@ body[data-museum-theme="dark"] .museum-header {
     border-radius: 999px;
     background: rgba(200, 169, 110, 0.12);
     overflow: hidden;
+    margin-bottom: 14px;
 }
 
 .loading-bar {
@@ -4640,6 +4939,17 @@ body[data-museum-theme="dark"] .museum-header {
     border-radius: 999px;
     background: linear-gradient(90deg, rgba(200, 169, 110, 0.3), rgba(200, 169, 110, 0.9));
     box-shadow: 0 0 18px rgba(200, 169, 110, 0.22);
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 42%, transparent 76%);
+    transform: translateX(-100%);
+    animation: loadingSweep 1.8s linear infinite;
 }
 
 .loading-meta {
@@ -4649,6 +4959,7 @@ body[data-museum-theme="dark"] .museum-header {
     align-items: center;
     color: var(--muted);
     font-size: 15px;
+    flex-wrap: wrap;
 }
 
 .loading-dots {
@@ -4682,6 +4993,12 @@ body[data-museum-theme="dark"] .museum-header {
         transform: scale(1.15);
         opacity: 1;
     }
+}
+
+@keyframes loadingSweep {
+    0% { transform: translateX(-100%); opacity: 0; }
+    18% { opacity: 1; }
+    100% { transform: translateX(120%); opacity: 0; }
 }
 
 @keyframes museumHeaderDrift {
@@ -4820,13 +5137,12 @@ body[data-museum-theme="dark"] .museum-header {
     .museum-installation-aura,
     .museum-installation-orb,
     .museum-audio-meter span,
+    .loading-bar::after,
     .landing-shell::after,
     .landing-floating-fragments span,
     .landing-art,
-    .landing-skyline,
-    .landing-dome,
-    .landing-steps,
-    .landing-pillars span {
+    .landing-arch,
+    .landing-sculpture {
         animation: none !important;
         transition: none !important;
     }
@@ -4845,6 +5161,46 @@ body[data-museum-theme="dark"] .museum-header {
     margin-bottom: 18px;
 }
 
+.lobby-summary-shell,
+.timeline-intro,
+.visitor-book-shell {
+    position: relative;
+    border: 1px solid rgba(200, 169, 110, 0.14);
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.03), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.025), transparent 18%),
+        rgba(12, 9, 8, 0.54);
+    padding: 20px 22px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    overflow: hidden;
+}
+
+.lobby-summary-shell,
+.timeline-intro {
+    margin-bottom: 20px;
+}
+
+.lobby-summary-shell::before,
+.timeline-intro::before,
+.visitor-book-shell::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 14px;
+    pointer-events: none;
+}
+
+.hall-mini-kicker {
+    color: var(--gold-soft);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
 .lobby-card,
 .artifact-card,
 .timeline-card,
@@ -4853,10 +5209,30 @@ body[data-museum-theme="dark"] .museum-header {
     border: 1px solid var(--line);
     border-radius: 12px;
     background: var(--panel);
+    position: relative;
+    overflow: hidden;
 }
 
 .lobby-card {
-    padding: 14px;
+    padding: 16px 14px 14px;
+    border-radius: 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 12px 22px rgba(0,0,0,0.08);
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,0.025), transparent 18%),
+        rgba(12, 9, 8, 0.62);
+}
+
+.lobby-card::before,
+.world-detail::before,
+.artifact-card::after,
+.portrait-result-shell::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 14px;
+    pointer-events: none;
 }
 
 .lobby-label {
@@ -4871,15 +5247,15 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .lobby-summary {
-    padding: 22px 24px;
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    background:
-        radial-gradient(circle at top right, rgba(200, 169, 110, 0.06), transparent 24%),
-        rgba(14, 11, 9, 0.84);
-    margin-bottom: 18px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    margin-bottom: 0;
     line-height: 1.85;
     font-size: 18px;
+    color: var(--paper);
+    max-width: 54ch;
 }
 
 .world-details {
@@ -4889,7 +5265,12 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .world-detail {
-    padding: 16px 18px;
+    padding: 20px 18px 18px;
+    border-radius: 20px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 12px 22px rgba(0,0,0,0.08);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.025), transparent 18%),
+        rgba(12, 9, 8, 0.58);
 }
 
 .world-detail ul {
@@ -4905,6 +5286,12 @@ body[data-museum-theme="dark"] .museum-header {
     margin-bottom: 14px;
     position: relative;
     overflow: hidden;
+    border-radius: 20px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 16px 28px rgba(0,0,0,0.1);
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 18%),
+        rgba(11, 9, 8, 0.82);
 }
 
 .artifact-card::before {
@@ -4917,27 +5304,46 @@ body[data-museum-theme="dark"] .museum-header {
 
 .featured-artifact {
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: 24px;
     background:
         radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 18%),
         rgba(15, 11, 9, 0.88);
-    padding: 18px;
-    margin-bottom: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 18px 34px rgba(0,0,0,0.12);
+}
+
+.featured-artifact::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.artifact-gallery-shell {
+    display: grid;
+    gap: 14px;
 }
 
 .featured-grid {
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 18px;
+    grid-template-columns: 1.16fr 0.94fr;
+    gap: 22px;
     align-items: stretch;
 }
 
 .featured-image-shell {
-    border-radius: 14px;
+    border-radius: 18px;
     overflow: hidden;
     border: 1px solid rgba(200, 169, 110, 0.15);
     background: rgba(10, 8, 7, 0.5);
-    min-height: 320px;
+    min-height: 360px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .featured-image {
@@ -4963,6 +5369,8 @@ body[data-museum-theme="dark"] .museum-header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 16px;
+    padding: 4px 2px 2px 0;
 }
 
 .featured-label {
@@ -4977,8 +5385,9 @@ body[data-museum-theme="dark"] .museum-header {
 .featured-title {
     color: var(--gold);
     font-family: 'Cinzel', serif;
-    font-size: 24px;
+    font-size: 30px;
     margin-bottom: 10px;
+    line-height: 1.08;
 }
 
 .featured-text {
@@ -5031,6 +5440,13 @@ body[data-museum-theme="dark"] .museum-header {
     text-transform: uppercase;
     color: var(--gold-soft);
     background: rgba(200, 169, 110, 0.08);
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.artifact-tag:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200, 169, 110, 0.34);
+    background: rgba(200, 169, 110, 0.14);
 }
 
 .artifact-desc {
@@ -5047,30 +5463,46 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .timeline-card {
-    padding: 18px 20px;
+    padding: 22px 22px 20px;
     margin-bottom: 12px;
     display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 16px;
+    grid-template-columns: 132px 1fr;
+    gap: 18px;
     position: relative;
     overflow: hidden;
+    border-radius: 24px;
+    background:
+        linear-gradient(90deg, rgba(200, 169, 110, 0.08), transparent 14%),
+        linear-gradient(180deg, rgba(255,255,255,0.025), transparent 18%),
+        rgba(11, 9, 8, 0.78);
+    box-shadow: 0 16px 30px rgba(0,0,0,0.1);
 }
 
 .timeline-card::before {
     content: "";
     position: absolute;
-    left: 110px;
-    top: 18px;
-    bottom: 18px;
+    left: 122px;
+    top: 20px;
+    bottom: 20px;
     width: 1px;
     background: rgba(200, 169, 110, 0.16);
 }
 
+.timeline-card::after {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
 .timeline-year {
     font-family: 'Cinzel', serif;
-    color: var(--gold-soft);
-    font-size: 12px;
-    letter-spacing: 0.1em;
+    color: var(--gold);
+    font-size: 18px;
+    line-height: 1.35;
+    letter-spacing: 0.08em;
 }
 
 .timeline-title {
@@ -5094,16 +5526,36 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .newspaper-shell {
+    position: relative;
     background:
         linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.24)),
         rgba(250, 245, 236, 0.96);
     border-radius: 18px;
     color: var(--ink) !important;
-    padding: 24px 28px 18px;
+    padding: 42px 40px 34px;
     border: 1px solid rgba(54, 40, 24, 0.14);
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.55),
         0 14px 30px rgba(40, 26, 15, 0.08);
+    overflow: hidden;
+}
+
+.newspaper-shell::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(58, 42, 26, 0.14);
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.newspaper-shell::after {
+    content: "";
+    position: absolute;
+    inset: auto 22px 22px 22px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(58,42,26,0), rgba(58,42,26,0.18), rgba(58,42,26,0));
+    pointer-events: none;
 }
 
 .newspaper-shell * {
@@ -5140,17 +5592,18 @@ body[data-museum-theme="dark"] .museum-header {
 
 .newspaper-headline {
     font-family: 'Cinzel', serif;
-    font-size: 26px;
-    line-height: 1.3;
-    margin-bottom: 16px;
+    font-size: 30px;
+    line-height: 1.28;
+    margin-bottom: 18px;
     border-bottom: 1px solid rgba(36,26,18,0.22);
-    padding-bottom: 12px;
+    padding-bottom: 14px;
     color: #1f1710 !important;
+    text-wrap: balance;
 }
 
 .newspaper-columns {
     column-count: 2;
-    column-gap: 28px;
+    column-gap: 32px;
     column-rule: 1px solid rgba(70, 50, 30, 0.18);
 }
 
@@ -5162,8 +5615,10 @@ body[data-museum-theme="dark"] .museum-header {
 .newspaper-body,
 .newspaper-secondary-body {
     font-size: 18px;
-    line-height: 1.9;
+    line-height: 1.88;
     color: #241a12 !important;
+    text-align: justify;
+    text-wrap: pretty;
 }
 
 .newspaper-body {
@@ -5183,14 +5638,15 @@ body[data-museum-theme="dark"] .museum-header {
 
 .newspaper-secondary-headline {
     font-family: 'Cinzel', serif;
-    font-size: 18px;
-    margin-bottom: 8px;
+    font-size: 19px;
+    line-height: 1.34;
+    margin-bottom: 10px;
     color: #2b2016 !important;
 }
 
 .newspaper-ad {
-    margin-top: 16px;
-    padding: 12px 14px;
+    margin-top: 18px;
+    padding: 14px 16px;
     border: 1px solid rgba(70, 50, 30, 0.28);
     font-size: 14px;
     color: #5d4732;
@@ -5200,14 +5656,14 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .visitor-book {
-    padding: 42px 32px;
+    padding: 18px 4px 4px;
     max-width: 760px;
     margin: 0 auto;
     text-align: center;
     border-radius: 18px;
     background:
-        radial-gradient(circle at top, rgba(200, 169, 110, 0.08), transparent 24%),
-        rgba(12, 9, 7, 0.72);
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.06), transparent 18%),
+        transparent;
 }
 
 .visitor-kicker {
@@ -5217,11 +5673,12 @@ body[data-museum-theme="dark"] .museum-header {
 }
 
 .visitor-entry {
-    font-size: 24px;
+    font-size: 26px;
     line-height: 1.8;
     color: var(--paper);
     font-style: italic;
     margin-bottom: 18px;
+    text-wrap: pretty;
 }
 
 .visitor-signed {
@@ -5233,12 +5690,13 @@ body[data-museum-theme="dark"] .museum-header {
 
 .curator-notes-shell {
     border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 18px;
+    border-radius: 22px;
+    padding: 20px;
     margin-bottom: 18px;
     background:
         radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 24%),
         rgba(16, 11, 9, 0.84);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .curator-notes-head {
@@ -5280,8 +5738,8 @@ body[data-museum-theme="dark"] .museum-header {
 
 .curator-note-card {
     border: 1px solid rgba(215, 164, 164, 0.16);
-    border-radius: 14px;
-    padding: 14px;
+    border-radius: 16px;
+    padding: 16px 14px 14px;
     background: rgba(37, 21, 19, 0.34);
 }
 
@@ -5308,11 +5766,14 @@ body[data-museum-theme="dark"] .museum-header {
 
 .museum-complexity-badge {
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 12px 16px;
+    border-radius: 18px;
+    padding: 14px 16px 12px;
     min-width: 128px;
     text-align: center;
-    background: rgba(200, 169, 110, 0.08);
+    background:
+        radial-gradient(circle at top, rgba(200, 169, 110, 0.12), transparent 28%),
+        rgba(200, 169, 110, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .museum-complexity-kicker {
@@ -5336,16 +5797,69 @@ body[data-museum-theme="dark"] .museum-header {
     margin-top: 4px;
 }
 
-.ambassador-trigger-card {
+.visitor-side-exhibit {
+    position: relative;
     margin-top: 18px;
     border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 20px;
-    padding: 18px 18px 16px;
+    border-radius: 24px;
+    padding: 20px 20px 18px;
     background:
-        radial-gradient(circle at top right, rgba(125, 151, 255, 0.1), transparent 24%),
+        radial-gradient(circle at top right, rgba(125, 151, 255, 0.12), transparent 24%),
         radial-gradient(circle at 18% 18%, rgba(255,255,255,0.06), transparent 18%),
-        rgba(14, 10, 9, 0.82);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+        linear-gradient(180deg, rgba(18, 12, 11, 0.92), rgba(11, 8, 7, 0.96));
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.visitor-side-exhibit::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.visitor-side-exhibit-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.visitor-side-exhibit-copy {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 56ch;
+}
+
+.visitor-side-exhibit-rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.visitor-side-exhibit-pill {
+    border-radius: 999px;
+    border: 1px solid rgba(200, 169, 110, 0.16);
+    padding: 7px 12px;
+    color: var(--paper);
+    background: rgba(255,255,255,0.03);
+    font-size: 12px;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.visitor-side-exhibit-pill:hover {
+    transform: translateY(-1px);
+    border-color: rgba(200, 169, 110, 0.34);
+    background: rgba(255,255,255,0.06);
+}
+
+.ambassador-trigger-card {
+    margin-top: 0;
 }
 
 .ambassador-trigger-top {
@@ -5501,14 +6015,7 @@ body.is-ambassador-open .ambassador-modal-card {
 }
 
 .portrait-trigger-card {
-    margin-top: 14px;
-    border: 1px solid rgba(200, 169, 110, 0.16);
-    border-radius: 22px;
-    padding: 18px;
-    background:
-        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 28%),
-        rgba(11, 8, 7, 0.76);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+    margin-top: 0;
 }
 
 .portrait-trigger-grid {
@@ -5586,7 +6093,22 @@ body.is-ambassador-open .ambassador-modal-card {
     border: 1px solid rgba(200, 169, 110, 0.14);
     border-radius: 22px;
     padding: 18px;
-    background: rgba(255, 255, 255, 0.02);
+    background:
+        radial-gradient(circle at top right, rgba(200, 169, 110, 0.08), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 18%),
+        rgba(255, 255, 255, 0.02);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.portrait-panel::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 16px;
+    pointer-events: none;
 }
 
 .portrait-result-card {
@@ -5636,7 +6158,9 @@ body.is-ambassador-open .ambassador-modal-card {
 .portrait-meta-card {
     border-radius: 16px;
     border: 1px solid rgba(200, 169, 110, 0.14);
-    background: rgba(255, 255, 255, 0.03);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+        rgba(255, 255, 255, 0.03);
     padding: 12px 14px;
 }
 
@@ -5661,6 +6185,8 @@ body.is-ambassador-open .ambassador-modal-card {
     color: var(--muted);
     font-size: 14px;
     line-height: 1.7;
+    max-height: 10.5em;
+    overflow: auto;
 }
 
 .portrait-result-copy {
@@ -5680,6 +6206,7 @@ body.is-ambassador-open .ambassador-modal-card {
         rgba(12, 10, 12, 0.62);
     padding: 8px;
     margin-bottom: 14px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 14px 24px rgba(0,0,0,0.1);
 }
 
 .ambassador-chat .message,
@@ -5689,6 +6216,19 @@ body.is-ambassador-open .ambassador-modal-card {
 
 .ambassador-chat .message-wrap {
     margin-bottom: 8px !important;
+    border: 1px solid rgba(200, 169, 110, 0.08) !important;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)) !important;
+}
+
+.ambassador-chat [data-role="user"] .message-wrap,
+.ambassador-chat .message.user .message-wrap {
+    border-color: rgba(200, 169, 110, 0.18) !important;
+    background: linear-gradient(180deg, rgba(200,169,110,0.12), rgba(24,18,14,0.82)) !important;
+}
+
+.ambassador-chat [data-role="assistant"] .message-wrap,
+.ambassador-chat .message.bot .message-wrap {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)) !important;
 }
 
 .ambassador-chat textarea,
@@ -5699,6 +6239,9 @@ body.is-ambassador-open .ambassador-modal-card {
 .ambassador-input textarea,
 .ambassador-input input {
     min-height: 58px !important;
+    background: rgba(12, 9, 8, 0.88) !important;
+    border-color: rgba(200, 169, 110, 0.18) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03) !important;
 }
 
 .is-listening {
@@ -5706,6 +6249,7 @@ body.is-ambassador-open .ambassador-modal-card {
 }
 
 .museum-footer {
+    position: relative;
     padding: 20px;
     text-align: center;
     border-top: 1px solid var(--line);
@@ -5713,6 +6257,19 @@ body.is-ambassador-open .ambassador-modal-card {
     font-family: 'Cinzel', serif;
     font-size: 10px;
     letter-spacing: 0.16em;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)),
+        rgba(10, 8, 7, 0.18);
+    overflow: hidden;
+}
+
+.museum-footer::before {
+    content: "";
+    position: absolute;
+    inset: 8px 18px auto;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(200,169,110,0), rgba(200,169,110,0.24), rgba(200,169,110,0));
+    pointer-events: none;
 }
 
 @media (max-width: 900px) {
@@ -5723,6 +6280,22 @@ body.is-ambassador-open .ambassador-modal-card {
     .museum-sidebar {
         position: static;
         min-height: auto;
+        padding: 0;
+        border-right: 0;
+    }
+
+    .museum-sidebar::before {
+        margin-bottom: 2px;
+    }
+
+    .museum-canvas {
+        padding: 18px 0 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .museum-canvas::before {
+        display: none;
     }
 
     .landing-grid,
@@ -5832,12 +6405,19 @@ body.is-ambassador-open .ambassador-modal-card {
         max-width: 14ch;
     }
 
-    .landing-art {
-        min-height: 480px;
+    .landing-shell-topline {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 24px 28px 0;
     }
 
-    .control-shell {
-        margin-top: -36px;
+    .landing-shell-topline span:nth-child(2),
+    .landing-shell-topline span:nth-child(3) {
+        text-align: left;
+    }
+
+    .landing-art {
+        min-height: 480px;
     }
 
     .landing-plaque-row {
@@ -5849,11 +6429,37 @@ body.is-ambassador-open .ambassador-modal-card {
         gap: 10px;
     }
 
-    .landing-art-label,
-    .landing-art-plaque,
-    .landing-art-metrics {
+    .admission-form-column {
+        padding: 20px 20px 18px;
+    }
+
+    .admission-ticket-column {
+        padding-left: 0;
+    }
+
+    .landing-art-card--left,
+    .landing-art-card--right,
+    .landing-art-plaque {
         width: auto;
-        max-width: 240px;
+        max-width: 280px;
+    }
+
+    .landing-art-card--right {
+        top: auto;
+        right: 24px;
+        bottom: 156px;
+    }
+
+    .landing-arch-group {
+        inset: auto 12% 16%;
+    }
+
+    .museum-installation-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .museum-nav-route-line {
+        margin-bottom: 12px;
     }
 
 }
@@ -5890,10 +6496,6 @@ body.is-ambassador-open .ambassador-modal-card {
         min-height: auto;
     }
 
-    .admission-welcome {
-        margin-bottom: 14px;
-    }
-
     .landing-title {
         font-size: 32px;
     }
@@ -5918,25 +6520,32 @@ body.is-ambassador-open .ambassador-modal-card {
         padding: 14px;
     }
 
-    .landing-art-label {
+    .landing-shell-topline {
+        padding: 18px 18px 0;
+        font-size: 10px;
+    }
+
+    .landing-art-card--left {
         left: 16px;
         top: 16px;
         right: 16px;
         width: auto;
     }
 
-    .landing-art-metrics {
-        position: static;
-        width: auto;
-        max-width: none;
-        margin: 16px;
-        margin-top: auto;
-        padding-bottom: 74px;
+    .landing-art-card {
+        width: calc(100% - 32px);
+    }
+
+    .landing-art-card--right {
+        right: 16px;
+        left: 16px;
+        bottom: 132px;
     }
 
     .landing-art-plaque {
         left: 16px;
-        bottom: 68px;
+        right: 16px;
+        bottom: 16px;
         width: calc(100% - 32px);
         max-width: none;
     }
@@ -5945,25 +6554,34 @@ body.is-ambassador-open .ambassador-modal-card {
         display: none;
     }
 
-    .landing-halo-ring {
+    .landing-art-curve {
+        left: 10%;
         right: 10%;
-        top: 14%;
-        width: 48%;
+        top: 50%;
+        height: 100px;
     }
 
-    .landing-statue {
-        right: 3%;
-        width: 54%;
-        height: 60%;
+    .landing-arch-group {
+        inset: auto 10% 20%;
+        gap: 10px;
+    }
+
+    .landing-sculpture {
+        width: 128px;
+        height: 206px;
+        bottom: 21%;
+    }
+
+    .landing-pedestal {
+        width: 170px;
+        height: 62px;
+        bottom: 13%;
     }
 
     .landing-caption {
         flex-direction: column;
         align-items: flex-start;
-    }
-
-    .control-shell {
-        margin-top: 14px;
+        bottom: 98px;
     }
 
     .control-card {
@@ -5971,8 +6589,23 @@ body.is-ambassador-open .ambassador-modal-card {
         border-radius: 22px;
     }
 
+    .admission-form-column {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
     .theme-bar {
         padding: 16px;
+        border-radius: 18px;
+    }
+
+    .museum-nav-header,
+    .museum-room,
+    .featured-artifact,
+    .timeline-card,
+    .portrait-panel,
+    .portrait-result-shell,
+    .visitor-side-exhibit {
         border-radius: 18px;
     }
 
@@ -6011,6 +6644,21 @@ body.is-ambassador-open .ambassador-modal-card {
         align-items: stretch;
     }
 
+    .museum-audio-note {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .concept-chip-row {
+        align-items: flex-start;
+    }
+
+    .concept-chip-label {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 2px;
+    }
+
     .museum-ticket-title {
         font-size: 28px;
     }
@@ -6018,6 +6666,20 @@ body.is-ambassador-open .ambassador-modal-card {
     .museum-map {
         min-height: 460px;
         border-radius: 18px;
+    }
+
+    .museum-hall-shell,
+    .museum-hall-panel,
+    .museum-canvas {
+        border-radius: 22px;
+    }
+
+    .museum-hall-shell {
+        padding: 18px 16px;
+    }
+
+    .museum-hall-panel {
+        padding: 22px 18px 24px;
     }
 
     .museum-room-stage {
@@ -6053,6 +6715,13 @@ body.is-ambassador-open .ambassador-modal-card {
         line-height: 1.58;
     }
 
+    .featured-placeholder,
+    .newspaper-body,
+    .newspaper-secondary-body {
+        font-size: 16px;
+        line-height: 1.72;
+    }
+
     .museum-room-gallery {
         left: 16px;
         right: 16px;
@@ -6080,7 +6749,6 @@ body.is-ambassador-open .ambassador-modal-card {
         font-size: 7px;
     }
 
-    .share-card-grid,
     .museum-legend,
     .museum-hall-nav {
         grid-template-columns: 1fr;
@@ -6180,7 +6848,7 @@ def world_aura(world_bible: dict) -> str:
     return ("ember", "tide", "verdant", "velvet")[simple_seed(source) % 4]
 
 
-def hall_sigil_legacy(room_id: str) -> str:
+def _hall_sigil_legacy(room_id: str) -> str:
     return {
         "lobby": "◈",
         "artifacts": "⬢",
@@ -6291,10 +6959,6 @@ def format_list(items) -> str:
         return "<p>None recorded.</p>"
     rows = "".join(f"<li>{esc(item)}</li>" for item in items)
     return f"<ul>{rows}</ul>"
-
-
-def build_status_html(title: str, subtitle: str) -> str:
-    return build_status_panel(title, subtitle, "Anthropology")
 
 
 def build_status_panel(title: str, subtitle: str, curator_mode: str) -> str:
@@ -6439,56 +7103,6 @@ def build_journey_path_html(active_step: int = 0, curator_mode: str = "Anthropol
 """
 
 
-def build_share_card(state: dict) -> str:
-    state = state or {}
-    world_bible = state.get("world_bible") or {}
-    if not world_bible:
-        return "<div class='empty-state'>Generate a museum first to compose a share plaque.</div>"
-
-    artifacts = (state.get("artifacts") or {}).get("artifacts") or []
-    timeline = (state.get("timeline") or {}).get("events") or []
-    lead_event_data = normalize_timeline_event(timeline[0]) if timeline else {"title": "No recorded turning point yet."}
-    museum_name = world_bible.get("museum_name", "Infinite Museum")
-    summary = world_bible.get("summary") or world_bible.get("tagline") or "An impossible world shown across one museum."
-    lead_artifact = artifacts[0].get("name", "No artifact ready yet.") if artifacts else "No artifact ready yet."
-    lead_event = lead_event_data.get("title") or lead_event_data.get("description") or "No recorded turning point yet."
-    taboo = world_bible.get("taboo", "No absolute taboo recorded yet.")
-
-    return f"""
-<div class="share-card">
-    <div class="share-card-kicker">World share plaque</div>
-    <div class="share-card-title">{esc(museum_name)}</div>
-    <div class="share-card-summary">{esc(summary)}</div>
-    <div class="share-card-grid">
-        <div class="share-card-stat">
-            <div class="share-card-label">Premise</div>
-            <div class="share-card-value">{esc(state.get("concept", ""))}</div>
-        </div>
-        <div class="share-card-stat">
-            <div class="share-card-label">Government</div>
-            <div class="share-card-value">{esc(world_bible.get("government", "-"))}</div>
-        </div>
-        <div class="share-card-stat">
-            <div class="share-card-label">Artifact to remember</div>
-            <div class="share-card-value">{esc(lead_artifact)}</div>
-        </div>
-        <div class="share-card-stat">
-            <div class="share-card-label">Turning point</div>
-            <div class="share-card-value">{esc(lead_event)}</div>
-        </div>
-        <div class="share-card-stat">
-            <div class="share-card-label">Absolute taboo</div>
-            <div class="share-card-value">{esc(taboo)}</div>
-        </div>
-        <div class="share-card-stat">
-            <div class="share-card-label">Visual motif</div>
-            <div class="share-card-value">{esc(first_item(world_bible.get("visual_motifs"), "No motif recorded yet."))}</div>
-        </div>
-    </div>
-</div>
-"""
-
-
 def build_share_payload(state: dict) -> dict:
     state = state or {}
     world_bible = state.get("world_bible") or {}
@@ -6528,6 +7142,11 @@ def build_audio_guide(state: dict | None = None) -> str:
         if world_bible
         else "Generate a world first. Then the guide will speak for the active hall."
     )
+    note = (
+        "A quiet guide for the room you are standing in."
+        if world_bible
+        else "The guide will wake once the museum opens."
+    )
     hall = "Lobby"
     return f"""
 <div class="museum-audio-guide">
@@ -6535,6 +7154,7 @@ def build_audio_guide(state: dict | None = None) -> str:
         <div class="museum-audio-kicker">Curator audio guide</div>
         <div class="museum-audio-title" id="museum-audio-title">{esc(title)}</div>
         <div class="museum-audio-copy" id="museum-audio-copy">{esc(copy)}</div>
+        <div class="museum-audio-note">{esc(note)}</div>
     </div>
     <div class="museum-audio-controls">
         <div class="museum-audio-hall">Active hall: <span id="museum-audio-hall">{esc(hall)}</span></div>
@@ -6584,7 +7204,8 @@ def build_museum_header(state: dict | None = None, share_ready: bool = False) ->
 <div class="museum-header-band" data-world-aura-source="{esc_attr(aura)}">
     <div class="museum-header-identity">
         <div class="museum-world-emblem">{emblem_svg(world_bible) if world_bible else emblem_svg({})}</div>
-        <div>
+        <div class="museum-header-copy">
+        <div class="museum-header-kicker">Museum open</div>
         <div class="museum-title">{esc(title)}</div>
         <div class="museum-tagline">{esc(tagline)}</div>
         {visitor_html}
@@ -6615,7 +7236,10 @@ def build_lobby_html(world_bible: dict, complexity: dict | None = None, curator_
 {type_text("Orientation gallery", "section-heading", 14)}
 <div class="lobby-grid">{stat_html}</div>
 {build_curator_notes_html(curator_notes)}
-{type_text(world_bible.get("summary", ""), "lobby-summary", 10)}
+<div class="lobby-summary-shell">
+    <div class="hall-mini-kicker">Curator overview</div>
+    {type_text(world_bible.get("summary", ""), "lobby-summary", 10)}
+</div>
 <div class="world-details">
     <div class="world-detail">
         <div class="lobby-label">Laws of reality</div>
@@ -6709,7 +7333,7 @@ def build_artifacts_html(data: dict) -> str:
 </div>
 """
         )
-    return hall_intro + featured_html + "".join(cards)
+    return hall_intro + featured_html + f"<div class='artifact-gallery-shell'>{''.join(cards)}</div>"
 
 
 def _artifact_image_src(image_path: str | None) -> str:
@@ -6748,7 +7372,16 @@ def build_timeline_html(data: dict) -> str:
 </div>
 """
         )
-    return intro + "".join(cards)
+    headline = first_item(data.get("events"), {})
+    lead_event = normalize_timeline_event(headline)
+    intro_card = f"""
+<div class="timeline-intro">
+    <div class="hall-mini-kicker">Archive wall</div>
+    <div class="featured-title">{esc(lead_event.get("title", "The archive is opening"))}</div>
+    <div class="featured-text">{esc(lead_event.get("description", "The first event sets the tone for the rest of the timeline."))}</div>
+</div>
+"""
+    return intro + intro_card + "".join(cards)
 
 
 def build_newspaper_html(data: dict) -> str:
@@ -6780,10 +7413,13 @@ def build_visitor_book_html(data: dict) -> str:
         return "<div class='empty-state'>The visitor's book is still empty.</div>"
 
     return f"""
-<div class="visitor-book">
-    <div class="visitor-kicker">Final note</div>
-    {type_text(f'"{data.get("entry", "")}"', "visitor-entry", 11)}
-    <div class="visitor-signed">{esc(data.get("signed", ""))}</div>
+<div class="visitor-book-shell">
+    <div class="hall-mini-kicker">Private record</div>
+    <div class="visitor-book">
+        <div class="visitor-kicker">Final note</div>
+        {type_text(f'"{data.get("entry", "")}"', "visitor-entry", 11)}
+        <div class="visitor-signed">{esc(data.get("signed", ""))}</div>
+    </div>
 </div>
 """
 
@@ -6850,79 +7486,31 @@ def empty_gallery(message: str):
     return gr.update(value=f"<div class='empty-state'>{esc(message)}</div>")
 
 
-def museum_heading(world_bible: dict) -> str:
-    return f"""
-<div class="museum-section-intro">
-    <div class="museum-section-kicker">Current exhibition</div>
-    <div class="museum-section-title">{esc(world_bible.get("museum_name", "Infinite Museum"))}</div>
-    <div class="museum-section-copy">{esc(world_bible.get("tagline", ""))}</div>
-</div>
-"""
-
-
-def build_hero_html(curator_mode: str) -> str:
-    mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
-    return f"""
-<div class="museum-shell">
-    <div class="museum-header">
-        <div class="museum-marquee">
-            <span>Impossible Civilizations Archive</span>
-            <span>Museum open</span>
-            <span>Mode: {esc(curator_mode)}</span>
-        </div>
-        <div class="hero-grid">
-            <div class="hero-main">
-                <div class="museum-kicker">Infinite Museum of Impossible Worlds</div>
-                <div class="museum-title">Step Into A Civilization That Should Not Exist</div>
-                <div class="museum-tagline">Every idea creates a world. Every world leaves traces behind.</div>
-                <div class="museum-lead">{esc(mode["lead"])}</div>
-                <div class="hero-plaques">
-                    <div class="hero-plaque">
-                        <div class="hero-plaque-label">Current mode</div>
-                        <div class="hero-plaque-value">{esc(curator_mode)}</div>
-                    </div>
-                    <div class="hero-plaque">
-                        <div class="hero-plaque-label">What this does</div>
-                        <div class="hero-plaque-value">One idea becomes a full world.</div>
-                    </div>
-                    <div class="hero-plaque">
-                        <div class="hero-plaque-label">Focus</div>
-                        <div class="hero-plaque-value">{esc(mode["plaque"])}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-side">
-                <div class="hero-side-heading">Curator note</div>
-                <div class="hero-side-copy">{esc(mode["tagline"])}</div>
-                <div class="hero-side-note">Describe one impossible condition. The museum will turn it into government, objects, history, news, and personal memory.</div>
-            </div>
-        </div>
-    </div>
-</div>
-"""
-
-
 def build_landing_html(curator_mode: str) -> str:
     mode = CURATOR_MODES.get(curator_mode, CURATOR_MODES["Anthropology"])
     return f"""
-<div class="admission-welcome">
-    <div class="admission-kicker">Welcome Chamber</div>
-    <div class="admission-title">Welcome To The World Of Imagination</div>
-    <div class="admission-copy">Before you enter, the museum asks for one small record. Tell us your name and the year you come from. Then give us one impossible idea and we will open it like an exhibition.</div>
-    <div class="admission-rail">
-        <div class="admission-chip">One visitor identity</div>
-        <div class="admission-chip">One impossible world</div>
-        <div class="admission-chip">One museum ticket to carry out</div>
+<div class="landing-shell landing-shell--hero">
+    <div class="landing-shell-topline">
+        <span>Impossible Civilizations Archive</span>
+        <span>Welcome chamber</span>
+        <span>Mode: {esc(curator_mode)}</span>
     </div>
-</div>
-<div class="landing-shell">
     <div class="landing-floating-fragments" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="landing-grid">
         <div class="landing-copy">
-            <div class="landing-kicker">Infinite Museum</div>
-            <div class="landing-title">Enter One Idea. Watch It Become A Museum.</div>
-            <div class="landing-subtitle">This should feel like stepping into a special exhibition, not filling a normal form.</div>
-            <div class="landing-lead">{esc(mode["tagline"])} The museum keeps the structure simple: one idea, one route, five halls, one clear world to explore.</div>
+            <div class="landing-kicker">Infinite Museum Of Impossible Worlds</div>
+            <div class="landing-title">Welcome To The World Of Imagination</div>
+            <div class="landing-subtitle">{esc(mode["tagline"])}</div>
+            <div class="landing-lead">This should feel like walking up to a museum desk, not filling a form. Tell us your name, your year, and one impossible rule. The museum will open one complete world around that single idea.</div>
+            <div class="landing-route landing-route--hero">
+                <div class="landing-route-stop">One visitor identity</div>
+                <div class="landing-route-stop">One world rule</div>
+                <div class="landing-route-stop">One stamped pass</div>
+            </div>
+            <div class="landing-curator-strip">
+                <div class="landing-curator-label">Arrival note</div>
+                <div class="landing-curator-copy">Keep the prompt short and visual. The museum will build the lobby, objects, history, public record, and one final human voice for you.</div>
+            </div>
             <div class="landing-route">
                 <div class="landing-route-stop">Lobby</div>
                 <div class="landing-route-stop">Artifacts</div>
@@ -6944,41 +7532,41 @@ def build_landing_html(curator_mode: str) -> str:
                     <div class="landing-plaque-value">{esc(mode["plaque"])}</div>
                 </div>
             </div>
-            <div class="landing-curator-strip">
-                <div class="landing-curator-label">Curator note</div>
-                <div class="landing-curator-copy">Give one impossible condition. The museum will turn it into rules, public records, objects, history, and one human voice from inside that world.</div>
-            </div>
-            <div class="landing-cta-copy">Keep the idea simple. After your ticket is stamped, the museum opens from the lobby and starts calling you by name.</div>
+            <div class="landing-cta-copy">After the ticket is stamped, the doors open from the lobby and the whole museum starts speaking directly to you.</div>
         </div>
         <div class="landing-art" aria-hidden="true">
-            <div class="landing-art-label">
-                <div class="landing-art-label-title">Entrance Installation</div>
-                <div class="landing-art-label-copy">A museum facade waiting for its first impossible civilization. The architecture is calm. The world behind it is not.</div>
+            <div class="landing-art-glow"></div>
+            <div class="landing-art-card landing-art-card--left">
+                <div class="landing-art-card-label">Admission desk</div>
+                <div class="landing-art-card-title">A quiet foyer waiting for your first impossible world</div>
+                <div class="landing-art-card-copy">Soft light, dark stone, one central sculpture, and a route that opens room by room after your ticket is stamped.</div>
             </div>
-            <div class="landing-art-metrics">
-                <div class="landing-art-metric">
-                    <div class="landing-art-metric-label">Route</div>
-                    <div class="landing-art-metric-value">Five linked halls</div>
+            <div class="landing-art-card landing-art-card--right">
+                <div class="landing-art-card-label">What opens next</div>
+                <div class="landing-art-card-row">
+                    <div class="landing-art-card-metric">
+                        <div class="landing-art-card-label">Route</div>
+                        <div class="landing-art-card-metric-value">Five linked halls</div>
+                    </div>
+                    <div class="landing-art-card-metric">
+                        <div class="landing-art-card-label">Voice</div>
+                        <div class="landing-art-card-metric-value">One personal thread</div>
+                    </div>
                 </div>
-                <div class="landing-art-metric">
-                    <div class="landing-art-metric-label">Voice</div>
-                    <div class="landing-art-metric-value">One visitor, one world</div>
-                </div>
+                <div class="landing-art-card-copy">Once the world opens, the museum changes its title, mood, architecture, and hall voice to match that civilization.</div>
             </div>
-            <div class="landing-halo-ring"></div>
-            <div class="landing-skyline"></div>
-            <div class="landing-dome"></div>
-            <div class="landing-steps"></div>
-            <div class="landing-pillars"><span></span><span></span><span></span><span></span><span></span></div>
-            <div class="landing-statue"></div>
+            <div class="landing-art-curve"></div>
+            <div class="landing-arch-group"><span class="landing-arch"></span><span class="landing-arch"></span><span class="landing-arch"></span><span class="landing-arch"></span><span class="landing-arch"></span></div>
+            <div class="landing-sculpture"></div>
+            <div class="landing-pedestal"></div>
             <div class="landing-floor-label">Every generated world changes the mood of the museum once the doors open.</div>
             <div class="landing-art-plaque">
                 <div class="landing-art-plaque-label">Opening piece</div>
-                <div class="landing-art-plaque-value">A ceremonial figure waiting under warm light before the first hall begins.</div>
+                <div class="landing-art-plaque-value">One central installation under warm light, waiting for the museum to be renamed by the world you create.</div>
             </div>
             <div class="landing-caption">
-                <span>Atmospheric entrance rendering</span>
-                <span>Curated arrival sequence</span>
+                <span>Atmospheric entrance study</span>
+                <span>Grand foyer rendering</span>
             </div>
         </div>
     </div>
@@ -7028,6 +7616,7 @@ def build_map_html(active_room: str, completed_rooms: list[str]) -> str:
 
 def build_loading_html(title: str, body: str, step: int, total: int, next_hall: str) -> str:
     journey_stage = min(4, max(1, step))
+    progress = max(8, min(100, int((step / max(total, 1)) * 100)))
     return f"""
 <div class="loading-card">
     <div>
@@ -7036,6 +7625,7 @@ def build_loading_html(title: str, body: str, step: int, total: int, next_hall: 
         <div class="loading-copy">{esc(body)}</div>
     </div>
     <div>
+        <div class="loading-track"><div class="loading-bar" style="width:{progress}%"></div></div>
         {build_journey_path_html(journey_stage)}
         <div class="loading-meta">
             <span>Hall {step} of {total}</span>
@@ -7052,7 +7642,7 @@ def build_theme_bar() -> str:
 <div class="theme-bar">
     <div class="theme-bar-copy">
         <strong>Choose The Gallery Light</strong>
-        Switch the museum atmosphere while you explore. Choose a warm retro gallery, a cooler night mode, or a bright archival reading room.
+        Change the museum mood while you explore. Use warm retro light, a deeper night gallery, or a brighter reading-room style.
     </div>
     <div class="theme-chip-row">
         <button class="theme-chip is-active" type="button" data-theme-switch="retro">Retro</button>
@@ -7263,6 +7853,7 @@ def build_shell_intro(state: dict | None = None) -> str:
     artifact_name = artifacts[0].get("name", "The first object will appear here.") if artifacts else "The first object will appear here."
     artifact_note = artifacts[0].get("significance", premise) if artifacts else premise
     aura = world_aura(world_bible) if world_bible else "default"
+    stage_note = "The room keeps changing with each world, but the installation stays at the centre of the museum route."
 
     return f"""
 <div class="museum-installation-shell" data-world-aura-source="{esc_attr(aura)}">
@@ -7276,11 +7867,21 @@ def build_shell_intro(state: dict | None = None) -> str:
             <span>Five linked halls</span>
             <span>{esc(motif)}</span>
         </div>
+        <div class="museum-installation-metrics">
+            <div class="museum-installation-metric">
+                <div class="museum-installation-metric-label">Lead object</div>
+                <div class="museum-installation-metric-value">{esc(artifact_name)}</div>
+            </div>
+            <div class="museum-installation-metric">
+                <div class="museum-installation-metric-label">Main visual mood</div>
+                <div class="museum-installation-metric-value">{esc(motif)}</div>
+            </div>
+        </div>
     </div>
     <div class="museum-installation-stage">
         <div class="museum-installation-aura"></div>
         <div class="museum-installation-stage-copy">
-            <div class="museum-installation-kicker">Featured presence</div>
+            <div class="museum-installation-kicker">Featured object</div>
             <div class="museum-installation-stage-title">{esc(artifact_name)}</div>
             <div class="museum-installation-stage-note">{esc(artifact_note)}</div>
         </div>
@@ -7291,7 +7892,7 @@ def build_shell_intro(state: dict | None = None) -> str:
         <div class="museum-installation-pedestal"></div>
         <div class="museum-installation-plaque">
             <div class="museum-installation-plaque-label">Exhibition note</div>
-            <div class="museum-installation-plaque-value">{esc(motif)}</div>
+            <div class="museum-installation-plaque-value">{esc(stage_note)} {esc(motif)}</div>
         </div>
     </div>
 </div>
@@ -7955,7 +8556,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 """
                 )
                 with gr.Row(elem_classes=["admission-card-grid"]):
-                    with gr.Column(scale=6):
+                    with gr.Column(scale=6, elem_classes=["admission-form-column"]):
                         gr.HTML("<div class='admission-form-label'>Choose the curatorial mood for your arrival</div>", elem_classes=["admission-card-copy"])
                         curator_mode = gr.Radio(
                             choices=list(CURATOR_MODES.keys()),
@@ -7986,9 +8587,9 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                         )
                         with gr.Row(elem_classes=["hall-action-row"]):
                             concept_voice_btn = gr.Button("Speak World Idea", elem_classes=["museum-secondary-btn"], elem_id="concept-voice-btn")
-                            generate_btn = gr.Button("Begin My Journey →", elem_classes=["enter-btn"], elem_id="begin-journey-btn")
+                            generate_btn = gr.Button("Begin My Journey ->", elem_classes=["enter-btn"], elem_id="begin-journey-btn")
                         journey_preview_html = gr.HTML(build_journey_path_html(0, "Anthropology"))
-                    with gr.Column(scale=5):
+                    with gr.Column(scale=5, elem_classes=["admission-ticket-column"]):
                         admission_ticket_html = gr.HTML(build_entry_ticket_preview())
 
     with gr.Column(visible=False, elem_classes=["museum-shell"]) as museum_view:
@@ -7996,6 +8597,7 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
             exit_btn = gr.Button("Back To Entrance", size="sm", elem_classes=["museum-secondary-btn"])
 
         with gr.Row(elem_classes=["concept-chip-row"]):
+            gr.HTML("<div class='concept-chip-label'>Prompt ideas</div>")
             concept_chip_1 = gr.Button("Dreams are taxed and stored in public vaults", elem_classes=["concept-chip-btn"])
             concept_chip_2 = gr.Button("A floating city ruled by tides that remember every oath", elem_classes=["concept-chip-btn"])
             concept_chip_3 = gr.Button("A moon colony where gravity changes by social rank", elem_classes=["concept-chip-btn"])
@@ -8059,35 +8661,35 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
                         )
                         gr.HTML(
                             """
-<div class="ambassador-trigger-card">
-    <div class="ambassador-trigger-top">
+<div class="visitor-side-exhibit ambassador-trigger-card">
+    <div class="visitor-side-exhibit-head ambassador-trigger-top">
         <div>
             <div class="ambassador-trigger-kicker">Local voice encounter</div>
             <div class="ambassador-trigger-title">Tiny World Ambassador</div>
         </div>
         <button class="museum-action-btn" type="button" data-ambassador-open="true">Open Conversation</button>
     </div>
-    <div class="ambassador-trigger-copy">Step aside from the formal museum voice and speak to one resident of the world. Ask up to three questions about fear, ritual, work, or survival.</div>
-    <div class="ambassador-pill-row">
-        <div class="ambassador-pill">3 questions max</div>
-        <div class="ambassador-pill">In-world replies only</div>
-        <div class="ambassador-pill">Voice input ready</div>
+    <div class="visitor-side-exhibit-copy ambassador-trigger-copy">Step aside from the formal museum voice and speak to one resident of the world. Ask about fear, ritual, work, memory, or survival and hear one local point of view.</div>
+    <div class="visitor-side-exhibit-rail ambassador-pill-row">
+        <div class="visitor-side-exhibit-pill ambassador-pill">3 questions max</div>
+        <div class="visitor-side-exhibit-pill ambassador-pill">In-world replies only</div>
+        <div class="visitor-side-exhibit-pill ambassador-pill">Voice input ready</div>
     </div>
 </div>
 """
                         )
                         gr.HTML(
                             """
-<div class="portrait-trigger-card">
+<div class="visitor-side-exhibit portrait-trigger-card">
     <div class="portrait-trigger-grid">
         <div>
             <div class="ambassador-trigger-kicker">Visitor portrait studio</div>
             <div class="ambassador-trigger-title">See Yourself In This World</div>
-            <div class="portrait-trigger-copy">Upload one visitor photo right here in the Visitor Hall. The museum will assign you a role and create a portrait that matches this world.</div>
-            <div class="ambassador-pill-row">
-                <div class="ambassador-pill">Upload one photo</div>
-                <div class="ambassador-pill">Museum role assigned</div>
-                <div class="ambassador-pill">Download after render</div>
+            <div class="visitor-side-exhibit-copy portrait-trigger-copy">Upload one visitor photo right here in the Visitor Hall. The museum will assign you a role and create a portrait that matches the mood of this world.</div>
+            <div class="visitor-side-exhibit-rail ambassador-pill-row">
+                <div class="visitor-side-exhibit-pill ambassador-pill">Upload one photo</div>
+                <div class="visitor-side-exhibit-pill ambassador-pill">Museum role assigned</div>
+                <div class="visitor-side-exhibit-pill ambassador-pill">Download after render</div>
             </div>
         </div>
         <div class="portrait-trigger-art" aria-hidden="true">
@@ -8234,3 +8836,4 @@ with gr.Blocks(**build_blocks_kwargs()) as demo:
 
 if __name__ == "__main__":
     launch_demo(demo)
+
